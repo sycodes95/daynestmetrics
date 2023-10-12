@@ -16,3 +16,12 @@
   }
 }
 
+
+@font-face {
+  font-family: Display;
+  src: url(../assets/fonts/Befroce.ttf);
+}
+
+.font-display {
+  font-family: Display;
+}
