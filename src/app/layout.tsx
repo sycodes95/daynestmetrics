@@ -20,12 +20,15 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
   const session = await getSession();
+  
   const user = session?.user;
 
   return (
     <>
-    <html lang="en" className='min-h-screen flex flex-col '>
+
+    <html lang="en" className='min-h-screen flex flex-col ' suppressHydrationWarning>
       <UserProvider>
       
         <body className="flex flex-col items-center w-full font-main text-sm">
@@ -44,6 +47,7 @@ export default async function RootLayout({
         </body>
       </UserProvider>
     </html>
+    
     </>
   )
 }
