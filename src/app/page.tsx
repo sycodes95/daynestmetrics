@@ -7,7 +7,11 @@ export default async function HomePage() {
   
   const session = await getSession();
   const user = session?.user;
-  console.log(user);  
+ 
+  const getUserPG = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/user`)
+  .then(res => res.json())
+  
+  console.log('PGGGG', getUserPG);   
   return (
     <div className=' '>
       { 
@@ -17,7 +21,7 @@ export default async function HomePage() {
       <span>NO</span>
       }
       
-    </div>
+    </div> 
   )
 }
 

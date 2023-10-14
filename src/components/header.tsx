@@ -8,5 +8,5 @@ export default async function Header(){
       <a className="text-black font-display text-2xl" href={'/'}>Daynestmetrics</a>
       <UserMenu />
     </div>
-  )
+  ) 
 }
