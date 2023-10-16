@@ -7,11 +7,47 @@ export default async function HomePage() {
   
   const session = await getSession();
   const user = session?.user;
- 
-  const getUserPG = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/user`)
-  .then(res => res.json())
+  await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/user`, {
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(user)
+})
+.then(res => res.json())
   
-  console.log('PGGGG', getUserPG);   
+  if(user) {
+
+    const getUserFromPG = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/user?sub=${user.sub}`)
+    .then(res => res.json())
+
+    if(getUserFromPG){
+      const userAuth0KeyValues = Object.entries(user)
+      const userPGKeyValues = Object.entries(getUserFromPG)
+      let auth0AndPGIsSynced = true;
+      for(let i = 0; i < userAuth0KeyValues.length; i++) {
+        if(userAuth0KeyValues[i][1] !== userPGKeyValues[i][1] ){
+          auth0AndPGIsSynced = false;
+          break;
+        } 
+      }
+      if(!auth0AndPGIsSynced){
+        const patchPGUser = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/user`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(user)
+        })
+        .then(res => res.json())
+      }
+
+    }
+    
+  }
+
+  
+  
   return (
     <div className=' '>
       { 
