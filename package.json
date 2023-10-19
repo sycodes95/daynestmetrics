@@ -11,7 +11,10 @@
   "dependencies": {
     "@auth0/auth0-react": "^2.2.1",
     "@auth0/nextjs-auth0": "^3.2.0",
+    "@fullcalendar/daygrid": "^6.1.9",
+    "@fullcalendar/react": "^6.1.9",
     "@radix-ui/react-popover": "^1.0.7",
+    "antd": "^5.10.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "lucide-react": "^0.286.0",

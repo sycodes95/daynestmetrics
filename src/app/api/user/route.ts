@@ -27,7 +27,6 @@ export async function PATCH(req: Request, res: Response){
 
   queryText += ` WHERE sub = $${queryParams.findIndex(el => el === user.sub) + 1} RETURNING *`;
 
-  console.log(queryText, queryParams);
   const result = await db.query(queryText, queryParams);
 
   return NextResponse.json(result);
@@ -62,5 +61,3 @@ export async function POST(req: Request){
 
   return NextResponse.json(result.rows)
 };
-
-//its working :D

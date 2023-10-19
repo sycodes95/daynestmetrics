@@ -15,10 +15,9 @@ type User = {
 }
 export const getUser = async ()  => {
   const session = await getSession();
-  const user : Claims | undefined = session?.user;
+  const user = session?.user;
   if(user) {
     return user
   } 
-
   return null
 }
