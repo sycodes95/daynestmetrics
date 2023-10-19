@@ -34,3 +34,28 @@
   padding: 0 !important;
   border: none !important;
 }
+
+.ant-radio-button-checked, .ant-radio-button-wrapper, .ant-radio-button, .ant-select-selector{
+  color: black !important;
+  border: none !important;
+}
+
+.ant-picker-cell:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  transition: all ease-out 200ms !important;
+}
+
+.ant-picker-calendar-date-today, .ant-picker-cell-today, .ant-picker-calendar-date-value {
+  color: none !important;
+  border-color: black !important;
+}
+
+.ant-picker-cell-today{
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+
+.ant-picker-cell-selected{
+  color: none !important;
+}
+

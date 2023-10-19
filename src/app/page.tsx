@@ -1,4 +1,4 @@
-import { Calendar } from 'antd';
+
 import React from 'react'
 import '../styles/globals.css'
 import { getSession } from '@auth0/nextjs-auth0';
@@ -47,17 +47,40 @@ export default async function HomePage() {
     }
     
   }
+
+  const dateCellRender = (value: Dayjs) => {
+    console.log(value);
+    // const listData = getListData(value);
+    // return (
+    //   <ul className="events">
+    //     {listData.map((item) => (
+    //       <li key={item.content}>
+    //         <Badge status={item.type as BadgeProps['status']} text={item.content} />
+    //       </li>
+    //     ))}
+    //   </ul>
+    // );
+  };
+
+  
+
+  const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
+    console.log(current['$d']);
+    return <></>
+    // if (info.type === 'date') return dateCellRender(current);
+    // if (info.type === 'month') return monthCellRender(current);
+    // return info.originNode;
+  };
   
   return (
-    <div className=' '>
+    <div className='w-full h-full grow '>
       {/* { 
       user ?
       <span>User</span>
       :
       <span>NO</span>
       } */}
-
-      <Calendar />
+      <MoodCalendar />
       
     </div> 
   )

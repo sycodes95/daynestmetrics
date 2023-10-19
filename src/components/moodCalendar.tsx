@@ -1,30 +1,49 @@
 'use client'
 
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid';
+import { getYMDFromDate } from '@/util/getYMDFromDate';
+import { Calendar, CalendarProps, Badge } from 'antd';
+import type { Dayjs } from 'dayjs';
+import { format } from 'date-fns';
+const dailyMetricsData = [
+  {factors: ['smoke, coffee'], mood: { content: 6, motivated: 9 }, date: '2023-10-05'},
+  {factors: ['run, coffee'], mood: { content: 2, motivated: 5 }, date: '2023-10-02'}
 
-function renderEventContent(eventInfo: any) {
-  return (
-    <div className='!border-black w-full rounded-lg !flex gap-2 p-2 !grow !h-full bg-black !border !outline-none'>
-      <b>{eventInfo.event.title.split("\n")[0]}</b>
-      <div>{eventInfo.event.title.split("\n")[1]}</div>
-    </div>
-  );
-}
+]
 
 export default function MoodCalendar() {
-  const trades = [
-  { title: "$71.32\n1 trade", date: "2023-10-01", backgroundColor: "#4CAF50" }, // green for profit
-  { title: "-$30.78\n2 trades", date: "2023-10-03", backgroundColor: "#F44336" }, // red for loss
-  // ... add more trade data
-];
+  console.log('meow');
+  const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
+    const currentDate = format(current.toDate(), 'yyyy-MM-dd')
+
+    const currentDateData = dailyMetricsData.find(data => data.date === currentDate)
+    return (
+      <div className='h-full w-full rounded-lg' >
+        {
+        currentDateData ? 
+        <div className='flex items-center md:flex-row flex-col h-full justify-evenly  w-full bg-black bg-opacity-20'>
+          <div className='flex justify-between items-center'>
+            {/* <span>Motivation</span> */}
+             <span className='p-1 w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>{currentDateData.mood.motivated}</span>
+          </div>
+          <div className='flex justify-between items-center'>
+            {/* <span>Contentment</span> */}
+            <span className='p-1 w-6 h-6 rounded-full bg-black text-white flex items-center justify-center'>{currentDateData.mood.content}</span>
+             
+          </div>
+        </div>
+        :
+        <>
+        </>
+        }
+      </div>
+
+    )
+    // if (info.type === 'date') return dateCellRender(current);
+    // if (info.type === 'month') return monthCellRender(current);
+    // return info.originNode;
+  };
   return (
-    <FullCalendar
-      plugins={[ dayGridPlugin ]}
-      initialView="dayGridMonth"
-      events={trades}
-      eventContent={renderEventContent}
-      // other props and customization
-    />
+    <Calendar className='' cellRender={cellRender} />
+
   )
 }
