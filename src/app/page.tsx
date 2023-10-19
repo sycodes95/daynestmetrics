@@ -20,18 +20,18 @@ export default async function HomePage() {
     const getUserFromPG = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/user?sub=${user.sub}`)
     .then(res => res.json())
 
-    console.log('23', getUserFromPG);
-
     if(getUserFromPG){
-      const userAuth0KeyValues = Object.entries(user)
-      const userPGKeyValues = Object.entries(getUserFromPG)
+      const userAuth0KeyValues = Object.entries(user) 
+      const userPGKeyValues = Object.entries(getUserFromPG) 
+
       let auth0AndPGIsSynced = true;
-      for(let i = 0; i < userAuth0KeyValues.length; i++) {
-        if(userAuth0KeyValues[i][1] !== userPGKeyValues[i][1] ){
+      for(let i = 0; i < userPGKeyValues.length; i++) {
+        if(userAuth0KeyValues[i][1] !== userPGKeyValues[i + 1][1] ){
           auth0AndPGIsSynced = false;
           break;
         } 
       }
+
       if(!auth0AndPGIsSynced){
         const patchPGUser = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/user`, {
           method: 'PATCH',
