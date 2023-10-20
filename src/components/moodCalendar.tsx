@@ -11,7 +11,6 @@ const dailyMetricsData = [
 ]
 
 export default function MoodCalendar() {
-  console.log('meow');
   const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
     const currentDate = format(current.toDate(), 'yyyy-MM-dd')
 

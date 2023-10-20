@@ -10,7 +10,6 @@ export default async function HomePage() {
   const user = session?.user;
   
   if(user) {
-    console.log(user);
     const getUserFromPG = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/user?sub=${user.sub}`)
     .then(res => res.json())
     if(getUserFromPG){
@@ -47,31 +46,6 @@ export default async function HomePage() {
     }
     
   }
-
-  const dateCellRender = (value: Dayjs) => {
-    console.log(value);
-    // const listData = getListData(value);
-    // return (
-    //   <ul className="events">
-    //     {listData.map((item) => (
-    //       <li key={item.content}>
-    //         <Badge status={item.type as BadgeProps['status']} text={item.content} />
-    //       </li>
-    //     ))}
-    //   </ul>
-    // );
-  };
-
-  
-
-  const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
-    console.log(current['$d']);
-    return <></>
-    // if (info.type === 'date') return dateCellRender(current);
-    // if (info.type === 'month') return monthCellRender(current);
-    // return info.originNode;
-  };
-  
   return (
     <div className='w-full h-full grow '>
       {/* { 

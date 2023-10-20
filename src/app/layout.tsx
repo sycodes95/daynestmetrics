@@ -9,6 +9,7 @@ import { getSession } from '@auth0/nextjs-auth0';
 import LandingPage from './landingPage/landingPage';
 import NProgress from '@/components/nProgress';
 import NextTopLoader from 'nextjs-toploader';
+import StyledComponentsRegistry from '../lib/AntdRegistry';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -39,8 +40,9 @@ export default async function RootLayout({
           <>
           <NProgress />
           <Header/>
+          
           <div className='grow w-full h-full max-w-7xl p-4'>
-            {children}
+            <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
           </div>
           </>
           :
