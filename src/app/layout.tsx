@@ -7,9 +7,10 @@ import Header from '../components/header'
 import { Auth0Provider } from '@auth0/auth0-react';
 import { getSession } from '@auth0/nextjs-auth0';
 import LandingPage from './landingPage/landingPage';
-import NProgress from '@/components/nProgress';
 import NextTopLoader from 'nextjs-toploader';
 import StyledComponentsRegistry from '../lib/AntdRegistry';
+import { getUserAndSyncDB } from '@/lib/getUserAndSyncDB';
+import { getUser } from '@/lib/getUser';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -23,9 +24,11 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
 
-  const session = await getSession();
   
-  const user = session?.user;
+  
+  const user = await getUser()
+  getUserAndSyncDB(user)
+  
 
   return (
     <>
@@ -34,11 +37,10 @@ export default async function RootLayout({
       <UserProvider>
       
         <body className="flex flex-col grow items-center w-full font-main text-sm">
-          <NextTopLoader showSpinner={false} color="#E7B008" />
+          <NextTopLoader showSpinner={false} color="#08a4a7" />
           {
           user ? 
           <>
-          <NProgress />
           <Header/>
           
           <div className='grow w-full h-full max-w-7xl p-4'>

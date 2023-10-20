@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/popover"
 import { userRoutes } from "@/lib/userRoutes";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function UserMenu () {
@@ -32,7 +33,11 @@ export default function UserMenu () {
 
         <PopoverTrigger className="flex items-center gap-2">
 
-          <img className="rounded-full w-8 h-8 object-contain" src={user ? user.picture : ''} alt="" />
+          <img 
+          className="rounded-full w-8 h-8 object-contain" 
+          src={user && user.picture ? user.picture : ''} 
+          alt="" 
+          />
 
           <span>{user.name}</span>
 
