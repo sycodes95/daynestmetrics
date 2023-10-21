@@ -6,8 +6,19 @@ import type { Dayjs } from 'dayjs';
 import { format } from 'date-fns';
 import Link from 'next/link';
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DayView from '@/app/dayView/page';
 
 const dailyMetricsData = [
   {factors: ['smoke, coffee'], mood: { content: 6, motivated: 9 }, date: '2023-10-05'},
@@ -34,7 +45,7 @@ export default function MoodCalendar() {
     }
   }
   const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
-    console.log(info);
+    
     const currentDate = format(current.toDate(), 'yyyy-MM-dd')
 
     const currentDateData = dailyMetricsData.find(data => data.date === currentDate)
@@ -46,44 +57,46 @@ export default function MoodCalendar() {
       <>
       </> 
       :
-      <div className='h-full w-full rounded-lg' >
-        {
-        currentDateData && 
-        <div className='flex items-center md:flex-row flex-col h-full justify-evenly  w-full bg-opacity-20'>
-          <div className='flex justify-between items-center h-full w-full'>
-            {/* <span>Motivation</span> */}
-            <span className={`p-2 w-full h-full rounded-lg font-bold bg-black text-white flex items-center justify-center 
+      <Dialog>
+        <div className='h-full w-full rounded-lg' >
+          {
+          currentDateData && 
+          <DialogTrigger className='h-full w-full'>
+            <span className={`p-2 w-full h-full text-sm rounded-lg font-bold text-white flex items-center justify-center 
             ${getMoodAvgColor(getMoodAvg(currentDateData?.mood.motivated, currentDateData.mood.content))}
             `}>
               {getMoodAvg(currentDateData.mood.motivated, currentDateData.mood.content)}
             </span>
-
-            <div  className='absolute top-10 gap-1 right-2 w-fit h-fit text-2xl text-gray-400 items-center flex-col justify-center bg-opacity-20 md:flex hidden '>
-              <EditIcon className='h-6 w-6 hover:text-black transition-all duration-300' />
-              <DeleteForeverIcon className='h-6 w-6 hover:text-black transition-all duration-300' />
+          </DialogTrigger>
+            
+          }
+          {
+          !currentDateData && (new Date(currentDate) < new Date()) &&
+          <DialogTrigger className='h-full w-full'>
+            <div className='flex text-2xl text-gray-400 items-center md:flex-row flex-col h-full justify-center  w-full bg-opacity-20 hover:text-black transition-all duration-200'>
+              +
             </div>
+          </DialogTrigger>
+          }
+
+          {
+          !currentDateData && (new Date(currentDate) > new Date()) &&
+          <div className=' flex text-2xl text-gray-400 items-center md:flex-row flex-col h-full justify-center  w-full bg-opacity-20 cursor-default pointer-events-none z-50'>
           </div>
+          }
+          
           
         </div>
-        }
-        {
-        !currentDateData && (new Date(currentDate) < new Date()) &&
-        <Link href={`/dayView`} className='flex text-2xl text-gray-400 items-center md:flex-row flex-col h-full justify-center  w-full bg-opacity-20 hover:text-black transition-all duration-200'>
-          +
-        </Link>
-        }
 
-        {
-        !currentDateData && (new Date(currentDate) > new Date()) &&
-        <div className=' flex text-2xl text-gray-400 items-center md:flex-row flex-col h-full justify-center  w-full bg-opacity-20 cursor-default pointer-events-none z-50'>
-          
-        </div>
-        }
-        
-        
-      </div>
-
-
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>How was your day?</DialogTitle>
+            <DialogDescription>
+              <DayView />
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
       }
       </>
     )

@@ -16,8 +16,6 @@ const theme: ThemeConfig = {
     colorPrimaryTextHover: 'none',
     colorLinkHover: 'none',
 
-
-
   },
 };
 
