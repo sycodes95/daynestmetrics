@@ -11,6 +11,7 @@ import NextTopLoader from 'nextjs-toploader';
 import StyledComponentsRegistry from '../lib/AntdRegistry';
 import { getUserAndSyncDB } from '@/lib/getUserAndSyncDB';
 import { getUser } from '@/lib/getUser';
+import Footer from '@/components/footer';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -33,19 +34,22 @@ export default async function RootLayout({
   return (
     <>
 
-    <html lang="en" className='min-h-screen flex flex-col ' suppressHydrationWarning>
+    <html lang="en" className='flex' suppressHydrationWarning>
       <UserProvider>
       
-        <body className="flex flex-col grow items-center w-full font-main text-sm">
+        <body className="flex flex-col items-center w-full font-main text-sm min-h-screen ">
           <NextTopLoader showSpinner={false} color="#08a4a7" />
           {
           user ? 
           <>
           <Header/>
-          
-          <div className='grow w-full h-full max-w-7xl p-4'>
-            <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
-          </div>
+          <StyledComponentsRegistry>
+            <div className='flex-1 w-full h-full max-w-7xl p-4 flex'>
+              {children}
+            </div>
+          </StyledComponentsRegistry>
+
+          <Footer />
           </>
           :
           <LandingPage/>

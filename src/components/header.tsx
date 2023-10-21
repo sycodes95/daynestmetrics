@@ -9,7 +9,6 @@ export default function Header(){
   console.log(pathname);
   const pageRoutes = [
     'entries',
-    'settings'
   ]
 
   return (

@@ -15,6 +15,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+import { Button } from "@/components/ui/button"
+
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -45,7 +53,7 @@ export default function MoodCalendar() {
     }
   }
   const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
-    
+
     const currentDate = format(current.toDate(), 'yyyy-MM-dd')
 
     const currentDateData = dailyMetricsData.find(data => data.date === currentDate)
@@ -61,22 +69,34 @@ export default function MoodCalendar() {
         <div className='h-full w-full rounded-lg' >
           {
           currentDateData && 
-          <DialogTrigger className='h-full w-full'>
-            <span className={`p-2 w-full h-full text-sm rounded-lg font-bold text-white flex items-center justify-center 
-            ${getMoodAvgColor(getMoodAvg(currentDateData?.mood.motivated, currentDateData.mood.content))}
-            `}>
-              {getMoodAvg(currentDateData.mood.motivated, currentDateData.mood.content)}
-            </span>
-          </DialogTrigger>
+
+          <div className='relative h-full w-full flex'>
+            <Popover>
+              <PopoverTrigger className='w-full h-full'>
+                <span className={`p-2 w-full h-full text-sm rounded-lg font-bold text-white flex items-center justify-center 
+                ${getMoodAvgColor(getMoodAvg(currentDateData?.mood.motivated, currentDateData.mood.content))}
+                `}>
+                  {getMoodAvg(currentDateData.mood.motivated, currentDateData.mood.content)}
+                </span>
+              </PopoverTrigger>
+              <PopoverContent className=' h-fit w-fit flex flex-col'>
+                <DialogTrigger className=''>
+                  <Button className='text-xs' variant={'outline'}>Edit</Button>
+                </DialogTrigger>
+                <Button className='text-xs' variant={'destructive'}>Delete</Button>
+              </PopoverContent>
+            </Popover>
+
+          </div>
             
           }
           {
           !currentDateData && (new Date(currentDate) < new Date()) &&
-          <DialogTrigger className='h-full w-full'>
+          <Link href={`/dayView`} className='h-full w-full'>
             <div className='flex text-2xl text-gray-400 items-center md:flex-row flex-col h-full justify-center  w-full bg-opacity-20 hover:text-black transition-all duration-200'>
               +
             </div>
-          </DialogTrigger>
+          </Link>
           }
 
           {
@@ -85,10 +105,9 @@ export default function MoodCalendar() {
           </div>
           }
           
-          
         </div>
 
-        <DialogContent>
+        <DialogContent className='shadow-lg shadow-gray-300'>
           <DialogHeader>
             <DialogTitle>How was your day?</DialogTitle>
             <DialogDescription>
