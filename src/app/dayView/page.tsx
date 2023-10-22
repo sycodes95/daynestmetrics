@@ -43,7 +43,7 @@ export default function DayView() {
   },[productivityValue])
   return (
     <div className="flex flex-col gap-8 h-full grow ">
-      <span className="text-xl mt-2">How was your day?</span>
+      {/* <span className="text-xl mt-2">How was your day?</span> */}
       <span className="text-xl mt-2">Oct 10 2023</span>
 
       <div className="flex flex-col gap-4 ">
@@ -72,9 +72,9 @@ export default function DayView() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full grow">
       
-        <div className="relative flex flex-col flex-1 max-h-96 gap-2">
+        <div className="relative flex flex-col flex-1 md:max-h-96 gap-2">
           <span className="sticky top-0">Factors</span>
-          <div className="w-full md:max-h-96 flex flex-col flex-1 gap-2 overflow-y-auto ">
+          <div className="w-full md:max-h-96 flex flex-col flex-1 gap-2 md:overflow-y-auto ">
             {
             factors.map((factor, index) => (
               <div key={index} className="w-full h-10 p-2 flex justify-between items-center rounded-lg border border-gray-300">
@@ -98,7 +98,7 @@ export default function DayView() {
 
         <div className="flex flex-col flex-1 gap-2 max-h-96 ">
           <span>Journal</span>
-          <textarea className="md:h-full h-full rounded-lg border border-gray-300 p-4 outline-none" name="journal" id=""></textarea>
+          <textarea className="md:h-full h-80 rounded-lg border border-gray-300 p-4 outline-none" placeholder="..." name="journal" id=""></textarea>
         </div>
 
       </div>

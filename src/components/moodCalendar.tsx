@@ -79,7 +79,7 @@ export default function MoodCalendar() {
                   {getMoodAvg(currentDateData.mood.motivated, currentDateData.mood.content)}
                 </span>
               </PopoverTrigger>
-              <PopoverContent className=' h-fit w-fit flex flex-col'>
+              <PopoverContent className='h-fit  w-fit flex flex-col'>
                 <DialogTrigger className=''>
                   <Button className='text-xs' variant={'outline'}>Edit</Button>
                 </DialogTrigger>
@@ -90,13 +90,21 @@ export default function MoodCalendar() {
           </div>
             
           }
-          {
+          {/* {
           !currentDateData && (new Date(currentDate) < new Date()) &&
           <Link href={`/dayView`} className='h-full w-full'>
             <div className='flex text-2xl text-gray-400 items-center md:flex-row flex-col h-full justify-center  w-full bg-opacity-20 hover:text-black transition-all duration-200'>
               +
             </div>
           </Link>
+          } */}
+          {
+          !currentDateData && (new Date(currentDate) < new Date()) &&
+          <DialogTrigger className='h-full w-full'>
+            <div className='flex text-2xl text-gray-400 items-center md:flex-row flex-col h-full justify-center  w-full bg-opacity-20 hover:text-black transition-all duration-200'>
+              +
+            </div>
+          </DialogTrigger>
           }
 
           {
@@ -107,7 +115,7 @@ export default function MoodCalendar() {
           
         </div>
 
-        <DialogContent className='shadow-lg shadow-gray-300'>
+        <DialogContent className='shadow-lg shadow-gray-300 h-full  w-full max-w-6xl overflow-y-scroll md:overflow-hidden'>
           <DialogHeader>
             <DialogTitle>How was your day?</DialogTitle>
             <DialogDescription>
