@@ -28,7 +28,7 @@ export default function DayView() {
     'cold shower',
     'cold shower',
     'cold shower',
-    'cold shower',
+    'cold shower cold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold shower',
   ]
 
   const [factors, setFactors] = useState<string[]>(testFactors)
@@ -78,7 +78,7 @@ export default function DayView() {
             {
             factors.map((factor, index) => (
               <div key={index} className="w-full h-10 p-2 flex justify-between items-center rounded-lg border border-gray-300">
-                <span>
+                <span className="whitespace-nowrap overflow-hidden text-ellipsis">
                   {factor}
                 </span>
                 <div className="flex gap-2">
