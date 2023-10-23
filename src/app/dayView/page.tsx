@@ -31,7 +31,7 @@ export default function DayView() {
     'cold shower cold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold shower',
   ]
 
-  const [factors, setFactors] = useState<string[]>(testFactors)
+  const [habits, setHabits] = useState<string[]>(testFactors)
   const [didToday, setDidToday] = useState<string[]>()
   const [didNotDoToday, setDidNotDoToday] = useState<string[]>()
 
@@ -72,14 +72,14 @@ export default function DayView() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full grow">
       
-        <div className="relative flex flex-col flex-1 md:max-h-96 gap-2">
-          <span className="sticky top-0">Factors</span>
+        <div className="relative flex flex-col flex-1  gap-2">
+          <span className="sticky top-0">Habits</span>
           <div className="w-full md:max-h-96 flex flex-col flex-1 gap-2 md:overflow-y-auto ">
             {
-            factors.map((factor, index) => (
+            habits.map((habits, index) => (
               <div key={index} className="w-full h-10 p-2 flex justify-between items-center rounded-lg border border-gray-300">
                 <span className="whitespace-nowrap overflow-hidden text-ellipsis">
-                  {factor}
+                  {habits}
                 </span>
                 <div className="flex gap-2">
                   <button className="text-gray-400 cursor-pointer hover:text-emerald-400 transition-all">
@@ -96,9 +96,9 @@ export default function DayView() {
           </div>
         </div>
 
-        <div className="flex flex-col flex-1 gap-2 max-h-96 ">
+        <div className="flex flex-col flex-1 gap-2  ">
           <span>Journal</span>
-          <textarea className="md:h-full h-80 rounded-lg border border-gray-300 p-4 outline-none" placeholder="..." name="journal" id=""></textarea>
+          <textarea className="md:h-full h-80 rounded-lg border border-gray-300 p-4 outline-none resize-none" placeholder="..." name="journal" id=""></textarea>
         </div>
 
       </div>

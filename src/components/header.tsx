@@ -8,8 +8,8 @@ export default function Header(){
   const pathname = usePathname()
   console.log(pathname);
   const pageRoutes = [
-    'entries',
-    'factors'
+    {name: 'Entries' , route : '/entries'},
+    {name: 'Lifestyle Factors' , route : '/lifestyle-factors'}
   ]
 
   return (
@@ -18,11 +18,12 @@ export default function Header(){
       <Link className="text-black font-display text-xl mt-1" href={'/'}>Daynestmetrics</Link>
       <div className="flex items-center h-full pl-4">
         {
-        pageRoutes.map((route) => (
-          <Link className={`flex w-24 justify-center items-center border-b-2 h-full ${pathname.slice(1, pathname.length) === route ? 'border-b-cyan-500' : 'border-b-transparent'} hover:text-gray-500 transition-all duration-300 text-primary`} 
-          key={route} 
-          href={`${route}`}>
-            {`${route.slice(0, 1).toUpperCase() + route.slice(1, route.length)}`}
+        pageRoutes.map((data, index) => (
+          <Link className={`flex w-fit p-4 justify-center items-center border-b-2 h-full ${pathname === data.route ? 'border-b-black' : 'border-b-transparent'} hover:text-gray-500 transition-all duration-300 text-primary whitespace-nowrap`} 
+
+          key={index} 
+          href={`${data.route}`}>
+            {data.name}
           </Link>
         ))
         }
