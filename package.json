@@ -27,6 +27,7 @@
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.10",
     "lucide-react": "^0.286.0",
+    "nanoid": "^5.0.2",
     "next": "13.5.4",
     "nextjs-progressbar": "^0.0.16",
     "nextjs-toploader": "^1.5.3",

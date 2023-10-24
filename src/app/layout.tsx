@@ -44,7 +44,7 @@ export default async function RootLayout({
           <>
           <Header/>
           <StyledComponentsRegistry>
-            <div className='flex-1 w-full h-full max-w-7xl p-4 flex'>
+            <div className=' w-full h-full max-w-7xl p-4 flex'>
               {children}
             </div>
           </StyledComponentsRegistry>
