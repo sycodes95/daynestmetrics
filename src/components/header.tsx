@@ -13,7 +13,7 @@ export default function Header(){
   ]
 
   return (
-    <div className="h-14 w-full pl-4 pr-4 flex items-center  bg-white max-w-7xl 
+    <div className="sticky top-0 h-14 w-full pl-4 pr-4 flex items-center  bg-white max-w-7xl 
     ">
       <Link className="text-black font-display text-xl mt-1" href={'/'}>Daynestmetrics</Link>
       <div className="flex items-center h-full pl-4">
