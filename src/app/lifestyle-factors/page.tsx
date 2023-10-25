@@ -82,9 +82,12 @@ export default function LifestyleFactors() {
     lifestyleFactors.forEach((data: LifestyleFactor) => {
       const categoryIndex = defaultArray.findIndex(el => el.lifestyle_category_id === data.lifestyle_category_id)
       defaultArray[categoryIndex].factors.push(data)
-      defaultArray[categoryIndex].factors.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+      defaultArray[categoryIndex].factors.sort((a, b) => {
+        const dateA = a.created_at ? new Date(a.created_at).getTime() : 0 ;
+        const dateB = b.created_at ? new Date(b.created_at).getTime() : 0 ;
+        return dateA - dateB;
+      })
     })
-
     setLifestyleFactors(defaultArray)
 
   }
@@ -233,22 +236,23 @@ export default function LifestyleFactors() {
       lifestyleFactors.map((data, catIndex) => (
         <div key={catIndex} className="rounded-lg text-black w-full h-full flex flex-col gap-2 " >
           <div className="flex items-center h-fit gap-2 ">
-            <Input className="w-full " 
+            <Input className="w-full !border-b-1 border-gray-300" 
             value={lifestyleFactors[catIndex].name}  
             onChange={(e) => replaceLifestyleCategory(catIndex, e.target.value)} 
             onBlur={()=> createOrUpdateCategory(catIndex) }
             placeholder={`Category ${catIndex + 1}`} />
             <Button className="bg-primary text-primary-foreground" onClick={()=> {
-              if(data.name) {
-                addFactorToCategory(catIndex)
-              }
+              addFactorToCategory(catIndex)
+              // if(data.name) {
+                // addFactorToCategory(catIndex)
+              // }
             }} variant={'outline'}>Add</Button>
           </div>
           <div className="h-full ">
             {
             data.factors.map((factor) => (
               <div key={factor.nano_id} className="flex items-center h-fit ">
-                <Input  className="h-10" value={factor.name} 
+                <Input  className="h-10 border-none" value={factor.name} 
                 onChange={(e) => replaceLifestyleFactor(catIndex, factor.nano_id, e.target.value)}  
                 onBlur={()=> updateFactor(catIndex, factor.nano_id)}
                 placeholder="test"/>
@@ -285,3 +289,5 @@ export default function LifestyleFactors() {
   )
 }
 
+// i wanna see if factors work without category, (it should)
+// works well, but i dont like how much code i had to write to make this work ;'(
