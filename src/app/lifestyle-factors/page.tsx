@@ -13,7 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from "@/components/ui/popover" 
-import { getUser } from "@/lib/getUser";
+
 import { getUserId } from "@/lib/getUserId";
 
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -46,10 +46,10 @@ export default function LifestyleFactors() {
   const [lifestyleFactors, setLifestyleFactors] = useState<LifestyleCategory[]>([])
 
   useEffect(()=> {
+    if(user && !error && !isLoading) getLifestyleFactors()
     
-    getLifestyleFactors()
     
-  },[])
+  },[user, error, isLoading])
 
   useEffect(()=> {
     console.log(lifestyleFactors);
@@ -243,9 +243,7 @@ export default function LifestyleFactors() {
             placeholder={`Category ${catIndex + 1}`} />
             <Button className="bg-primary text-primary-foreground" onClick={()=> {
               addFactorToCategory(catIndex)
-              // if(data.name) {
-                // addFactorToCategory(catIndex)
-              // }
+              
             }} variant={'outline'}>Add</Button>
           </div>
           <div className="h-full ">
@@ -265,12 +263,10 @@ export default function LifestyleFactors() {
                       <span>Are you sure you want to delete this factor?</span>
                       <Button variant={'destructive'} onClick={()=> {
                         deleteFactorFromCategory(
-                          catIndex, 
-                          factor.lifestyle_factor_id ? factor.lifestyle_factor_id : null,  
-                          factor.nano_id
-                          )
-
-                        
+                        catIndex, 
+                        factor.lifestyle_factor_id ? factor.lifestyle_factor_id : null,  
+                        factor.nano_id
+                        )
                       } } >Delete</Button>
                     </div>
                   </PopoverContent>
@@ -288,6 +284,3 @@ export default function LifestyleFactors() {
     </div>
   )
 }
-
-// i wanna see if factors work without category, (it should)
-// works well, but i dont like how much code i had to write to make this work ;'(
