@@ -7,14 +7,14 @@ const db = require('../../../db/db')
 export async function GET(req: Request){
   const url = new URL(req.url)
   const sub = url.searchParams.get("sub")
-  const result = await db.query('SELECT * FROM users WHERE sub = $1', [sub]);
+  const result = await db.query('SELECT * FROM app_user WHERE sub = $1', [sub]);
   return NextResponse.json(result.rows.length > 0 ? result.rows[0] : null)
 };
 
 export async function PATCH(req: Request, res: Response){
   const user = await req.json()
 
-  let queryText = `UPDATE users SET `;
+  let queryText = `UPDATE app_user SET `;
   let queryParams: any[] = [];
 
   Object.keys(user).forEach((key: string, index) => {
@@ -55,7 +55,7 @@ export async function POST(req: Request){
     queryParams.push(user[key])
 
   })
-  let queryText = `INSERT INTO users (${insertFields}) VALUES(${insertValues}) RETURNING *`
+  let queryText = `INSERT INTO app_user (${insertFields}) VALUES(${insertValues}) RETURNING *`
 
   const result = await db.query(queryText, queryParams);
 
