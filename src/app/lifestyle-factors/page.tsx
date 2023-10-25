@@ -236,7 +236,7 @@ export default function LifestyleFactors() {
       lifestyleFactors.map((data, catIndex) => (
         <div key={catIndex} className="rounded-lg text-black w-full h-full flex flex-col gap-2 " >
           <div className="flex items-center h-fit gap-2 ">
-            <Input className="w-full !border-b-1 border-gray-300" 
+            <Input className="w-full !border-b-1 border-gray-300 text-md text-gray-600 placeholder-shown:placeholder-gray-400 font-semibold" 
             value={lifestyleFactors[catIndex].name}  
             onChange={(e) => replaceLifestyleCategory(catIndex, e.target.value)} 
             onBlur={()=> createOrUpdateCategory(catIndex) }
@@ -250,7 +250,7 @@ export default function LifestyleFactors() {
             {
             data.factors.map((factor) => (
               <div key={factor.nano_id} className="flex items-center h-fit ">
-                <Input  className="h-10 border-none" value={factor.name} 
+                <Input  className="h-10 border-none placeholder-shown:placeholder-gray-400 text-sm" value={factor.name} 
                 onChange={(e) => replaceLifestyleFactor(catIndex, factor.nano_id, e.target.value)}  
                 onBlur={()=> updateFactor(catIndex, factor.nano_id)}
                 placeholder="test"/>
