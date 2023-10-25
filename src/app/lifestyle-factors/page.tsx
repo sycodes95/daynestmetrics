@@ -34,6 +34,7 @@ export type LifestyleFactor = {
   nano_id: string; 
   name: string; 
   order_position: number;
+  created_at? : string;
 };
 
 
@@ -81,6 +82,7 @@ export default function LifestyleFactors() {
     lifestyleFactors.forEach((data: LifestyleFactor) => {
       const categoryIndex = defaultArray.findIndex(el => el.lifestyle_category_id === data.lifestyle_category_id)
       defaultArray[categoryIndex].factors.push(data)
+      defaultArray[categoryIndex].factors.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
     })
 
     setLifestyleFactors(defaultArray)
@@ -99,6 +101,8 @@ export default function LifestyleFactors() {
     })
     .then(res => res.json())
 
+    if(result) getLifestyleFactors()
+
   }
 
   const updateFactor = async (categoryIndex: number, nano_id: string ) => {
@@ -111,8 +115,7 @@ export default function LifestyleFactors() {
       },
       body: JSON.stringify(factorToPatch)
     })
-
-    console.log(patchFactor);
+    if(patchFactor) getLifestyleFactors()
 
   }
 
@@ -150,7 +153,8 @@ export default function LifestyleFactors() {
       order_position: newFactors.length
     }
 
-    await addFactorToPG(factor)
+    const addFactor = await addFactorToPG(factor)
+    if(addFactor) getLifestyleFactors()
 
     newFactors.push(factor);
 
@@ -174,7 +178,7 @@ export default function LifestyleFactors() {
       },
       body: JSON.stringify(factor)
     })
-
+    return result
   }
 
   const deleteFactorFromCategory = async (categoryIndex: number, lifestyle_factor_id: number | null, nano_id: string) => {

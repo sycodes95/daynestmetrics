@@ -9,7 +9,7 @@ export async function GET(req: Request){
   const queryParams = [user_id]
 
   const result = await db.query(queryText, queryParams)
-  return NextResponse.json(result.rows)
+  return NextResponse.json(result.rows.length > 0 ? result.rows : null)
 }
 
 export async function PATCH(req: Request){
