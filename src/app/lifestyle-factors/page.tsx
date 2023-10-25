@@ -101,6 +101,17 @@ export default function LifestyleFactors() {
 
   }
 
+  const updateFactor = async () => {
+    const patchFactor = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(factor)
+    })
+
+  }
+
   const replaceLifestyleCategory = (categoryIndex: number, value: string) => {
     const newLifestyleFactors = [...lifestyleFactors];
     const newFactors = [...newLifestyleFactors[categoryIndex].factors]
@@ -108,9 +119,10 @@ export default function LifestyleFactors() {
     setLifestyleFactors(newLifestyleFactors)
   }
 
-  const replaceLifestyleFactor = (categoryIndex: number, factorId: string, value: string) => {
+  const replaceLifestyleFactor = async (categoryIndex: number, nano_id: string, value: string) => {
     const newLifestyleFactors = [...lifestyleFactors];
-    const factor = newLifestyleFactors[categoryIndex].factors.find(f => f.nano_id === factorId);
+    const factor = newLifestyleFactors[categoryIndex].factors.find(f => f.nano_id === nano_id);
+
     if (factor) {
       factor.name = value;
       setLifestyleFactors(newLifestyleFactors);
@@ -151,8 +163,6 @@ export default function LifestyleFactors() {
   }
 
   const addFactorToPG = async (factor : LifestyleFactor) => {
-    console.log(factor);
-    const pgUser = await getUserId(user)
     const result = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor`, {
       method: 'POST',
       headers: {
@@ -161,13 +171,25 @@ export default function LifestyleFactors() {
       body: JSON.stringify(factor)
     })
 
-    console.log(result);
   }
 
-  const deleteFactorFromCategory = (categoryIndex: number, factorId: string) => {
+  const deleteFactorFromCategory = async (categoryIndex: number, lifestyle_factor_id: number | null, nano_id: string) => {
     const newLifestyleFactors = [...lifestyleFactors];
-    newLifestyleFactors[categoryIndex].factors = newLifestyleFactors[categoryIndex].factors.filter(factor => factor.nano_id !== factorId);
+
+    const factorToDelete = newLifestyleFactors[categoryIndex].factors.find(data => data.lifestyle_factor_id === lifestyle_factor_id)
+
+    const deleteFactor = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(factorToDelete)
+    })
+
+    newLifestyleFactors[categoryIndex].factors = newLifestyleFactors[categoryIndex].factors.filter(factor => factor.nano_id !== nano_id);
+    
     setLifestyleFactors(newLifestyleFactors);
+
   }
 
   return (
@@ -201,7 +223,7 @@ export default function LifestyleFactors() {
 
       {
       lifestyleFactors.map((data, catIndex) => (
-        <div key={catIndex} className="rounded-lg text-black w-full h-full flex flex-col gap-2 ">
+        <div key={catIndex} className="rounded-lg text-black w-full h-full flex flex-col gap-2 " >
           <div className="flex items-center h-fit gap-2 ">
             <Input className="w-full " 
             value={lifestyleFactors[catIndex].name}  
@@ -230,7 +252,12 @@ export default function LifestyleFactors() {
                     <div className="flex flex-col gap-2">
                       <span>Are you sure you want to delete this factor?</span>
                       <Button variant={'destructive'} onClick={()=> {
-                        deleteFactorFromCategory(catIndex, factor.nano_id)
+                        deleteFactorFromCategory(
+                          catIndex, 
+                          factor.lifestyle_factor_id ? factor.lifestyle_factor_id : null,  
+                          factor.nano_id
+                          )
+
                         
                       } } >Delete</Button>
                     </div>
