@@ -101,14 +101,18 @@ export default function LifestyleFactors() {
 
   }
 
-  const updateFactor = async () => {
+  const updateFactor = async (categoryIndex: number, nano_id: string ) => {
+    const factorToPatch = lifestyleFactors[categoryIndex].factors.find(data => data.nano_id === nano_id);
+    console.log(factorToPatch);
     const patchFactor = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(factor)
+      body: JSON.stringify(factorToPatch)
     })
+
+    console.log(patchFactor);
 
   }
 
@@ -242,7 +246,7 @@ export default function LifestyleFactors() {
               <div key={factor.nano_id} className="flex items-center h-fit ">
                 <Input  className="h-10" value={factor.name} 
                 onChange={(e) => replaceLifestyleFactor(catIndex, factor.nano_id, e.target.value)}  
-
+                onBlur={()=> updateFactor(catIndex, factor.nano_id)}
                 placeholder="test"/>
                 <Popover>
                   <PopoverTrigger>

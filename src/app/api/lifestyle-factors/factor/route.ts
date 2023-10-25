@@ -18,7 +18,7 @@ export async function PATCH(req: Request){
   // const user_id = url.searchParams.get("user_id")
   const updateText = `UPDATE lifestyle_factor 
   SET name = $1 
-  WHERE user_id = $1 AND lifestyle_factor_id = $2 
+  WHERE user_id = $2 AND lifestyle_factor_id = $3 
   RETURNING*`
 
   const updateParams = [
