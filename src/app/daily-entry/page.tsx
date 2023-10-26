@@ -30,12 +30,33 @@ export default function DailyEntry() {
     }
   },[user, error, isLoading])
 
+  const handleDidOrNot = (factorName : string, didOrNot: string) => {
+    if(didOrNot === 'did') {
+      setDidToday(prev => [...prev, factorName])
+
+      if(didNotDoToday.includes(factorName)){
+        const newArr = Array.from(didNotDoToday).filter(name => name !== factorName)
+        setDidNotDoToday(newArr)
+      }
+    }
+
+    if(didOrNot === 'did not'){
+      setDidNotDoToday(prev => [...prev, factorName])
+
+      if(didToday.includes(factorName)){
+        const newArr = Array.from(didToday).filter(name => name !== factorName)
+        setDidToday(newArr)
+      }
+
+    }
+  }
+
   useEffect(()=> {
     console.log(lifestyleFactors);
   },[lifestyleFactors])
 
-  const [didToday, setDidToday] = useState<string[]>()
-  const [didNotDoToday, setDidNotDoToday] = useState<string[]>()
+  const [didToday, setDidToday] = useState<string[]>([])
+  const [didNotDoToday, setDidNotDoToday] = useState<string[]>([])
 
   const [moodValue, setMoodValue] = useState(0)
   const [productivityValue, setProductivityValue] = useState(0)
@@ -49,7 +70,7 @@ export default function DailyEntry() {
       <span className="text-xl mt-2">Oct 10 2023</span>
 
       <div className="flex flex-col gap-4 ">
-        <div className="flex justify-between">
+        <div className="flex justify-between text-lg">
           <span>Mood Rating</span>
           <span>{moodValue} / 10</span>
         </div>
@@ -61,7 +82,7 @@ export default function DailyEntry() {
       </div>
 
       <div className="flex flex-col gap-4 ">
-        <div className="flex justify-between">
+        <div className="flex justify-between text-lg">
           <span>Productivity Rating</span>
           <span>{productivityValue} / 10</span>
         </div>
@@ -75,7 +96,7 @@ export default function DailyEntry() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full grow">
       
         <div className="relative flex flex-col flex-1  gap-2">
-          <span className="sticky top-0">Lifestyle Factors</span>
+          <span className="text-lg">Lifestyle Factors</span>
           <div className="w-full md:max-h-96 flex flex-col flex-1 gap-2 md:overflow-y-auto ">
             {
             lifestyleFactors.map((category, index) => (
@@ -88,10 +109,22 @@ export default function DailyEntry() {
                   <div className="flex items-center justify-between gap-2 w-full" key={factor.nano_id}>
                     <span className="">{factor.name}</span>
                     <div className="flex gap-2">
-                      <button className="text-gray-400 cursor-pointer hover:text-emerald-400 transition-all">
+                      <button className={`
+                      ${didToday.includes(factor.name) && 'text-emerald-400'}
+                      text-gray-400 cursor-pointer hover:text-emerald-400 transition-all
+                      `}
+                      onClick={()=> {
+                        handleDidOrNot(factor.name, 'did')
+                      }}>
                         <TaskAltIcon className=""  />
                       </button>
-                      <button className="text-gray-400 cursor-pointer hover:text-red-400 transition-all">
+                      <button className={`
+                      ${didNotDoToday.includes(factor.name) && 'text-red-400'}
+                      text-gray-400 cursor-pointer hover:text-red-400 transition-all
+                      `}
+                      onClick={()=> {
+                        handleDidOrNot(factor.name, 'did not')
+                      }}>
                         <HighlightOffIcon className="" />
                       </button>
                     </div>
@@ -106,7 +139,7 @@ export default function DailyEntry() {
         </div>
 
         <div className="flex flex-col flex-1 gap-2  ">
-          <span>Journal</span>
+          <span className="text-lg">Journal</span>
           <textarea className="md:h-full h-80 rounded-lg border border-gray-300 p-4 outline-none resize-none" placeholder="..." name="journal" id=""></textarea>
         </div>
 
