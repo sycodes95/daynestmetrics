@@ -9,8 +9,8 @@ import { getSession } from '@auth0/nextjs-auth0';
 import LandingPage from './landingPage/landingPage';
 import NextTopLoader from 'nextjs-toploader';
 import StyledComponentsRegistry from '../lib/AntdRegistry';
-import { getUserAndSyncDB } from '@/lib/getUserAndSyncDB';
-import { getUser } from '@/lib/getUser';
+import { getUserAndSyncDB } from '@/lib/user/getUserAndSyncDB';
+import { getUser } from '@/lib/user/getUser';
 import Footer from '@/components/footer';
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,12 +24,9 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-
-  
   
   const user = await getUser()
   getUserAndSyncDB(user)
-  
 
   return (
     <>

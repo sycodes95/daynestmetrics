@@ -27,6 +27,11 @@
   src: url(../assets/fonts/DMSerifDisplay-Regular.ttf);
 }
 
+@font-face {
+  font-family: Main;
+  src: url(../assets/fonts/Bender.otf)
+}
+
 .font-display {
   font-family: Display;
 }

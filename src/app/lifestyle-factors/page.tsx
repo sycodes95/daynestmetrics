@@ -1,12 +1,15 @@
 
 'use client'
 
-import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
+
+import { nanoid } from 'nanoid'
+
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+
+import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button";
-import { nanoid } from 'nanoid'
 
 import {
   Popover,
@@ -14,9 +17,14 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover" 
 
-import { getUserId } from "@/lib/getUserId";
-
+import { getUserId } from "@/lib/user/getUserId";
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { getLifestyleFactors } from "@/lib/lifestyle-factors/getLifestyleFactors";
+import { replaceLifestyleCategory, updateLifestyleCategory } from "./utils/replaceLifestyleCategory";
+import { createOrUpdateCategoryPG } from "./utils/createOrUpdateCategoryPG";
+import { updateFactorPG } from "./utils/updateFactorPG";
+import { updateLifestyleFactors } from "./utils/updateLifestyleFactors";
+import { deleteFactorFromCategory } from "./utils/deleteFactorFromCategory";
 
 
 export type LifestyleCategory = { 
@@ -38,7 +46,6 @@ export type LifestyleFactor = {
 };
 
 
-
 export default function LifestyleFactors() {
 
   const { user, error, isLoading } = useUser();
@@ -46,98 +53,23 @@ export default function LifestyleFactors() {
   const [lifestyleFactors, setLifestyleFactors] = useState<LifestyleCategory[]>([])
 
   useEffect(()=> {
-    if(user && !error && !isLoading) getLifestyleFactors()
-    
-    
+
+    if(user && !error && !isLoading) getLSFactors()
   },[user, error, isLoading])
 
-  useEffect(()=> {
-    console.log(lifestyleFactors);
-    
-  },[lifestyleFactors])
 
-  async function getLifestyleFactors() {
-    const pgUser = await getUserId(user)
+  async function getLSFactors () {
 
-    const defaultArray: LifestyleCategory[] = Array.from({ length: 12 }, (_, index) => ({
-      name: '', 
-      order_position: index,
-      factors: [],
-    }));
+    if(user) {
 
-    const lifestyleCategories = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/category?user_id=${pgUser.user_id}`).then(res => res.json())
+      const lsFactors = await getLifestyleFactors(user)
 
-    const lifestyleFactors = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor?user_id=${pgUser.user_id}`).then(res => res.json())
+      lsFactors && lsFactors.length > 0 ? setLifestyleFactors(lsFactors) : setLifestyleFactors([]) 
 
-    lifestyleCategories.forEach((data: LifestyleCategory) => {
-      defaultArray[data.order_position] = {
-        user_id : data.user_id,
-        lifestyle_category_id : data.lifestyle_category_id,
-        name : data.name,
-        order_position : data.order_position,
-        factors : [],
-      }
-    });
+    };
 
-    lifestyleFactors.forEach((data: LifestyleFactor) => {
-      const categoryIndex = defaultArray.findIndex(el => el.lifestyle_category_id === data.lifestyle_category_id)
-      defaultArray[categoryIndex].factors.push(data)
-      defaultArray[categoryIndex].factors.sort((a, b) => {
-        const dateA = a.created_at ? new Date(a.created_at).getTime() : 0 ;
-        const dateB = b.created_at ? new Date(b.created_at).getTime() : 0 ;
-        return dateA - dateB;
-      })
-    })
-    setLifestyleFactors(defaultArray)
+  };
 
-  }
-
-  const createOrUpdateCategory = async (catIndex: number) => {
-    const pgUser = await getUserId(user)
-    const lifestyleCategory = lifestyleFactors[catIndex]
-    const result = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/category?user_id=${pgUser.user_id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(lifestyleCategory)
-    })
-    .then(res => res.json())
-
-    if(result) getLifestyleFactors()
-
-  }
-
-  const updateFactor = async (categoryIndex: number, nano_id: string ) => {
-    const factorToPatch = lifestyleFactors[categoryIndex].factors.find(data => data.nano_id === nano_id);
-    console.log(factorToPatch);
-    const patchFactor = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(factorToPatch)
-    })
-    if(patchFactor) getLifestyleFactors()
-
-  }
-
-  const replaceLifestyleCategory = (categoryIndex: number, value: string) => {
-    const newLifestyleFactors = [...lifestyleFactors];
-    const newFactors = [...newLifestyleFactors[categoryIndex].factors]
-    newLifestyleFactors[categoryIndex] = { name: value, order_position: categoryIndex, factors: newFactors};
-    setLifestyleFactors(newLifestyleFactors)
-  }
-
-  const replaceLifestyleFactor = async (categoryIndex: number, nano_id: string, value: string) => {
-    const newLifestyleFactors = [...lifestyleFactors];
-    const factor = newLifestyleFactors[categoryIndex].factors.find(f => f.nano_id === nano_id);
-
-    if (factor) {
-      factor.name = value;
-      setLifestyleFactors(newLifestyleFactors);
-    }
-  }
 
   const addFactorToCategory = async (categoryIndex: number) => {
     const pgUser = await getUserId(user)
@@ -157,7 +89,7 @@ export default function LifestyleFactors() {
     }
 
     const addFactor = await addFactorToPG(factor)
-    if(addFactor) getLifestyleFactors()
+    if(addFactor) getLSFactors()
 
     newFactors.push(factor);
 
@@ -182,25 +114,6 @@ export default function LifestyleFactors() {
       body: JSON.stringify(factor)
     })
     return result
-  }
-
-  const deleteFactorFromCategory = async (categoryIndex: number, lifestyle_factor_id: number | null, nano_id: string) => {
-    const newLifestyleFactors = [...lifestyleFactors];
-
-    const factorToDelete = newLifestyleFactors[categoryIndex].factors.find(data => data.lifestyle_factor_id === lifestyle_factor_id)
-
-    const deleteFactor = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(factorToDelete)
-    })
-
-    newLifestyleFactors[categoryIndex].factors = newLifestyleFactors[categoryIndex].factors.filter(factor => factor.nano_id !== nano_id);
-    
-    setLifestyleFactors(newLifestyleFactors);
-
   }
 
   return (
@@ -235,44 +148,70 @@ export default function LifestyleFactors() {
       {
       lifestyleFactors.map((data, catIndex) => (
         <div key={catIndex} className="rounded-lg text-black w-full h-full flex flex-col gap-2 " >
+
           <div className="flex items-center h-fit gap-2 ">
-            <Input className="w-full !border-b-1 border-gray-300 text-md text-gray-600 placeholder-shown:placeholder-gray-400 font-semibold" 
+
+            <Input className="w-full !border-b-1 border-gray-300 text-md text-gray-600 placeholder-shown:placeholder-gray-400 font-semibold caret-black" 
             value={lifestyleFactors[catIndex].name}  
-            onChange={(e) => replaceLifestyleCategory(catIndex, e.target.value)} 
-            onBlur={()=> createOrUpdateCategory(catIndex) }
-            placeholder={`Category ${catIndex + 1}`} />
+            onChange={(e) => 
+              setLifestyleFactors(updateLifestyleCategory(catIndex, e.target.value, lifestyleFactors))
+            }
+            onBlur={()=> 
+              createOrUpdateCategoryPG(catIndex, user, lifestyleFactors).then(res => {
+                if(res) getLSFactors()
+              }) 
+            }
+            onKeyDown={(e) => {
+              if(e.key === 'Enter') {
+
+                createOrUpdateCategoryPG(catIndex, user, lifestyleFactors).then(res => {
+                  if(res) getLSFactors()
+                }) 
+
+              }
+            }}
+            placeholder={`Category ${catIndex + 1}`} 
+            />
+            
             <Button className="bg-primary text-primary-foreground" onClick={()=> {
               addFactorToCategory(catIndex)
               
             }} variant={'outline'}>Add</Button>
           </div>
-          <div className="h-full ">
+
+
+          <div className="h-full flex flex-col gap-1 ">
             {
             data.factors.map((factor) => (
-              <div key={factor.nano_id} className="flex items-center h-fit ">
-                <Input  className="h-10 border-none placeholder-shown:placeholder-gray-400 text-sm" value={factor.name} 
-                onChange={(e) => replaceLifestyleFactor(catIndex, factor.nano_id, e.target.value)}  
-                onBlur={()=> updateFactor(catIndex, factor.nano_id)}
-                placeholder="test"/>
-                <Popover>
-                  <PopoverTrigger>
-                    <DeleteOutlineIcon className="hover:text-red-500 transition-all" />
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <div className="flex flex-col gap-2">
-                      <span>Are you sure you want to delete this factor?</span>
-                      <Button variant={'destructive'} onClick={()=> {
-                        deleteFactorFromCategory(
-                        catIndex, 
-                        factor.lifestyle_factor_id ? factor.lifestyle_factor_id : null,  
-                        factor.nano_id
-                        )
-                      } } >Delete</Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-                
-              </div>
+            <div key={factor.nano_id} className="flex items-center h-fit  ">
+              <Input  className="h-10 border-none placeholder-shown:placeholder-gray-400 text-sm shadow-sm shadow-slate-300" value={factor.name} 
+              onChange={(e) => setLifestyleFactors(updateLifestyleFactors(catIndex, factor.nano_id, e.target.value, lifestyleFactors))}  
+              onBlur={()=> updateFactorPG(catIndex, factor.nano_id, lifestyleFactors).then(res => {
+                if(res) getLSFactors()
+              })}
+              placeholder="test"/>
+              <Popover>
+                <PopoverTrigger>
+                  <DeleteOutlineIcon className="hover:text-red-500 transition-all" />
+                </PopoverTrigger>
+                <PopoverContent>
+                  <div className="flex flex-col gap-2">
+                    <span>Are you sure you want to delete this factor?</span>
+                    <Button variant={'destructive'} onClick={()=> {
+                      deleteFactorFromCategory(
+                      catIndex, 
+                      factor.lifestyle_factor_id ? factor.lifestyle_factor_id : null,  
+                      factor.nano_id,
+                      lifestyleFactors
+                      ).then(res => {
+                        if(res) setLifestyleFactors(res)
+                      })
+                    } } >Delete</Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+              
+            </div>
             ))
             }
             
