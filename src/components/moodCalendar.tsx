@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button"
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import DayView from '@/app/dayView/page';
+import DayView from '@/app/daily-entry/page';
 
 const dailyMetricsData = [
   {factors: ['smoke, coffee'], mood: { content: 6, motivated: 9 }, date: '2023-10-05'},

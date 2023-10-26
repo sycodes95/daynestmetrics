@@ -7,31 +7,33 @@ import { useEffect, useState } from "react"
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { Button } from "@/components/ui/button";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { LifestyleCategory } from "../lifestyle-factors/page";
+import { getLifestyleFactors } from "@/lib/lifestyle-factors/getLifestyleFactors";
 
-export default function DayView() {
+export default function DailyEntry() {
 
-  const testFactors = [
-    'nicotine',
-    'coffee',
-    'alcohol',
-    'work out',
-    'cardio',
-    'meditation',
-    'ice bath',
-    'drugs',
-    'cocaine',
-    'sauna',
-    'cold shower',
-    'cold shower',
-    'cold shower',
-    'cold shower',
-    'cold shower',
-    'cold shower',
-    'cold shower',
-    'cold shower cold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold showercold shower',
-  ]
+  const { user, error, isLoading } = useUser();
 
-  const [habits, setHabits] = useState<string[]>(testFactors)
+  
+
+  const [lifestyleFactors, setLifestyleFactors] = useState<LifestyleCategory[]>([])
+
+  useEffect(()=> {
+
+    if(user && !error && !isLoading) {
+      getLifestyleFactors(user).then(lsFactors => {
+        if(lsFactors) {
+          setLifestyleFactors(lsFactors.filter(cat => cat.name))
+        }
+      })
+    }
+  },[user, error, isLoading])
+
+  useEffect(()=> {
+    console.log(lifestyleFactors);
+  },[lifestyleFactors])
+
   const [didToday, setDidToday] = useState<string[]>()
   const [didNotDoToday, setDidNotDoToday] = useState<string[]>()
 
@@ -73,23 +75,30 @@ export default function DayView() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full grow">
       
         <div className="relative flex flex-col flex-1  gap-2">
-          <span className="sticky top-0">Habits</span>
+          <span className="sticky top-0">Lifestyle Factors</span>
           <div className="w-full md:max-h-96 flex flex-col flex-1 gap-2 md:overflow-y-auto ">
             {
-            habits.map((habits, index) => (
-              <div key={index} className="w-full h-10 p-2 flex justify-between items-center rounded-lg border border-gray-300">
-                <span className="whitespace-nowrap overflow-hidden text-ellipsis">
-                  {habits}
+            lifestyleFactors.map((category, index) => (
+              <div key={index} className="w-full flex flex-col gap-2 rounded-lg ">
+                <span className="whitespace-nowrap overflow-hidden text-ellipsis font-semibold text-black border border-b-gray-400">
+                  {category.name}
                 </span>
-                <div className="flex gap-2">
-                  <button className="text-gray-400 cursor-pointer hover:text-emerald-400 transition-all">
-                    <TaskAltIcon className=""  />
-                  </button>
-                  <button className="text-gray-400 cursor-pointer hover:text-red-400 transition-all">
-                    <HighlightOffIcon className="" />
-                  </button>
-
-                </div>
+                {
+                category.factors.map((factor, index) => (
+                  <div className="flex items-center justify-between gap-2 w-full" key={factor.nano_id}>
+                    <span className="">{factor.name}</span>
+                    <div className="flex gap-2">
+                      <button className="text-gray-400 cursor-pointer hover:text-emerald-400 transition-all">
+                        <TaskAltIcon className=""  />
+                      </button>
+                      <button className="text-gray-400 cursor-pointer hover:text-red-400 transition-all">
+                        <HighlightOffIcon className="" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+                }
+                
               </div>
             ))
             }

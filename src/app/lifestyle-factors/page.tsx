@@ -17,14 +17,14 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover" 
 
-import { getUserId } from "@/lib/user/getUserId";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { getLifestyleFactors } from "@/lib/lifestyle-factors/getLifestyleFactors";
-import { replaceLifestyleCategory, updateLifestyleCategory } from "./utils/replaceLifestyleCategory";
+import { updateLifestyleCategory } from "./utils/replaceLifestyleCategory";
 import { createOrUpdateCategoryPG } from "./utils/createOrUpdateCategoryPG";
 import { updateFactorPG } from "./utils/updateFactorPG";
 import { updateLifestyleFactors } from "./utils/updateLifestyleFactors";
 import { deleteFactorFromCategory } from "./utils/deleteFactorFromCategory";
+import { addFactorToCategory } from "./utils/addFactorToCategory";
 
 
 export type LifestyleCategory = { 
@@ -69,52 +69,6 @@ export default function LifestyleFactors() {
     };
 
   };
-
-
-  const addFactorToCategory = async (categoryIndex: number) => {
-    const pgUser = await getUserId(user)
-
-    const newLifestyleFactors = [...lifestyleFactors];
-
-    const newFactors = [...newLifestyleFactors[categoryIndex].factors]
-
-    const { user_id, lifestyle_category_id, name } = newLifestyleFactors[categoryIndex]
-
-    const factor = { 
-      user_id: pgUser.user_id, 
-      lifestyle_category_id,
-      nano_id: nanoid(), 
-      name: '', 
-      order_position: newFactors.length
-    }
-
-    const addFactor = await addFactorToPG(factor)
-    if(addFactor) getLSFactors()
-
-    newFactors.push(factor);
-
-    newLifestyleFactors[categoryIndex] = { 
-      user_id, 
-      lifestyle_category_id,
-      name, 
-      order_position: categoryIndex, 
-      factors: newFactors
-    };
-
-
-    setLifestyleFactors(newLifestyleFactors)
-  }
-
-  const addFactorToPG = async (factor : LifestyleFactor) => {
-    const result = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(factor)
-    })
-    return result
-  }
 
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -163,7 +117,6 @@ export default function LifestyleFactors() {
             }
             onKeyDown={(e) => {
               if(e.key === 'Enter') {
-
                 createOrUpdateCategoryPG(catIndex, user, lifestyleFactors).then(res => {
                   if(res) getLSFactors()
                 }) 
@@ -174,8 +127,9 @@ export default function LifestyleFactors() {
             />
             
             <Button className="bg-primary text-primary-foreground" onClick={()=> {
-              addFactorToCategory(catIndex)
-              
+              addFactorToCategory(catIndex, lifestyleFactors, user).then(newState => {
+                if(newState) setLifestyleFactors(newState)
+              } )
             }} variant={'outline'}>Add</Button>
           </div>
 
