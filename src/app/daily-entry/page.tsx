@@ -19,6 +19,45 @@ export default function DailyEntry() {
 
   const [lifestyleFactors, setLifestyleFactors] = useState<LifestyleCategory[]>([])
 
+  
+
+  
+
+  
+
+  const [didToday, setDidToday] = useState<string[]>([])
+  const [didNotDoToday, setDidNotDoToday] = useState<string[]>([])
+
+
+  const [moodValue, setMoodValue] = useState(0)
+  const [productivityValue, setProductivityValue] = useState(0)
+
+  const handleDidOrNot = (factorName : string, didOrNot: string) => {
+    if(didOrNot === 'did') {
+
+      if(!didToday.includes(factorName)){
+        setDidToday(prev => [...prev, factorName])
+      }
+
+      if(didNotDoToday.includes(factorName)){
+        const newArr = Array.from(didNotDoToday).filter(name => name !== factorName)
+        setDidNotDoToday(newArr)
+      }
+    }
+
+    if(didOrNot === 'did not'){
+      if(!didNotDoToday.includes(factorName)) {
+        setDidNotDoToday(prev => [...prev, factorName])
+      }
+
+      if(didToday.includes(factorName)){
+        const newArr = Array.from(didToday).filter(name => name !== factorName)
+        setDidToday(newArr)
+      }
+
+    }
+  }
+
   useEffect(()=> {
 
     if(user && !error && !isLoading) {
@@ -30,36 +69,9 @@ export default function DailyEntry() {
     }
   },[user, error, isLoading])
 
-  const handleDidOrNot = (factorName : string, didOrNot: string) => {
-    if(didOrNot === 'did') {
-      setDidToday(prev => [...prev, factorName])
-
-      if(didNotDoToday.includes(factorName)){
-        const newArr = Array.from(didNotDoToday).filter(name => name !== factorName)
-        setDidNotDoToday(newArr)
-      }
-    }
-
-    if(didOrNot === 'did not'){
-      setDidNotDoToday(prev => [...prev, factorName])
-
-      if(didToday.includes(factorName)){
-        const newArr = Array.from(didToday).filter(name => name !== factorName)
-        setDidToday(newArr)
-      }
-
-    }
-  }
-
   useEffect(()=> {
-    console.log(lifestyleFactors);
-  },[lifestyleFactors])
-
-  const [didToday, setDidToday] = useState<string[]>([])
-  const [didNotDoToday, setDidNotDoToday] = useState<string[]>([])
-
-  const [moodValue, setMoodValue] = useState(0)
-  const [productivityValue, setProductivityValue] = useState(0)
+    console.log(didToday);
+  },[didToday])
 
   useEffect(()=> {
     console.log(productivityValue);
@@ -96,12 +108,12 @@ export default function DailyEntry() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full grow">
       
         <div className="relative flex flex-col flex-1  gap-2">
-          <span className="text-lg">Lifestyle Factors</span>
-          <div className="w-full md:max-h-96 flex flex-col flex-1 gap-2 md:overflow-y-auto ">
+          <span className="text-lg text-left">Lifestyle Factors</span>
+          <div className="w-full md:max-h-96 flex flex-col flex-1 gap-2 md:overflow-y-auto pt-2 pb-2">
             {
             lifestyleFactors.map((category, index) => (
               <div key={index} className="w-full flex flex-col gap-2 rounded-lg ">
-                <span className="whitespace-nowrap overflow-hidden text-ellipsis font-semibold text-black border border-b-gray-400">
+                <span className="whitespace-nowrap overflow-hidden text-left text-ellipsis font-semibold text-black border border-b-gray-400">
                   {category.name}
                 </span>
                 {
@@ -110,8 +122,8 @@ export default function DailyEntry() {
                     <span className="">{factor.name}</span>
                     <div className="flex gap-2">
                       <button className={`
-                      ${didToday.includes(factor.name) && 'text-emerald-400'}
-                      text-gray-400 cursor-pointer hover:text-emerald-400 transition-all
+                      ${didToday.includes(factor.name) ? 'text-emerald-400' : 'text-gray-400'}
+                       cursor-pointer hover:text-emerald-400 transition-all
                       `}
                       onClick={()=> {
                         handleDidOrNot(factor.name, 'did')
@@ -119,8 +131,8 @@ export default function DailyEntry() {
                         <TaskAltIcon className=""  />
                       </button>
                       <button className={`
-                      ${didNotDoToday.includes(factor.name) && 'text-red-400'}
-                      text-gray-400 cursor-pointer hover:text-red-400 transition-all
+                      ${didNotDoToday.includes(factor.name) ? 'text-red-400' : 'text-gray-400'}
+                       cursor-pointer hover:text-red-400 transition-all
                       `}
                       onClick={()=> {
                         handleDidOrNot(factor.name, 'did not')
@@ -139,7 +151,7 @@ export default function DailyEntry() {
         </div>
 
         <div className="flex flex-col flex-1 gap-2  ">
-          <span className="text-lg">Journal</span>
+          <span className="text-lg text-left">Journal</span>
           <textarea className="md:h-full h-80 rounded-lg border border-gray-300 p-4 outline-none resize-none" placeholder="..." name="journal" id=""></textarea>
         </div>
 
