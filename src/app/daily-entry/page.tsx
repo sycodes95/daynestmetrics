@@ -113,7 +113,7 @@ export default function DailyEntry() {
             {
             lifestyleFactors.map((category, index) => (
               <div key={index} className="w-full flex flex-col gap-2 rounded-lg ">
-                <span className="whitespace-nowrap overflow-hidden text-left text-ellipsis font-semibold text-black border border-b-gray-400">
+                <span className="whitespace-nowrap overflow-hidden text-left text-ellipsis font-semibold text-black border border-b-gray-300 pt-2 pb-2">
                   {category.name}
                 </span>
                 {
