@@ -1,5 +1,5 @@
 import { LifestyleCategory, LifestyleFactor } from "@/app/lifestyle-factors/page";
-import { getUserId } from "../user/getUserId";
+import { getUserPG } from "../user/getUserPG";
 import { UserProfile } from "@auth0/nextjs-auth0/client";
 
 export async function getLifestyleFactors(user : UserProfile | undefined) {
@@ -7,7 +7,7 @@ export async function getLifestyleFactors(user : UserProfile | undefined) {
   try {
     if(!user) return null
   
-    const pgUser = await getUserId(user)
+    const pgUser = await getUserPG(user)
   
     const defaultArray: LifestyleCategory[] = Array.from({ length: 12 }, (_, index) => ({
       name: '', 

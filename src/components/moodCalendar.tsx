@@ -119,7 +119,7 @@ export default function MoodCalendar() {
           <DialogHeader>
             <DialogTitle>How was your day?</DialogTitle>
             <DialogDescription>
-              <DayView />
+              <DayView currentDate={currentDate} />
             </DialogDescription>
           </DialogHeader>
         </DialogContent>

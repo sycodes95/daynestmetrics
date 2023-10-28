@@ -1,5 +1,6 @@
 CREATE TABLE app_user (
   user_id SERIAL PRIMARY KEY,
+  
   given_name TEXT DEFAULT '',
   family_name TEXT DEFAULT '',
   nickname TEXT DEFAULT '',
@@ -15,6 +16,7 @@ CREATE TABLE app_user (
 
 CREATE TABLE lifestyle_category (
   lifestyle_category_id SERIAL PRIMARY KEY,
+
   user_id INTEGER NOT NULL,
   name TEXT NOT NULL,
   order_position INTEGER NOT NULL,
@@ -23,6 +25,7 @@ CREATE TABLE lifestyle_category (
 
 CREATE TABLE lifestyle_factor (
   lifestyle_factor_id SERIAL PRIMARY KEY,
+
   lifestyle_category_id INTEGER NOT NULL,
   user_id INTEGER NOT NULL,
   nano_id TEXT NOT NULL,
@@ -36,6 +39,7 @@ CREATE TABLE lifestyle_factor (
 
 CREATE TABLE daily_entry (
   daily_entry_id SERIAL PRIMARY KEY,
+
   mood_rating INTEGER NOT NULL,
   productivity_rating INTEGER NOT NULL,
   journal TEXT DEFAULT '',

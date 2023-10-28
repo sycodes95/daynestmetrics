@@ -1,4 +1,4 @@
-import { getUserId } from "@/lib/user/getUserId"
+import { getUserPG } from "@/lib/user/getUserPG"
 import { UserProfile } from "@auth0/nextjs-auth0/client"
 import { LifestyleCategory } from "../page"
 import { getLifestyleFactors } from "@/lib/lifestyle-factors/getLifestyleFactors"
@@ -9,7 +9,7 @@ export const createOrUpdateCategoryPG = async (catIndex: number, user: UserProfi
   
     if(!user) return false
 
-    const pgUser = await getUserId(user)
+    const pgUser = await getUserPG(user)
 
     const lifestyleCategory = lifestyleFactors[catIndex]
 

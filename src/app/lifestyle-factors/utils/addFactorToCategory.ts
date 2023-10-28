@@ -1,6 +1,6 @@
 import { UserProfile } from "@auth0/nextjs-auth0/client";
 import { LifestyleCategory } from "../page";
-import { getUserId } from "@/lib/user/getUserId";
+import { getUserPG } from "@/lib/user/getUserPG";
 import { nanoid } from "nanoid";
 import { addFactorToPG } from "./addFactorToPG";
 
@@ -10,7 +10,7 @@ export const addFactorToCategory = async (categoryIndex: number, lifestyleFactor
     
     if(!user) return null
 
-    const pgUser = await getUserId(user)
+    const pgUser = await getUserPG(user)
 
     const newLifestyleFactors = [...lifestyleFactors];
 
