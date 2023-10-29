@@ -27,14 +27,12 @@ export async function PATCH(req: Request){
     lifestyle_factor.lifestyle_factor_id
   ];
   const result = await db.query(updateText, updateParams)
-  console.log(result.rows);
   return NextResponse.json(result.rows.length > 0 ? result.rows[0] : null)
 
 };
 
 export async function POST(req: Request){
   const lifestyle_factor : LifestyleFactor = await req.json()
-  console.log(lifestyle_factor);
   const url = new URL(req.url)
   const user_id = url.searchParams.get("user_id")
   const insertText = `INSERT INTO lifestyle_factor 
@@ -67,7 +65,6 @@ export async function DELETE(req: Request){
     lifestyle_factor.lifestyle_factor_id,
   ];
   const result = await db.query(deleteText, deleteParams)
-  console.log(result.rows);
   return NextResponse.json(result.rows.length > 0 ? result.rows[0] : null)
 
 };

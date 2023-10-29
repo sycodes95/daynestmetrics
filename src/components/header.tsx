@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 
 export default function Header(){
   const pathname = usePathname()
-  console.log(pathname);
   const pageRoutes = [
     {name: 'Entries' , route : '/entries'},
     {name: 'Lifestyle Factors' , route : '/lifestyle-factors'}

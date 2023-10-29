@@ -52,7 +52,9 @@ CREATE TABLE daily_entry_factor (
   daily_entry_id INTEGER NOT NULL,
   lifestyle_factor_id INTEGER NOT NULL,
   did BOOLEAN NOT NULL,
+  user_id INTEGER NOT NULL,
   FOREIGN KEY (daily_entry_id) REFERENCES daily_entry(daily_entry_id),
   FOREIGN KEY (lifestyle_factor_id) REFERENCES lifestyle_factor(lifestyle_factor_id),
+  FOREIGN KEY (user_id) REFERENCES app_user(user_id),
   PRIMARY KEY (daily_entry_id, lifestyle_factor_id)
 );
