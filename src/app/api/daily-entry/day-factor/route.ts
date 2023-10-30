@@ -12,7 +12,9 @@ export async function GET(req: Request){
   const result = await db.query(`SELECT * FROM daily_entry_factor 
   WHERE daily_entry_id = $1 AND user_id = $2`
   , queryParams);
-  return NextResponse.json(result.rows.length > 0 ? result.rows : null)
+
+  console.log(result);
+  return NextResponse.json(result.rows)
 };
 
 export async function POST(req: Request) {

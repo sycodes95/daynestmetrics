@@ -54,21 +54,63 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
   useEffect(()=> {
     
     if(user && !error && !isLoading) {
-      getDailyEntry(user, currentDate).then(entry => {
-        if(entry) {
-          const {
-            daily_entry_id,
-            entry_date,
-            journal,
-            mood_rating,
-            productivity_rating,
-            user_id
-          } = entry
-          setMoodRating(mood_rating)
-          setProductivityRating(productivity_rating)
-          setJournalValue(journal)
-        }
-      })
+
+      const getDailyEntryAndFactors = async () => {
+        console.log('test');
+        const {user_id} = await getUserPG(user)
+
+        const dailyEntry = await getDailyEntry(user, currentDate);
+
+        if(!dailyEntry) return
+
+        const {
+          daily_entry_id,
+          journal,
+          mood_rating,
+          productivity_rating,
+        } = dailyEntry
+
+        if(!daily_entry_id) return 
+
+        setMoodRating(mood_rating)
+        setProductivityRating(productivity_rating)
+        setJournalValue(journal)
+
+        const lifestyleFactors = await getLifestyleFactors(user)
+
+        if(!lifestyleFactors) return 
+
+        setLifestyleFactors(lifestyleFactors.filter(cat => cat.name))
+
+        const dailyEntryFactors = await getDayFactors(user_id, daily_entry_id)
+        console.log(dailyEntryFactors);
+        if(!dailyEntryFactors || dailyEntryFactors.length < 1) return
+
+        const didFactors: LifestyleFactor[]  = []
+        const didNotFactors: LifestyleFactor[] = []
+        
+        dailyEntryFactors.forEach((dailyFactor) => {
+
+          const lifestyleFactorCateogory = lifestyleFactors.find(category => category.factors.find(f => f.lifestyle_factor_id === dailyFactor.lifestyle_factor_id))
+
+          if(lifestyleFactorCateogory) {
+
+            const lifestyleFactor = lifestyleFactorCateogory.factors.find(factor => factor.lifestyle_factor_id === dailyFactor.lifestyle_factor_id)
+            
+            dailyFactor.did && lifestyleFactor && didFactors.push(lifestyleFactor)
+
+            !dailyFactor.did && lifestyleFactor && didNotFactors.push(lifestyleFactor)
+          }
+
+        })
+
+        setDidToday(didFactors)
+        setDidNotDoToday(didNotFactors)
+
+
+      };
+      
+      getDailyEntryAndFactors()
     }
     
   },[user, error, isLoading])
