@@ -54,15 +54,17 @@ export async function POST(req: Request){
 
 export async function DELETE(req: Request){
   const lifestyle_factor : LifestyleFactor = await req.json()
+
+  console.log(lifestyle_factor);
   // const url = new URL(req.url)
   // const user_id = url.searchParams.get("user_id")
   const deleteText = `DELETE FROM lifestyle_factor 
-  WHERE user_id = $1 AND lifestyle_factor_id = $2 
+  WHERE user_id = $1 AND nano_id = $2 
   RETURNING*`
 
   const deleteParams = [
     lifestyle_factor.user_id,
-    lifestyle_factor.lifestyle_factor_id,
+    lifestyle_factor.nano_id,
   ];
   const result = await db.query(deleteText, deleteParams)
   return NextResponse.json(result.rows.length > 0 ? result.rows[0] : null)

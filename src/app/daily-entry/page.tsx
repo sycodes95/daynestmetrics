@@ -56,7 +56,7 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
     if(user && !error && !isLoading) {
 
       const getDailyEntryAndFactors = async () => {
-        console.log('test');
+        
         const {user_id} = await getUserPG(user)
 
         const dailyEntry = await getDailyEntry(user, currentDate);

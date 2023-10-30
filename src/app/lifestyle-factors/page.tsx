@@ -70,6 +70,10 @@ export default function LifestyleFactors() {
 
   };
 
+  useEffect(()=> {
+    
+  }, [lifestyleFactors])
+
   return (
     <div className="flex flex-col gap-8 w-full">
       <div className="flex flex-col gap-2 w-full"> 
@@ -128,8 +132,13 @@ export default function LifestyleFactors() {
             
             <Button className="bg-primary text-primary-foreground" onClick={()=> {
               addFactorToCategory(catIndex, lifestyleFactors, user).then(newState => {
-                if(newState) setLifestyleFactors(newState)
-              } )
+                if(newState)  setLifestyleFactors(newState)
+              })
+
+              // createOrUpdateCategoryPG(catIndex, user, lifestyleFactors).then(res => {
+              //   if(res) getLSFactors()
+              // }) 
+              
             }} variant={'outline'}>Add</Button>
           </div>
 
@@ -152,6 +161,7 @@ export default function LifestyleFactors() {
                   <div className="flex flex-col gap-2">
                     <span>Are you sure you want to delete this factor?</span>
                     <Button variant={'destructive'} onClick={()=> {
+                      console.log(factor.lifestyle_factor_id);
                       deleteFactorFromCategory(
                       catIndex, 
                       factor.lifestyle_factor_id ? factor.lifestyle_factor_id : null,  
