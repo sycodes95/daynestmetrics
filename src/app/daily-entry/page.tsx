@@ -16,6 +16,7 @@ import { putDailyEntry } from "./services/putDailyEntry";
 import { getDayFactors } from "./services/getDayFactors";
 import { deleteDailyFactors } from "./services/deleteDayFactors";
 import { didDailyFactors, postDailyFactors } from "./services/postDailyFactors";
+import { getDailyEntry } from "./services/getDailyEntry";
 
 type DailyEntryProps = {
   currentDate: string;
@@ -48,10 +49,26 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
   
   const [dailyEntryIsSaving, setDailyEntryIsSaving] = useState(false)
 
+  const [errorSaving, setErrorSaving] = useState(false)
+
   useEffect(()=> {
     
     if(user && !error && !isLoading) {
-      getDailyEntry()
+      getDailyEntry(user, currentDate).then(entry => {
+        if(entry) {
+          const {
+            daily_entry_id,
+            entry_date,
+            journal,
+            mood_rating,
+            productivity_rating,
+            user_id
+          } = entry
+          setMoodRating(mood_rating)
+          setProductivityRating(productivity_rating)
+          setJournalValue(journal)
+        }
+      })
     }
     
   },[user, error, isLoading])
@@ -99,18 +116,17 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
   }
 
 
-  const getDailyEntry = async () => {
-    const pgUser = await getUserPG(user)
+  // const getDailyEntry = async () => {
+  //   const pgUser = await getUserPG(user)
 
-    if(!pgUser) return null
-    const entry: DailyEntry = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day?entry_date=${currentDate}&user_id=${pgUser.user_id}`)
-    .then(res => res.json())
+  //   if(!pgUser) return null
+  //   const entry: DailyEntry = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day?entry_date=${currentDate}&user_id=${pgUser.user_id}`)
+  //   .then(res => res.json())
 
-    console.log(entry);
-
-  }
+  // }
 
   const handleSave = async () => {
+
     try {
       
       setDailyEntryIsSaving(true)
@@ -145,25 +161,31 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
       } 
 
       const postDailyFactorsResults = await postDailyFactors(didToday, didNotDoToday, daily_entry_id, user_id)
+
+      setDailyEntryIsSaving(false)
       
       if(!postDailyFactorsResults) return null
 
-      
-
       return {
-        
-      }
+        dailyEntry,
+        didFactors : {
+          didToday: postDailyFactorsResults.didToday, 
+          didNotDoToday: postDailyFactorsResults.didNotDoToday 
+        }
+      };
 
 
     } catch (err) {
 
-      console.error('error saving daily entry and corresponding factors', err)
+      console.error('error saving daily entry and corresponding factors', err);
 
-      setDailyEntryIsSaving(false)
+      setDailyEntryIsSaving(false);
 
-      return null
-    }
-  }
+      return null;
+
+    };
+
+  };
 
   useEffect(()=> {
     if(user && !error && !isLoading) {
@@ -177,8 +199,6 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
     }
   },[user, error, isLoading])
 
-  
-
   return (
     <div className="flex flex-col gap-8 h-full grow ">
       <span className="text-xl mt-2">{currentDate}</span>
@@ -189,7 +209,8 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
           <span>{moodRating} / 10</span>
         </div>
         <Slider className=""
-        defaultValue={[0]} 
+        defaultValue={[moodRating]} 
+        value={[moodRating]}
         max={10} step={1} 
         onValueChange={(e) => setMoodRating(e[0])}
         />
@@ -201,7 +222,8 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
           <span>{productivityRating} / 10</span>
         </div>
         <Slider className=""
-        defaultValue={[0]} 
+        defaultValue={[productivityRating]} 
+        value={[productivityRating]}
         max={10} step={1} 
         onValueChange={(e) => setProductivityRating(e[0])}
         />
@@ -258,6 +280,7 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
           className="md:h-full h-80 rounded-lg border border-gray-300 p-4 outline-none resize-none" 
           placeholder="..." 
           name="journal" 
+          value={journalValue}
           onChange={(e)=> setJournalValue(e.target.value)}
           id=""/>
         </div>
@@ -265,7 +288,9 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
       </div>
 
       <div className="flex justify-end">
-        <Button onClick={()=> handleSave()}>
+        <Button onClick={()=> handleSave().then(result => {
+          if(!result) setErrorSaving(true)
+        })}>
           {
           dailyEntryIsSaving ? 
           <Oval
