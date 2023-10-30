@@ -15,32 +15,6 @@ export async function GET(req: Request){
   return NextResponse.json(result.rows.length > 0 ? result.rows : null)
 };
 
-// export async function PATCH(req: Request) {
-//   const {
-//     daily_entry_id,
-//     lifestyle_factor_id,
-//     did,
-//     user_id
-//   } = await req.json();
-
-//   const updateText = `UPDATE daily_entry_factor 
-//   SET did = $1 
-//   WHERE daily_entry_id = $2 AND lifestyle_factor_id = $3 AND user_id = $4 
-//   RETURNING*`
-
-//   const updateParams = [
-//     daily_entry_id,
-//     lifestyle_factor_id,
-//     did,
-//     user_id
-//   ];
-
-//   const result = await db.query(updateText, updateParams);
-
-//   return NextResponse.json(result.rows.length > 0 ? result.rows[0] : null);
-
-// }
-
 export async function POST(req: Request) {
   const {
     daily_entry_id,
@@ -86,7 +60,6 @@ export async function DELETE(req: Request) {
   const result = await db.query(deleteText, deleteParams);
 
   return NextResponse.json(result.rows.length > 0 ? result.rows : null);
-
 
 }
 

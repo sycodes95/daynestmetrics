@@ -1,25 +1,28 @@
 'use client'
 
-import { Slider } from "@/components/ui/slider"
-
 import { useEffect, useState } from "react"
 
+import { Slider } from "@/components/ui/slider"
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
+
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { Button } from "@/components/ui/button";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { LifestyleCategory, LifestyleFactor } from "../lifestyle-factors/page";
 import { getLifestyleFactors } from "@/lib/lifestyle-factors/getLifestyleFactors";
 import { getUserPG } from "@/lib/user/getUserPG";
-import { getMDYFromDate } from "@/util/getMDYFromDate";
 import { Oval } from 'react-loader-spinner'
+import { putDailyEntry } from "./services/putDailyEntry";
+import { getDayFactors } from "./services/getDayFactors";
+import { deleteDailyFactors } from "./services/deleteDayFactors";
+import { didDailyFactors, postDailyFactors } from "./services/postDailyFactors";
 
 type DailyEntryProps = {
   currentDate: string;
 }
 
 export type DailyEntry = {
-  daily_entry_id: number,
+  daily_entry_id?: number,
   entry_date: string,
   journal: string,
   mood_rating: number,
@@ -34,21 +37,23 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
   const [lifestyleFactors, setLifestyleFactors] = useState<LifestyleCategory[]>([])
 
   const [didToday, setDidToday] = useState<LifestyleFactor[]>([])
+
   const [didNotDoToday, setDidNotDoToday] = useState<LifestyleFactor[]>([])
 
-
   const [moodRating, setMoodRating] = useState(0)
-  const [productivityRating, setProductivityRating] = useState(0)
-  const [journalValue, setJournalValue] = useState('')
 
+  const [productivityRating, setProductivityRating] = useState(0)
+  
+  const [journalValue, setJournalValue] = useState('')
+  
   const [dailyEntryIsSaving, setDailyEntryIsSaving] = useState(false)
 
-
   useEffect(()=> {
+    
     if(user && !error && !isLoading) {
       getDailyEntry()
     }
-
+    
   },[user, error, isLoading])
 
   const handleDidOrNot = (factor : LifestyleFactor, didOrNot: string) => {
@@ -59,7 +64,7 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
         setDidToday(prev => [...prev, factor])
       } else {
         // if factor DOES already exist in did today, remove it.
-        setDidToday(prev =>  {
+        setDidToday(prev => {
           const updated = prev.filter(pre => pre.lifestyle_factor_id !== factor.lifestyle_factor_id)
           return updated
         })
@@ -101,101 +106,68 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
     const entry: DailyEntry = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day?entry_date=${currentDate}&user_id=${pgUser.user_id}`)
     .then(res => res.json())
 
-
+    console.log(entry);
 
   }
 
   const handleSave = async () => {
     try {
+      
       setDailyEntryIsSaving(true)
-      const pgUser = await getUserPG(user)
 
-      const dailyEntryData = {
-        user_id: pgUser.user_id,
+      const { user_id } = await getUserPG(user)
+
+      if(!user_id) return null
+
+      const dailyEntryData : DailyEntry = {
+        user_id,
         entry_date: currentDate,
         mood_rating: moodRating,
         productivity_rating: productivityRating,
         journal : journalValue
       }
-      const putDailyEntry: DailyEntry = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dailyEntryData)
-      }).then(result => result.json())
 
-      if(!putDailyEntry) return null
+      const dailyEntry = await putDailyEntry(dailyEntryData)
+
+      const daily_entry_id = dailyEntry?.daily_entry_id
+
+      if(!dailyEntry || !daily_entry_id) return null
       
-      const getDayFactors = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day-factor?user_id=${pgUser.user_id}&daily_entry_id=${putDailyEntry.daily_entry_id}`)
-      .then(res => res.json())
+      const dayFactors = await getDayFactors(user_id, daily_entry_id)
 
-      console.log('day factors', getDayFactors);
-      if(getDayFactors && getDayFactors.length > 0) {
+      if(dayFactors && dayFactors.length > 0) {
         //if daily entry is saved successfully and day factors already exist for this day, delete all factors.
-        const deleted = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day-factor`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            user_id: pgUser.user_id,
-            daily_entry_id: putDailyEntry.daily_entry_id,
-          })
-        }).then(res => res.json())
 
-        if(!deleted) return 
-
+        const fetchDeleteDailyFactors = await deleteDailyFactors( user_id, daily_entry_id)
+        
+        if(!fetchDeleteDailyFactors) return null
 
       } 
+
+      const postDailyFactorsResults = await postDailyFactors(didToday, didNotDoToday, daily_entry_id, user_id)
       
-      const didPromises = Promise.all(didToday.map(async (factor) => {
-        const posted = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day-factor`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            daily_entry_id: putDailyEntry.daily_entry_id,
-            lifestyle_factor_id: factor.lifestyle_factor_id,
-            user_id: pgUser.user_id,
-            did: true
-          })
-        }).then(res => res.json())
-        if(posted) return posted
-         
+      if(!postDailyFactorsResults) return null
 
-      }))
-      //so there should be only 2 rows in daily factors, lets check
-      const didNotPromises = Promise.all(didNotDoToday.map(async (factor) => {
-        const posted = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day-factor`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            daily_entry_id: putDailyEntry.daily_entry_id,
-            lifestyle_factor_id: factor.lifestyle_factor_id,
-            user_id: pgUser.user_id,
-            did: false
-          })
-        }).then(res => res.json())
+      
 
-        if(posted) return posted
+      return {
+        
+      }
 
-      }))
+
+    } catch (err) {
+
+      console.error('error saving daily entry and corresponding factors', err)
 
       setDailyEntryIsSaving(false)
 
-
-      console.log(putDailyEntry, didPromises, didNotPromises)
-    } catch (err) {
-      console.error('error saving daily entry', err)
+      return null
     }
   }
 
   useEffect(()=> {
     if(user && !error && !isLoading) {
+      
       getLifestyleFactors(user).then(lsFactors => {
         if(lsFactors) {
           setLifestyleFactors(lsFactors.filter(cat => cat.name))
@@ -207,14 +179,9 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
 
   
 
-
-  // now lets test if it deletes it when saving it again
   return (
     <div className="flex flex-col gap-8 h-full grow ">
-      {/* <span className="text-xl mt-2">How was your day?</span> */}
-      {/* <span className="text-xl mt-2">{getMDYFromDate(currentDate)}</span> */}
       <span className="text-xl mt-2">{currentDate}</span>
-
 
       <div className="flex flex-col gap-4 ">
         <div className="flex justify-between text-lg">

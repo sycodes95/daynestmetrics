@@ -70,3 +70,20 @@ export async function PUT(req: Request){
   }
 
 };
+
+export async function DELETE(req: Request){
+  const daily_entry = await req.json()
+  const {
+    user_id,
+    entry_date,
+    mood_rating,
+    productivity_rating,
+    journal
+  } = daily_entry
+
+  const deleteText = `DELETE FROM daily_entry 
+  WHERE daily_entry_id = $1 AND user_id = $2 
+  RETURNING*`
+
+
+};
