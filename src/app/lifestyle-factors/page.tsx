@@ -3,8 +3,6 @@
 
 import { useEffect, useState } from "react"
 
-import { nanoid } from 'nanoid'
-
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
@@ -25,25 +23,8 @@ import { updateFactorPG } from "./utils/updateFactorPG";
 import { updateLifestyleFactors } from "./utils/updateLifestyleFactors";
 import { deleteFactorFromCategory } from "./utils/deleteFactorFromCategory";
 import { addFactorToCategory } from "./utils/addFactorToCategory";
-
-
-export type LifestyleCategory = { 
-  user_id? : number;
-  lifestyle_category_id? : number;
-  name: string;
-  order_position: number;
-  factors: LifestyleFactor[];
-};
-
-export type LifestyleFactor = { 
-  user_id? : number;
-  lifestyle_factor_id?: number;
-  lifestyle_category_id? : number;
-  nano_id: string; 
-  name: string; 
-  order_position: number;
-  created_at? : string;
-};
+import PageHeading from "@/components/pageHeading";
+import { LifestyleCategory } from "@/types/lifestyleFactors";
 
 
 export default function LifestyleFactors() {
@@ -70,33 +51,18 @@ export default function LifestyleFactors() {
 
   };
 
-  useEffect(()=> {
-    
-  }, [lifestyleFactors])
-
-  //pretty much done with the calendar. and the daily entry modal
-
   return (
     <>
       {
-
       user &&
       <div className="flex flex-col gap-8 w-full">
-        <div className="flex flex-col gap-2 w-full"> 
-          <div className="text-primary text-2xl flex gap-2 items-center">
-            <span>
-              Lifestyle Factors
-            </span>
-            <DirectionsRunIcon />
 
-          </div>
-
-          <span className="text-gray-500 ">
-            Add lifestyle factors that you want to track daily.
-          </span>
-
-        </div>
-        
+        <PageHeading
+        header="Lifestyle Factors"
+        body="Add lifestyle factors that you want to track daily."
+        >
+          <DirectionsRunIcon />
+        </PageHeading>
 
         <div className="w-full h-fit 
         grid 
@@ -130,7 +96,6 @@ export default function LifestyleFactors() {
                   createOrUpdateCategoryPG(catIndex, user, lifestyleFactors).then(res => {
                     if(res) getLSFactors()
                   }) 
-
                 }
               }}
               placeholder={`Category ${catIndex + 1}`} 

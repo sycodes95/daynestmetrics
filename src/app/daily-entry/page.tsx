@@ -8,7 +8,6 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { Button } from "@/components/ui/button";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { LifestyleCategory, LifestyleFactor } from "../lifestyle-factors/page";
 import { getLifestyleFactors } from "@/lib/lifestyle-factors/getLifestyleFactors";
 import { getUserPG } from "@/lib/user/getUserPG";
 import { Oval } from 'react-loader-spinner'
@@ -18,6 +17,7 @@ import { deleteDailyFactors } from "./services/deleteDayFactors";
 import { postDailyFactors } from "./services/postDailyFactors";
 import { getDailyEntry } from "./services/getDailyEntry";
 import { useRouter } from "next/navigation";
+import { LifestyleCategory, LifestyleFactor } from "@/types/lifestyleFactors";
 
 
 type DailyEntryProps = {

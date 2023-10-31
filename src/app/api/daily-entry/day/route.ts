@@ -95,3 +95,5 @@ export async function DELETE(req: Request){
   return NextResponse.json(null)
 
 };
+
+// now modal should close if saved successfully

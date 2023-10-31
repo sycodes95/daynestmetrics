@@ -36,7 +36,7 @@ export default function DailyEntryCalendar() {
 
   const [dailyEntries, setDailyEntries] = useState<DailyEntry[]>([])
 
-  useEffect(() => {
+  useEffect(() => { 
     if(user && !error && !isLoading) getAllDailyEntries()
   },[user, error, isLoading])
 
