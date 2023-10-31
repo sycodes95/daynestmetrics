@@ -75,7 +75,6 @@ export default function DailyEntryCalendar() {
 
   }
 
-  
   const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
 
 
@@ -114,14 +113,22 @@ export default function DailyEntryCalendar() {
         setDailyEntries(prev => {
           // update state 
           const newEntries = [...prev]
+          const entryToDelete = newEntries.findIndex(en => {
 
-          // const entryToDelete = newEntries.findIndex(en => format(new Date(en.entry_date), 'yyyy-MM-dd') === currentDate)
+            console.log(format(new Date(en.entry_date), 'yyyy-MM-dd'), currentDate);
+            return format(new Date(en.entry_date), 'yyyy-MM-dd') === currentDate
+          })
 
-          const entryToDelete = newEntries.findIndex(en => en.entry_date === dayEntry?.entry_date)
+          console.log(newEntries[entryToDelete]);
 
-          if(entryToDelete) newEntries.splice(entryToDelete, 1)
+          // const entryToDelete = newEntries.findIndex(en => en.entry_date === dayEntry?.entry_date)
+
+          if(entryToDelete > -1) newEntries.splice(entryToDelete, 1)
+
+          console.log(newEntries);
 
           return newEntries
+
         })
 
         return deletedEntry

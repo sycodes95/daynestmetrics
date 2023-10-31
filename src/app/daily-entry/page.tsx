@@ -15,7 +15,7 @@ import { Oval } from 'react-loader-spinner'
 import { putDailyEntry } from "./services/putDailyEntry";
 import { getDayFactors } from "./services/getDayFactors";
 import { deleteDailyFactors } from "./services/deleteDayFactors";
-import { didDailyFactors, postDailyFactors } from "./services/postDailyFactors";
+import { postDailyFactors } from "./services/postDailyFactors";
 import { getDailyEntry } from "./services/getDailyEntry";
 import { useRouter } from "next/navigation";
 
@@ -133,7 +133,6 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
       }
 
       getLSFactors()
-
       
     }
     

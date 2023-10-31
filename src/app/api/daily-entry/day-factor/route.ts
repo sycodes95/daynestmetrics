@@ -65,6 +65,3 @@ export async function DELETE(req: Request) {
 
 }
 
-//maybe deleting all factors if exist then re POST everytime user edits the daily entry is better than individually 
-//deleting all factors, it will be hard to keep track on front end.
-//much more simple this way i think. no reason not to imo because its not something someone would do a lot if ever.
