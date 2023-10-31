@@ -10,5 +10,3 @@ export async function GET(req: Request){
   return NextResponse.json(result.rows.length > 0 ? result.rows : null)
 };
 
-
-// I THINK I HAVE TO USE REDUX, MAYBE NOT IDK LEMME SEE

@@ -92,6 +92,6 @@ export async function DELETE(req: Request){
 
   if(result && result.rows.length > 0) return NextResponse.json(result.rows[0])
 
-  return null
+  return NextResponse.json(null)
 
 };

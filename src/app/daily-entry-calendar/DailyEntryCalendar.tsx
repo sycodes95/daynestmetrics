@@ -60,7 +60,7 @@ export default function DailyEntryCalendar() {
     if(avg >= 0 && avg < 4){
       return 'bg-red-400'
     } else if (avg >= 4 && avg < 7) {
-      return 'bg-yellow-400'
+      return 'bg-yellow-500'
     } else if (avg >= 7 && avg < 10) {
       return 'bg-green-400'
     } else if (avg === 10) {
@@ -89,13 +89,16 @@ export default function DailyEntryCalendar() {
 
     const currentDate = format(current.toDate(), 'yyyy-MM-dd')
 
-    const currentDateData = dailyEntries.find(entry => format(new Date(entry.entry_date), 'yyyy-MM-dd') === currentDate);
+    const dayEntry = dailyEntries.find(entry => format(new Date(entry.entry_date), 'yyyy-MM-dd') === currentDate);
 
     const handleDailyEntryDelete = async () => {
 
       try {
 
+        if(!dayEntry) return null
+
         const { user_id } = await getUserPG(user)
+
 
         const fetchDelete = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day`, {
           method: 'DELETE',
@@ -103,12 +106,33 @@ export default function DailyEntryCalendar() {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            entry_date: currentDate,
+            entry_date: dayEntry?.entry_date,
             user_id
           })
         })
 
+        console.log(fetchDelete);
+
         const deletedEntry = await fetchDelete.json()
+
+        if(!deletedEntry) return null
+
+        // confirm the entry is deleted in DB before updating the state to reflect the deletion
+
+        setDailyEntries(prev => {
+          // update state 
+          const newEntries = [...prev]
+
+          // const entryToDelete = newEntries.findIndex(en => format(new Date(en.entry_date), 'yyyy-MM-dd') === currentDate)
+
+          const entryToDelete = newEntries.findIndex(en => en.entry_date === dayEntry?.entry_date)
+
+          if(entryToDelete) newEntries.splice(entryToDelete, 1)
+
+          return newEntries
+        })
+
+        
 
         return deletedEntry
 
@@ -131,22 +155,26 @@ export default function DailyEntryCalendar() {
       <Dialog>
         <div className='h-full w-full rounded-lg' >
           {
-          currentDateData && 
+          dayEntry && 
 
           <div className='relative h-full w-full flex'>
             <Popover>
               <PopoverTrigger className='w-full h-full'>
                 <span className={`p-2 w-full h-full text-sm rounded-lg font-bold text-white flex items-center justify-center 
-                ${getMoodAvgColor(getMoodAvg(currentDateData.mood_rating, currentDateData.productivity_rating))}
+                ${getMoodAvgColor(getMoodAvg(dayEntry.mood_rating, dayEntry.productivity_rating))}
                 `}>
-                  {getMoodAvg(currentDateData.mood_rating, currentDateData.productivity_rating)}
+                  {getMoodAvg(dayEntry.mood_rating, dayEntry.productivity_rating)}
                 </span>
               </PopoverTrigger>
               <PopoverContent className='h-fit  w-fit flex flex-col'>
                 <DialogTrigger className=''>
                   <Button className='text-xs' variant={'outline'}>Edit</Button>
                 </DialogTrigger>
-                <Button className='text-xs' variant={'destructive'}>Delete</Button>
+
+                <Button className='text-xs' variant={'destructive'} onClick={()=> handleDailyEntryDelete()} >Delete</Button>
+                {/* <button className='text-xs bg-black text-white'  >test</button> */}
+
+                
               </PopoverContent>
             </Popover>
 
@@ -155,7 +183,7 @@ export default function DailyEntryCalendar() {
           }
          
           {
-          !currentDateData && (new Date(currentDate) < new Date()) &&
+          !dayEntry && (new Date(currentDate) < new Date()) &&
           <DialogTrigger className='h-full w-full'>
             <div className='flex text-2xl text-gray-400 items-center md:flex-row flex-col h-full justify-center  w-full bg-opacity-20 hover:text-black transition-all duration-200'>
               +
@@ -164,7 +192,7 @@ export default function DailyEntryCalendar() {
           }
 
           {
-          !currentDateData && (new Date(currentDate) > new Date()) &&
+          !dayEntry && (new Date(currentDate) > new Date()) &&
           <div className=' flex text-2xl text-gray-400 items-center md:flex-row flex-col h-full justify-center  w-full bg-opacity-20 cursor-default pointer-events-none z-50'>
           </div>
           }
