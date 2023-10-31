@@ -2,9 +2,9 @@
 import React from 'react'
 import '../styles/globals.css'
 import { getSession } from '@auth0/nextjs-auth0';
-import MoodCalendar from '@/components/moodCalendar';
 import { ConfigProvider } from 'antd';
 import theme from '../theme/themeConfig'
+import DailyEntryCalendar from './daily-entry-calendar/DailyEntryCalendar';
 
 
 export default function HomePage() {
@@ -18,7 +18,7 @@ export default function HomePage() {
       <span>NO</span>
       } */}
       <ConfigProvider theme={theme}>
-        <MoodCalendar />
+        <DailyEntryCalendar />
       </ConfigProvider>
       
       

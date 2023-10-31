@@ -51,6 +51,9 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
 
   const [errorSaving, setErrorSaving] = useState(false)
 
+  const [errorDeleting, setErrorDeleting] = useState(false)
+
+
   useEffect(()=> {
     
     if(user && !error && !isLoading) {
@@ -228,6 +231,14 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
     };
 
   };
+
+  // const handleDelete = async () => {
+  //   const fetchDelete = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day`)
+  //   const deletedEntry = await fetchDelete.json()
+
+  //   if(deletedEntry) 
+  //   // i have to close the modal if user deletes
+  // }
 
   useEffect(()=> {
     if(user && !error && !isLoading) {

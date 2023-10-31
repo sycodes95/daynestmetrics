@@ -161,7 +161,6 @@ export default function LifestyleFactors() {
                   <div className="flex flex-col gap-2">
                     <span>Are you sure you want to delete this factor?</span>
                     <Button variant={'destructive'} onClick={()=> {
-                      console.log(factor.lifestyle_factor_id);
                       deleteFactorFromCategory(
                       catIndex, 
                       factor.lifestyle_factor_id ? factor.lifestyle_factor_id : null,  
