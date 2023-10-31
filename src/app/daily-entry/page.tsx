@@ -17,6 +17,8 @@ import { getDayFactors } from "./services/getDayFactors";
 import { deleteDailyFactors } from "./services/deleteDayFactors";
 import { didDailyFactors, postDailyFactors } from "./services/postDailyFactors";
 import { getDailyEntry } from "./services/getDailyEntry";
+import { useRouter } from "next/navigation";
+
 
 type DailyEntryProps = {
   currentDate: string;
@@ -30,8 +32,10 @@ export type DailyEntry = {
   productivity_rating: number,
   user_id: number,
 }
-
+// i want to break this component down more
 export default function DailyEntry( { currentDate } : DailyEntryProps) {
+
+  const router = useRouter()
 
   const { user, error, isLoading } = useUser();
 
@@ -49,7 +53,9 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
   
   const [dailyEntryIsSaving, setDailyEntryIsSaving] = useState(false)
 
-  const [errorSaving, setErrorSaving] = useState(false)
+  const [saveSuccessful, setSaveSuccessful] = useState(false)
+
+  const [errorSaving, setErrorSaving] = useState(true)
 
   const [errorDeleting, setErrorDeleting] = useState(false)
 
@@ -61,9 +67,9 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
       const getDailyEntryAndFactors = async () => {
         
         const {user_id} = await getUserPG(user)
-
+        console.log(currentDate);
         const dailyEntry = await getDailyEntry(user, currentDate);
-
+        console.log(dailyEntry);
         if(!dailyEntry) return
 
         const {
@@ -79,11 +85,7 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
         setProductivityRating(productivity_rating)
         setJournalValue(journal)
 
-        const lifestyleFactors = await getLifestyleFactors(user)
-
-        if(!lifestyleFactors) return 
-
-        setLifestyleFactors(lifestyleFactors.filter(cat => cat.name))
+        
 
         const dailyEntryFactors = await getDayFactors(user_id, daily_entry_id)
         console.log(dailyEntryFactors);
@@ -114,9 +116,30 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
       };
       
       getDailyEntryAndFactors()
+
+      const getLSFactors = async () => {
+
+        try {
+          const lifestyleFactors = await getLifestyleFactors(user)
+
+          if(!lifestyleFactors) return 
+
+          setLifestyleFactors(lifestyleFactors.filter(cat => cat.name))
+          
+        } catch (error) {
+          console.error('Error getting lifestyle factors', error)
+        }
+        
+      }
+
+      getLSFactors()
+
+      
     }
     
   },[user, error, isLoading])
+
+
 
   const handleDidOrNot = (factor : LifestyleFactor, didOrNot: string) => {
     if(didOrNot === 'did') {
@@ -160,16 +183,6 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
     }
   }
 
-
-  // const getDailyEntry = async () => {
-  //   const pgUser = await getUserPG(user)
-
-  //   if(!pgUser) return null
-  //   const entry: DailyEntry = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day?entry_date=${currentDate}&user_id=${pgUser.user_id}`)
-  //   .then(res => res.json())
-
-  // }
-
   const handleSave = async () => {
 
     try {
@@ -211,6 +224,7 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
       
       if(!postDailyFactorsResults) return null
 
+
       return {
         dailyEntry,
         didFactors : {
@@ -232,26 +246,13 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
 
   };
 
-  // const handleDelete = async () => {
-  //   const fetchDelete = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day`)
-  //   const deletedEntry = await fetchDelete.json()
-
-  //   if(deletedEntry) 
-  //   // i have to close the modal if user deletes
-  // }
-
   useEffect(()=> {
-    if(user && !error && !isLoading) {
-      
-      getLifestyleFactors(user).then(lsFactors => {
-        if(lsFactors) {
-          setLifestyleFactors(lsFactors.filter(cat => cat.name))
+    // resets save message if user enters any value into any input on the page
+    if(saveSuccessful) setSaveSuccessful(false)
 
-        }
-      })
-    }
-  },[user, error, isLoading])
+    if(errorSaving) setErrorSaving(false)
 
+  },[lifestyleFactors, didToday, didNotDoToday, moodRating, productivityRating, journalValue ])
   return (
     <div className="flex flex-col gap-8 h-full grow ">
       <span className="text-xl mt-2">{currentDate}</span>
@@ -340,23 +341,31 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
 
       </div>
 
-      <div className="flex justify-end">
-        <Button onClick={()=> handleSave().then(result => {
-          if(!result) setErrorSaving(true)
+      <div className="flex gap-4 justify-end items-center">
+        {
+        saveSuccessful &&
+        <span className="text-green-500"> Saved Successfully! </span>
+        }
+        {
+        errorSaving &&
+        <span className="text-red-500"> Error Saving :( </span>
+        }
+        <Button className="w-20" onClick={()=> handleSave().then(result => {
+          result ? setSaveSuccessful(true) : setErrorSaving(true)
         })}>
           {
           dailyEntryIsSaving ? 
           <Oval
             height={20}
             width={20}
-            color="#4fa94d"
+            color="#FFFFFF"
             wrapperStyle={{}}
             wrapperClass=""
             visible={true}
             ariaLabel='oval-loading'
-            secondaryColor="#4fa94d"
-            strokeWidth={2}
-            strokeWidthSecondary={2}
+            secondaryColor="#000000"
+            strokeWidth={4}
+            strokeWidthSecondary={4}
 
           />
           :

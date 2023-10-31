@@ -24,19 +24,11 @@ import {
 import { Button } from "@/components/ui/button"
 
 
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import DayView, { DailyEntry } from '@/app/daily-entry/page';
 import { getUserPG } from '@/lib/user/getUserPG';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useEffect, useState } from 'react';
 
-const dailyMetricsData = [
-  {factors: ['smoke, coffee'], mood: { content: 6, motivated: 9 }, date: '2023-10-05'},
-  {factors: ['run, coffee'], mood: { content: 2, motivated: 5 }, date: '2023-10-02'},
-  {factors: ['run, coffee'], mood: { content: 4, motivated: 6 }, date: '2023-10-10'}
-
-]
 
 export default function DailyEntryCalendar() {
 
@@ -52,11 +44,11 @@ export default function DailyEntryCalendar() {
     console.log(dailyEntries);
   },[dailyEntries])
 
-  const getMoodAvg = (motivated : number, content: number) => {
-    return Number(((motivated + content) / 2).toFixed(1))
+  const getMoodAvg = (motivated : number, productivity: number) => {
+    return Number(((motivated + productivity) / 2).toFixed(1))
   }
 
-  const getMoodAvgColor = (avg : number) => {
+  const getDailyAvgRating = (avg : number) => {
     if(avg >= 0 && avg < 4){
       return 'bg-red-400'
     } else if (avg >= 4 && avg < 7) {
@@ -132,8 +124,6 @@ export default function DailyEntryCalendar() {
           return newEntries
         })
 
-        
-
         return deletedEntry
 
       } catch (err) {
@@ -161,7 +151,7 @@ export default function DailyEntryCalendar() {
             <Popover>
               <PopoverTrigger className='w-full h-full'>
                 <span className={`p-2 w-full h-full text-sm rounded-lg font-bold text-white flex items-center justify-center 
-                ${getMoodAvgColor(getMoodAvg(dayEntry.mood_rating, dayEntry.productivity_rating))}
+                ${getDailyAvgRating(getMoodAvg(dayEntry.mood_rating, dayEntry.productivity_rating))}
                 `}>
                   {getMoodAvg(dayEntry.mood_rating, dayEntry.productivity_rating)}
                 </span>

@@ -11,9 +11,11 @@ export const getDailyEntry = async (user: UserProfile, entry_date: string) => {
   if(!pgUser) return null
 
   const getEntry = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day?entry_date=${entry_date}&user_id=${pgUser.user_id}`)
+  
 
   const entry : DailyEntry | null = await getEntry.json()
 
+  console.log(entry);
   return entry;
 
 }
