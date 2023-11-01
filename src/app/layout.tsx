@@ -35,25 +35,25 @@ export default async function RootLayout({
 
       <UserProvider>
       
-          <body className="flex flex-col gap-4 items-center w-full font-main text-sm min-h-screen ">
-            <NextTopLoader showSpinner={false} color="#08a4a7" />
-            {
-            user ? 
-            <>
-            <Header/>
-            <StyledComponentsRegistry>
-              <div className=' w-full h-full max-w-7xl p-4 flex'>
-                {children}
-              </div>
-            </StyledComponentsRegistry>
+        <body className="flex flex-col gap-2 items-center w-full font-main text-sm min-h-screen ">
+          <NextTopLoader showSpinner={false} color="#08a4a7" />
+          {
+          user ? 
+          <>
+          <Header/>
+          <StyledComponentsRegistry>
+            <div className=' w-full h-full max-w-7xl p-4 flex'>
+              {children}
+            </div>
+          </StyledComponentsRegistry>
 
-            <Footer />
-            </>
-            :
-            <LandingPage/>
-            }
-            
-          </body>
+          <Footer />
+          </>
+          :
+          <LandingPage/>
+          }
+          
+        </body>
       </UserProvider>
     </html>
     

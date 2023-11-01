@@ -1,4 +1,3 @@
-'use client'
 import React from 'react'
 import '../styles/globals.css'
 import { getSession } from '@auth0/nextjs-auth0';
@@ -15,6 +14,9 @@ export default function page() {
       <ConfigProvider theme={theme}>
         <Dashboard />
       </ConfigProvider>
+      {/* <ConfigProvider theme={{ algorithm: theme.}}>
+        <Dashboard />
+      </ConfigProvider> */}
     </>
   )
 }

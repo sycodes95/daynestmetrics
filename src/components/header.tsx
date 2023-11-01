@@ -15,11 +15,11 @@ export default function Header(){
   return (
     <div className="sticky top-0 z-50 h-14 w-full pl-4 pr-4 flex justify-center items-center  bg-background rounded-b-lg  text-primary border-b border-gray-300
     ">
-      <div className="w-full max-w-7xl flex items-center">
+      <div className="w-full max-w-7xl flex items-center min-w-max">
 
       
         <Link className=" font-display text-xl mt-1 flex gap-2 items-center" href={'/'}>
-          <QueryStatsIcon  className="h-4 w-4"/>
+          <QueryStatsIcon />
           <span>Daynestmetrics</span>
           
         </Link>

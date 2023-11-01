@@ -155,10 +155,10 @@ export default function EntryCalendar() {
           {
           dayEntry && 
 
-          <div className='relative h-full w-full flex'>
+          <div className='relative h-full w-full flex  rounded-lg'>
             <Popover>
               <PopoverTrigger className='w-full h-full'>
-                <span className={`p-2 w-full h-full text-sm rounded-lg font-bold text-white flex items-center justify-center 
+                <span className={`p-2 w-full h-full text-sm hover:border-2 hover:border-border rounded-lg font-bold text-white flex items-center justify-center 
                 ${getDailyAvgRating(getMoodAvg(dayEntry.mood_rating, dayEntry.productivity_rating))}
                 `}>
                   {getMoodAvg(dayEntry.mood_rating, dayEntry.productivity_rating)}
@@ -184,7 +184,6 @@ export default function EntryCalendar() {
           !dayEntry && (new Date(currentDate) < new Date()) &&
           <DialogTrigger className='h-full w-full flex items-center justify-center text-gray-300 hover:text-gray-500 transition-colors'>
               <AddCircleIcon className=' ' />
-
           </DialogTrigger>
           }
 

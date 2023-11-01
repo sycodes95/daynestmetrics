@@ -39,7 +39,7 @@ export default function UserMenu () {
           alt="" 
           />
 
-          <span>{user.name}</span>
+          <span className="hidden md:contents">{user.name}</span>
 
         </PopoverTrigger>
 

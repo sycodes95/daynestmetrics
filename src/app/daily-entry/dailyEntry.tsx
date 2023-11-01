@@ -291,7 +291,7 @@ export default function DailyEntry( { currentDate, getAllDailyEntriesCalendar } 
       
         <div className="relative flex flex-col flex-1  gap-2">
           <span className="text-lg text-left">Lifestyle Factors</span>
-          <div className="w-full md:max-h-96 flex flex-col flex-1 gap-2 md:overflow-y-auto pt-2 pb-2">
+          <div className="w-full md:max-h-96 flex flex-col flex-1 gap-2 md:overflow-y-auto pr-2">
             {
             lifestyleFactors.map((category, index) => (
               <div key={index} className="w-full flex flex-col gap-2 rounded-lg ">

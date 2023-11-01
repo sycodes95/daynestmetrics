@@ -6,7 +6,6 @@ import DailyEntryCalendar from "./components/entryCalendar";
 import { useEffect, useState } from "react";
 import StatBar from "./components/statBar";
 
-
 export default function Dashboard () {
 
   const [showCalendar, setShowCalendar] = useState(false)
@@ -15,13 +14,12 @@ export default function Dashboard () {
     setShowCalendar(true)
   },[])
   return (
-    <div className='w-full h-full grow md:text-center' >
+    <div className='w-full h-full grow md:text-center flex flex-col gap-4' >
       <StatBar />
       <ConfigProvider theme={theme}>
         {
         showCalendar &&
         <DailyEntryCalendar />
-
         }
       </ConfigProvider>
       
