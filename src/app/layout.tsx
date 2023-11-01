@@ -12,7 +12,6 @@ import StyledComponentsRegistry from '../lib/AntdRegistry';
 import { getUserAndSyncDB } from '@/lib/user/getUserAndSyncDB';
 import { getUser } from '@/lib/user/getUser';
 import Footer from '@/components/footer';
-import store from '../store'
 import { Provider } from 'react-redux'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -37,7 +36,6 @@ export default async function RootLayout({
     <html lang="en" className='flex' suppressHydrationWarning>
 
       <UserProvider>
-        <Provider store={store}>
       
           <body className="flex flex-col items-center w-full font-main text-sm min-h-screen ">
             <NextTopLoader showSpinner={false} color="#08a4a7" />
@@ -58,7 +56,6 @@ export default async function RootLayout({
             }
             
           </body>
-        </Provider>
       </UserProvider>
     </html>
     

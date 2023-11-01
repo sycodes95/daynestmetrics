@@ -12,12 +12,13 @@ import { getLifestyleFactors } from "@/lib/lifestyle-factors/getLifestyleFactors
 import { getUserPG } from "@/lib/user/getUserPG";
 import { Oval } from 'react-loader-spinner'
 import { putDailyEntry } from "./services/putDailyEntry";
-import { getDayFactors } from "./services/getDayFactors";
+import { getEntryFactors } from "./services/getEntryFactors";
 import { deleteDailyFactors } from "./services/deleteDayFactors";
 import { postDailyFactors } from "./services/postDailyFactors";
-import { getDailyEntry } from "./services/getDailyEntry";
+import { getEntry } from "./services/getEntry";
 import { useRouter } from "next/navigation";
 import { LifestyleCategory, LifestyleFactor } from "@/types/lifestyleFactors";
+import { formatFactors } from "./utils/formatFactors";
 
 
 type DailyEntryProps = {
@@ -25,190 +26,162 @@ type DailyEntryProps = {
 }
 
 export type DailyEntry = {
-  daily_entry_id?: number,
+  daily_entry_id?: number | null,
   entry_date: string,
   journal: string,
   mood_rating: number,
   productivity_rating: number,
-  user_id: number,
+  user_id?: number | null,
 }
 // i want to break this component down more
 export default function DailyEntry( { currentDate } : DailyEntryProps) {
-
-  const router = useRouter()
 
   const { user, error, isLoading } = useUser();
 
   const [lifestyleFactors, setLifestyleFactors] = useState<LifestyleCategory[]>([])
 
-  const [didToday, setDidToday] = useState<LifestyleFactor[]>([])
+  const [dailyFactorsData, setDailyFactorsData] = useState<{
+    did: LifestyleFactor[] | [],
+    didNot: LifestyleFactor[] | []
+  }>({ did : [], didNot : []});
 
-  const [didNotDoToday, setDidNotDoToday] = useState<LifestyleFactor[]>([])
 
-  const [moodRating, setMoodRating] = useState(0)
+  const [dailyEntryData, setDailyEntryData] = useState<DailyEntry>({
+    daily_entry_id : null,
+    entry_date: currentDate,
+    journal: '',
+    mood_rating: 0,
+    productivity_rating: 0,
+    user_id : null,
 
-  const [productivityRating, setProductivityRating] = useState(0)
-  
-  const [journalValue, setJournalValue] = useState('')
-  
-  const [dailyEntryIsSaving, setDailyEntryIsSaving] = useState(false)
+  })
 
-  const [saveSuccessful, setSaveSuccessful] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+
+  const [isSaved, setIsSaved] = useState(false)
 
   const [errorSaving, setErrorSaving] = useState(true)
 
-  const [errorDeleting, setErrorDeleting] = useState(false)
-
-
   useEffect(()=> {
-    
-    if(user && !error && !isLoading) {
-
-      const getDailyEntryAndFactors = async () => {
-        
-        const {user_id} = await getUserPG(user)
-        console.log(currentDate);
-        const dailyEntry = await getDailyEntry(user, currentDate);
-        console.log(dailyEntry);
-        if(!dailyEntry) return
-
-        const {
-          daily_entry_id,
-          journal,
-          mood_rating,
-          productivity_rating,
-        } = dailyEntry
-
-        if(!daily_entry_id) return 
-
-        setMoodRating(mood_rating)
-        setProductivityRating(productivity_rating)
-        setJournalValue(journal)
-
-        
-
-        const dailyEntryFactors = await getDayFactors(user_id, daily_entry_id)
-        console.log(dailyEntryFactors);
-        if(!dailyEntryFactors || dailyEntryFactors.length < 1) return
-
-        const didFactors: LifestyleFactor[]  = []
-        const didNotFactors: LifestyleFactor[] = []
-        
-        dailyEntryFactors.forEach((dailyFactor) => {
-
-          const lifestyleFactorCateogory = lifestyleFactors.find(category => category.factors.find(f => f.lifestyle_factor_id === dailyFactor.lifestyle_factor_id))
-
-          if(lifestyleFactorCateogory) {
-
-            const lifestyleFactor = lifestyleFactorCateogory.factors.find(factor => factor.lifestyle_factor_id === dailyFactor.lifestyle_factor_id)
-            
-            dailyFactor.did && lifestyleFactor && didFactors.push(lifestyleFactor)
-
-            !dailyFactor.did && lifestyleFactor && didNotFactors.push(lifestyleFactor)
+    async function addUserIdToEntryData () {
+      if(user && !error && !isLoading) {
+        const { user_id } = await getUserPG(user)
+        setDailyEntryData(prev => {
+          return {
+            ...prev,  
+            user_id
           }
-
-        })
-
-        setDidToday(didFactors)
-        setDidNotDoToday(didNotFactors)
-
-
+        });
+      
       };
       
-      getDailyEntryAndFactors()
+    };
 
-      const getLSFactors = async () => {
-
-        try {
-          const lifestyleFactors = await getLifestyleFactors(user)
-
-          if(!lifestyleFactors) return 
-
-          setLifestyleFactors(lifestyleFactors.filter(cat => cat.name))
-          
-        } catch (error) {
-          console.error('Error getting lifestyle factors', error)
-        }
-        
-      }
-
-      getLSFactors()
-      
-    }
+    addUserIdToEntryData()
     
   },[user, error, isLoading])
 
 
+  useEffect(()=> {
+    
+    if(user  && !error && !isLoading) {
 
-  const handleDidOrNot = (factor : LifestyleFactor, didOrNot: string) => {
-    if(didOrNot === 'did') {
+      const getLifestyleFactorsData = async () => {
+        try {
+          const lsFactors = await getLifestyleFactors(user)
+          if(!lsFactors) return 
+          setLifestyleFactors(lsFactors.filter(cat => cat.name))
+          
+        } catch (error) {
+          console.error('Error fetching lifestylefactors', error)
+        }
 
-      if(!didToday.some(f=> f.lifestyle_factor_id === factor.lifestyle_factor_id)){
-        // if factor doesn't already exist in did today, add it
-        setDidToday(prev => [...prev, factor])
-      } else {
-        // if factor DOES already exist in did today, remove it.
-        setDidToday(prev => {
-          const updated = prev.filter(pre => pre.lifestyle_factor_id !== factor.lifestyle_factor_id)
-          return updated
-        })
+      }
+
+      getLifestyleFactorsData()
+
+    }
+    
+  },[user, error, isLoading])
+
+  useEffect(()=> {
+    if(lifestyleFactors.length > 0 && user && !error && !isLoading) {
+      const getEntryData = async () => {
+        try {
+          //fetchData for dailyFactorsData state.
+          const { user_id } = await getUserPG(user)
+          const entry = await getEntry(user, currentDate);
+          if(!entry || !entry.daily_entry_id) return 
+          setDailyEntryData(entry)
+          
+          //fetchData for dailyEntryFactors state.
+          const dailyEntryFactors = await getEntryFactors(user_id, entry.daily_entry_id)
+          if(!dailyEntryFactors || dailyEntryFactors.length < 1) return
+          const formattedFactors = formatFactors(dailyEntryFactors, lifestyleFactors)
+          setDailyFactorsData(formattedFactors)
+          
+        } catch (error) {
+          console.error(error)
+        }
+
       };
+      
+      getEntryData()
 
-      if(didNotDoToday.some(f=> f.lifestyle_factor_id === factor.lifestyle_factor_id)){
-        // if factor exist in didNot state, remove it
-        const newArr = Array.from(didNotDoToday).filter(f => f.lifestyle_factor_id !== factor.lifestyle_factor_id)
-        setDidNotDoToday(newArr)
-      }
     }
 
-    if(didOrNot === 'did not'){
-      if(!didNotDoToday.some(f=> f.lifestyle_factor_id === factor.lifestyle_factor_id)) {
-        // if factor doesn't already exist in didNot today, add it
-        setDidNotDoToday(prev => [...prev, factor])
-      } else {
-        setDidNotDoToday(prev =>  {
-        // if factor DOES already exist in didNot today, remove it.
-          const updated = prev.filter(pre => pre.lifestyle_factor_id !== factor.lifestyle_factor_id)
-          return updated
-        })
+  },[lifestyleFactors, user, error, isLoading])
 
+  // this function below is ugly lol
+  const handleDidOrNot = (factor : LifestyleFactor, didOrNot: string) => {
+
+    setDailyFactorsData((prev) => {
+      const factorIsInDid = prev.did.some(f => f.lifestyle_factor_id === factor.lifestyle_factor_id);
+      const factorIsInDidNot = prev.didNot.some(f => f.lifestyle_factor_id === factor.lifestyle_factor_id);
+
+      let newDid = prev.did;
+      let newDidNot = prev.didNot;
+
+      if (didOrNot === 'did') {
+        //if new factor is in DID then it's deleted, else its added
+        newDid = factorIsInDid ? prev.did.filter(f => f.lifestyle_factor_id !== factor.lifestyle_factor_id) : [...prev.did, factor];
+        //if new factor is in DIDNOT then it's deleted, else nothing happens
+        newDidNot = factorIsInDidNot ? prev.didNot.filter(f => f.lifestyle_factor_id !== factor.lifestyle_factor_id) : prev.didNot;
+      } else if (didOrNot === 'did not') {
+        //if new factor is in DID NOT then it's deleted, else its added
+        newDidNot = factorIsInDidNot ? prev.didNot.filter(f => f.lifestyle_factor_id !== factor.lifestyle_factor_id) : [...prev.didNot, factor];
+        //if new factor is in DID then it's deleted, else nothing happens
+        newDid = factorIsInDid ? prev.did.filter(f => f.lifestyle_factor_id !== factor.lifestyle_factor_id) : prev.did;
       }
 
-      if(didToday.some(f => f.lifestyle_factor_id === factor.lifestyle_factor_id)){
-        // if factor exist in did state, remove it
-        const newArr = Array.from(didToday).filter(f => f.lifestyle_factor_id !== factor.lifestyle_factor_id)
-        setDidToday(newArr)
-      }
-    }
-  }
-
+      return {
+        ...prev,
+        did: newDid,
+        didNot: newDidNot,
+      };
+    });
+  
+  };
+  //lets see if this works lol
   const handleSave = async () => {
 
     try {
       
-      setDailyEntryIsSaving(true)
-
-      const { user_id } = await getUserPG(user)
-
-      if(!user_id) return null
-
-      const dailyEntryData : DailyEntry = {
-        user_id,
-        entry_date: currentDate,
-        mood_rating: moodRating,
-        productivity_rating: productivityRating,
-        journal : journalValue
-      }
+      setIsSaving(true)
 
       const dailyEntry = await putDailyEntry(dailyEntryData)
 
-      const daily_entry_id = dailyEntry?.daily_entry_id
-
-      if(!dailyEntry || !daily_entry_id) return null
+      if(!dailyEntry) return null
       
-      const dayFactors = await getDayFactors(user_id, daily_entry_id)
+      const { daily_entry_id, user_id } = dailyEntry
 
-      if(dayFactors && dayFactors.length > 0) {
+      if(!daily_entry_id || !user_id) return null
+      
+      // const daily_entry_id = dailyEntry?.daily_entry_id
+      
+      const entryFactors = await getEntryFactors(user_id, daily_entry_id)
+
+      if(entryFactors && entryFactors.length > 0) {
         //if daily entry is saved successfully and day factors already exist for this day, delete all factors.
 
         const fetchDeleteDailyFactors = await deleteDailyFactors( user_id, daily_entry_id)
@@ -217,9 +190,14 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
 
       } 
 
-      const postDailyFactorsResults = await postDailyFactors(didToday, didNotDoToday, daily_entry_id, user_id)
+      const postDailyFactorsResults = await postDailyFactors(
+        dailyFactorsData.did, 
+        dailyFactorsData.didNot, 
+        daily_entry_id, 
+        user_id
+      )
 
-      setDailyEntryIsSaving(false)
+      setIsSaving(false)
       
       if(!postDailyFactorsResults) return null
 
@@ -237,7 +215,7 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
 
       console.error('error saving daily entry and corresponding factors', err);
 
-      setDailyEntryIsSaving(false);
+      setIsSaving(false);
 
       return null;
 
@@ -247,11 +225,23 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
 
   useEffect(()=> {
     // resets save message if user enters any value into any input on the page
-    if(saveSuccessful) setSaveSuccessful(false)
+    if(isSaved) setIsSaved(false)
 
     if(errorSaving) setErrorSaving(false)
 
-  },[lifestyleFactors, didToday, didNotDoToday, moodRating, productivityRating, journalValue ])
+  },[lifestyleFactors, 
+    dailyFactorsData.did, 
+    dailyFactorsData.didNot, 
+    dailyEntryData.mood_rating, 
+    dailyEntryData.productivity_rating, 
+    dailyEntryData.journal 
+  ])
+
+  useEffect(()=> {
+    if(isSaved) setErrorSaving(false)
+    if(errorSaving) setIsSaved(false)
+
+  },[isSaved, errorSaving])
   return (
     <div className="flex flex-col gap-8 h-full grow ">
       <span className="text-xl mt-2">{currentDate}</span>
@@ -259,26 +249,40 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
       <div className="flex flex-col gap-4 ">
         <div className="flex justify-between text-lg">
           <span>Mood Rating</span>
-          <span>{moodRating} / 10</span>
+          <span>{dailyEntryData.mood_rating} / 10</span>
         </div>
         <Slider className=""
-        defaultValue={[moodRating]} 
-        value={[moodRating]}
+        defaultValue={[dailyEntryData.mood_rating]} 
+        value={[dailyEntryData.mood_rating]}
         max={10} step={1} 
-        onValueChange={(e) => setMoodRating(e[0])}
+        onValueChange={(e) => {
+          setDailyEntryData(prev => {
+            return {
+              ...prev,
+              mood_rating: e[0]
+            }
+          })
+        }}
         />
       </div>
 
       <div className="flex flex-col gap-4 ">
         <div className="flex justify-between text-lg">
           <span>Productivity Rating</span>
-          <span>{productivityRating} / 10</span>
+          <span>{dailyEntryData.productivity_rating} / 10</span>
         </div>
         <Slider className=""
-        defaultValue={[productivityRating]} 
-        value={[productivityRating]}
+        defaultValue={[dailyEntryData.productivity_rating]} 
+        value={[dailyEntryData.productivity_rating]}
         max={10} step={1} 
-        onValueChange={(e) => setProductivityRating(e[0])}
+        onValueChange={(e) => {
+          setDailyEntryData(prev => {
+            return {
+              ...prev,
+              productivity_rating: e[0]
+            }
+          })
+        }}
         />
       </div>
 
@@ -299,7 +303,7 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
                     <span className="">{factor.name}</span>
                     <div className="flex gap-2">
                       <button className={`
-                      ${didToday.some(f => f.lifestyle_factor_id === factor.lifestyle_factor_id) ? 'text-emerald-400' : 'text-gray-400'}
+                      ${dailyFactorsData.did.some(f => f.lifestyle_factor_id === factor.lifestyle_factor_id) ? 'text-emerald-400' : 'text-gray-400'}
                        cursor-pointer hover:text-emerald-400 transition-all
                       `}
                       onClick={()=> {
@@ -308,7 +312,7 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
                         <TaskAltIcon className=""  />
                       </button>
                       <button className={`
-                      ${didNotDoToday.some(f => f.lifestyle_factor_id === factor.lifestyle_factor_id) ? 'text-red-400' : 'text-gray-400'}
+                      ${dailyFactorsData.didNot.some(f => f.lifestyle_factor_id === factor.lifestyle_factor_id) ? 'text-red-400' : 'text-gray-400'}
                        cursor-pointer hover:text-red-400 transition-all
                       `}
                       onClick={()=> {
@@ -333,8 +337,13 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
           className="md:h-full h-80 rounded-lg border border-gray-300 p-4 outline-none resize-none" 
           placeholder="..." 
           name="journal" 
-          value={journalValue}
-          onChange={(e)=> setJournalValue(e.target.value)}
+          value={dailyEntryData.journal}
+          onChange={(e)=> setDailyEntryData(prev => {
+            return {
+              ...prev,
+              journal: e.target.value
+            }
+          })}
           id=""/>
         </div>
 
@@ -342,7 +351,7 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
 
       <div className="flex gap-4 justify-end items-center">
         {
-        saveSuccessful &&
+        isSaved &&
         <span className="text-green-500"> Saved Successfully! </span>
         }
         {
@@ -350,10 +359,10 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
         <span className="text-red-500"> Error Saving :( </span>
         }
         <Button className="w-20" onClick={()=> handleSave().then(result => {
-          result ? setSaveSuccessful(true) : setErrorSaving(true)
+          result ? setIsSaved(true) : setErrorSaving(true)
         })}>
           {
-          dailyEntryIsSaving ? 
+          isSaving ? 
           <Oval
             height={20}
             width={20}

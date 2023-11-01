@@ -1,4 +1,5 @@
-import { LifestyleFactor } from "@/app/lifestyle-factors/page"
+import { LifestyleFactor } from "@/types/lifestyleFactors"
+
 
 export const postDailyFactors = async (
   didToday : LifestyleFactor[], 
