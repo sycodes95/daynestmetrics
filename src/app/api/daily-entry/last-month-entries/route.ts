@@ -14,6 +14,6 @@ export async function GET(req: Request){
 
   const queryParams = [oneMonthAgoStr, todayStr, user_id];
 
-  const result = await db.query('SELECT * FROM daily_entry entry_date BETWEEN $1 AND $2 AND user_id = $2', queryParams);
-  return NextResponse.json(result.rows.length > 0 ? result.rows[0] : null)
+  const result = await db.query('SELECT * FROM daily_entry WHERE entry_date BETWEEN $1 AND $2 AND user_id = $3 ORDER BY entry_date ASC', queryParams);
+  return NextResponse.json(result.rows)
 };
