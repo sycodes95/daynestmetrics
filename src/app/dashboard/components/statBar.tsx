@@ -1,24 +1,36 @@
 import { useState } from "react"
+import StatCard from "./statCard"
 
 export default function StatBar () {
 
-  const [overall, setOverall] = useState({
-    month: 0,
-    week: 0
+  const [basicStats , setBasicStats] = useState({
+    overall: {
+      month: -1,
+      week: -1
+    },
+    mood: {
+      month: -1,
+      week: -1
+    },
+    productivity: {
+      month: -1,
+      week: -1
+    }
   })
-
-  const [mood, setMood] = useState({
-    month: 0,
-    week: 0
-  })
-
-  const [productivity, setProductivity] = useState({
-    month: 0,
-    week: 0
-  })
-
+ 
   return (
-    <div>
+    <div className="flex items-center gap-2">
+      {
+      Object.entries(basicStats).map(([statName, obj]) => (
+        <>
+        {
+          Object.entries(obj).map(([range, value], index) => (
+            <StatCard className="w-full" key={index} />
+          ))
+        }
+        </>
+      ))
+      }
 
     </div>
   )

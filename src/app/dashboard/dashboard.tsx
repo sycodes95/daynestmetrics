@@ -4,6 +4,7 @@ import { ConfigProvider } from "antd";
 import theme from '../../theme/themeConfig'
 import DailyEntryCalendar from "./components/entryCalendar";
 import { useEffect, useState } from "react";
+import StatBar from "./components/statBar";
 
 
 export default function Dashboard () {
@@ -15,6 +16,7 @@ export default function Dashboard () {
   },[])
   return (
     <div className='w-full h-full grow md:text-center' >
+      <StatBar />
       <ConfigProvider theme={theme}>
         {
         showCalendar &&
