@@ -4,8 +4,6 @@ import '../styles/globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Header from '../components/header'
-import { Auth0Provider } from '@auth0/auth0-react';
-import { getSession } from '@auth0/nextjs-auth0';
 import LandingPage from './landingPage/landingPage';
 import NextTopLoader from 'nextjs-toploader';
 import StyledComponentsRegistry from '../lib/AntdRegistry';

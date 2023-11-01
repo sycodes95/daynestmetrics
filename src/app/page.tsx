@@ -12,7 +12,9 @@ export default function page() {
   
   return (
     <>
-      <Dashboard />
+      <ConfigProvider theme={theme}>
+        <Dashboard />
+      </ConfigProvider>
     </>
   )
 }
