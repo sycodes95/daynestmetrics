@@ -3,7 +3,7 @@ import type { ThemeConfig } from 'antd';
 const theme: ThemeConfig = {
   token: {
     fontSize: 13,
-    colorPrimary: '#D3D3D3',
+    colorPrimary: '#808080',
     
     colorFillSecondary: '#D3D3D3',
     colorBgContainer: '#FFFFFF',
@@ -15,6 +15,7 @@ const theme: ThemeConfig = {
     colorBgTextHover: 'none',
     colorPrimaryTextHover: 'none',
     colorLinkHover: 'none',
+    controlItemBgActive: '#FFFFFF'
 
   },
 };

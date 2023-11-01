@@ -1,6 +1,6 @@
 export const deleteDailyFactors = async ( user_id: number, daily_entry_id: number ) => {
 
-  const fetchDelete = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day-factor`, {
+  const fetchDelete = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/entry-factor`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'

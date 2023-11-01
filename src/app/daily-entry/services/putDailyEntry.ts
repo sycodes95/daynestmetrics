@@ -1,8 +1,8 @@
-import { DailyEntry } from "../page";
+import { DailyEntry } from "../dailyEntry";
 
 export const putDailyEntry = async (dailyEntryData : DailyEntry) : Promise<DailyEntry | null> => {
 
-  const fetchPut = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day`, {
+  const fetchPut = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/entry`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'

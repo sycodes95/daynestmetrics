@@ -15,6 +15,14 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover" 
 
+import { AlertCircle } from "lucide-react"
+ 
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
+
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { getLifestyleFactors } from "@/lib/lifestyle-factors/getLifestyleFactors";
 import { updateLifestyleCategory } from "./utils/replaceLifestyleCategory";
@@ -56,13 +64,22 @@ export default function LifestyleFactors() {
       {
       user &&
       <div className="flex flex-col gap-8 w-full">
-
-        <PageHeading
-        header="Lifestyle Factors"
-        body="Add lifestyle factors that you want to track daily."
-        >
-          <DirectionsRunIcon />
-        </PageHeading>
+        <div className="flex flex-col justify-between gap-4  items-center w-full">
+           <PageHeading
+            header="Lifestyle Factors"
+            body="Add lifestyle factors that you want to track daily."
+            >
+              <DirectionsRunIcon />
+            </PageHeading>
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Warning</AlertTitle>
+            <AlertDescription className="text-xs">
+              Deleting any lifestyle factors that are used in a daily entry will also remove it from the entry.
+            </AlertDescription>
+          </Alert>
+        </div>
+       
 
         <div className="w-full h-fit 
         grid 

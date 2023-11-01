@@ -1,6 +1,6 @@
 import { getUserPG } from "@/lib/user/getUserPG"
 import { UserProfile } from "@auth0/nextjs-auth0/client"
-import { DailyEntry } from "../page"
+import { DailyEntry } from "../dailyEntry"
 
 
 
@@ -10,7 +10,7 @@ export const getEntry = async (user: UserProfile, entry_date: string) => {
 
   if(!pgUser) return null
 
-  const getEntry = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day?entry_date=${entry_date}&user_id=${pgUser.user_id}`)
+  const getEntry = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/entry?entry_date=${entry_date}&user_id=${pgUser.user_id}`)
 
   const entry : DailyEntry | null = await getEntry.json()
 

@@ -9,7 +9,7 @@ export const postDailyFactors = async (
   ) => {
 
   const didPromises = Promise.all(didToday.map(async (factor) => {
-    const posted = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day-factor`, {
+    const posted = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/entry-factor`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -27,7 +27,7 @@ export const postDailyFactors = async (
   }))
   //so there should be only 2 rows in daily factors, lets check
   const didNotPromises = Promise.all(didNotDoToday.map(async (factor) => {
-    const posted = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day-factor`, {
+    const posted = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/entry-factor`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

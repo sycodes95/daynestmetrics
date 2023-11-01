@@ -23,6 +23,7 @@ import { formatFactors } from "./utils/formatFactors";
 
 type DailyEntryProps = {
   currentDate: string;
+  getAllDailyEntriesCalendar: () => void;
 }
 
 export type DailyEntry = {
@@ -34,7 +35,7 @@ export type DailyEntry = {
   user_id?: number | null,
 }
 // i want to break this component down more
-export default function DailyEntry( { currentDate } : DailyEntryProps) {
+export default function DailyEntry( { currentDate, getAllDailyEntriesCalendar } : DailyEntryProps) {
 
   const { user, error, isLoading } = useUser();
 
@@ -201,7 +202,7 @@ export default function DailyEntry( { currentDate } : DailyEntryProps) {
       
       if(!postDailyFactorsResults) return null
 
-
+      getAllDailyEntriesCalendar()
       return {
         dailyEntry,
         didFactors : {

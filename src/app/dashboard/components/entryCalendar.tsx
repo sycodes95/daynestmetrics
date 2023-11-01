@@ -5,6 +5,7 @@ import { Calendar, CalendarProps, Badge } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import {
   Dialog,
@@ -24,13 +25,13 @@ import {
 import { Button } from "@/components/ui/button"
 
 
-import DayView, { DailyEntry } from '@/app/daily-entry/page';
+import DayView, { DailyEntry } from '@/app/daily-entry/dailyEntry';
 import { getUserPG } from '@/lib/user/getUserPG';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useEffect, useState } from 'react';
 
 
-export default function DailyEntryCalendar() {
+export default function EntryCalendar() {
 
   const { user, error, isLoading } = useUser();
 
@@ -64,7 +65,7 @@ export default function DailyEntryCalendar() {
 
     const { user_id } = await getUserPG(user)
 
-    const fetchGet = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/all-days?user_id=${user_id}`)
+    const fetchGet = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/all-entries?user_id=${user_id}`)
 
     const allDailyEntries = await fetchGet.json()
 
@@ -91,7 +92,7 @@ export default function DailyEntryCalendar() {
         const { user_id } = await getUserPG(user)
 
 
-        const fetchDelete = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/day`, {
+        const fetchDelete = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/entry`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'
@@ -181,10 +182,9 @@ export default function DailyEntryCalendar() {
          
           {
           !dayEntry && (new Date(currentDate) < new Date()) &&
-          <DialogTrigger className='h-full w-full'>
-            <div className='flex text-2xl text-gray-400 items-center md:flex-row flex-col h-full justify-center  w-full bg-opacity-20 hover:text-black transition-all duration-200'>
-              +
-            </div>
+          <DialogTrigger className='h-full w-full flex items-center justify-center text-gray-300 hover:text-gray-500 transition-colors'>
+              <AddCircleIcon className=' ' />
+
           </DialogTrigger>
           }
 
@@ -200,7 +200,7 @@ export default function DailyEntryCalendar() {
           <DialogHeader>
             <DialogTitle>How was your day?</DialogTitle>
             <DialogDescription>
-              <DayView currentDate={currentDate} />
+              <DayView currentDate={currentDate} getAllDailyEntriesCalendar={getAllDailyEntries} />
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
@@ -211,7 +211,7 @@ export default function DailyEntryCalendar() {
   };
   return (
 
-    <div className='flex flex-col  p-4'>
+    <div className='flex flex-col'>
       <Calendar className='' cellRender={cellRender} />
     </div>
 
