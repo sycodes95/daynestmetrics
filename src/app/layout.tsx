@@ -35,7 +35,7 @@ export default async function RootLayout({
 
       <UserProvider>
       
-          <body className="flex flex-col items-center w-full font-main text-sm min-h-screen ">
+          <body className="flex flex-col gap-4 items-center w-full font-main text-sm min-h-screen ">
             <NextTopLoader showSpinner={false} color="#08a4a7" />
             {
             user ? 
