@@ -21,6 +21,8 @@ export default function StatBar () {
 
   const [pastMonthEntries, setPastMonthEntries] = useState<DailyEntry[] | []>([])
 
+  const [overallAvg, setOverallAvg] = useState<number | null>(null)
+
   const [basicStats , setBasicStats] = useState<BasicStats>({
     overall: [],
     mood: [],
@@ -37,7 +39,6 @@ export default function StatBar () {
     } else if (statName === 'productivity') {
       return '#FF7F50'
     } 
-
     return '#619DC4'
   }
 
@@ -107,7 +108,15 @@ export default function StatBar () {
   },[user, error, isLoading])
  
   return (
-    <div className="flex items-center gap-2 h-32 w-full">
+    <div className="flex flex-col md:flex-row items-center gap-2  w-full">
+      <div className="w-full rounded-lg bg-black text-white h-full md:mr-2 border-black border-2 p-2 flex flex-col items-center md:w-64">
+        <span className=" w-full text-left text-sm font-bold">Overall</span>
+        <span className=" w-full flex items-center justify-center  h-full font-bold text-2xl">7 / 10</span>
+
+      </div>
+
+      <div className="flex items-center gap-2 w-full h-32">
+      
       {
       !statsAreLoading ?
       Object.entries(basicStats).map(([statName, data]) => (
@@ -124,6 +133,7 @@ export default function StatBar () {
         <StatBarSkeleton key={key}/>
       ))
       }
+      </div>
 
     </div>
   )

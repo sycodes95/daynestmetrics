@@ -67,10 +67,10 @@ type StatCardProps = {
 export default function StatCard ({className, statName, data, lineColor} : StatCardProps) {
   return (
     <Card className={`${className}  h-32 relative w-full flex border-gray-400`}>
-      <CardHeader className="p-0 text-left absolute top-0 left-0 z-10">
-        <CardTitle className="text-sm text-primary font-semibold flex flex-col gap-1 bg-black bg-opacity-10 rounded-lg w-fit backdrop-blur-sm">
+      <CardHeader className="p-0 text-left absolute top-0 left-0 z-10 w-full">
+        <CardTitle className="text-sm text-primary font-semibold flex flex-col md:flex-row justify-between gap-1 bg-black bg-opacity-10 rounded-lg w-fit md:w-full backdrop-blur-sm p-2">
           <span>{statName.slice(0, 1).toUpperCase() + statName.slice(1)}</span>
-          <span className="font-normal text-xs">Past Month</span>
+          <span className="font-normal text-xs flex items-center">Past Month</span>
 
         </CardTitle>
         
@@ -78,7 +78,7 @@ export default function StatCard ({className, statName, data, lineColor} : StatC
       <CardContent className="p-0  w-full flex justify-center">
         <ResponsiveContainer className={`flex transition-all`} width="90%" height="99%">
           <LineChart className="h-32"  data={data}
-            margin={{ top: 10, right: 5, left: 5, bottom: 0 }}>
+            margin={{ top: 30, right: 5, left: 5, bottom: 0 }}>
             <Tooltip />
             <Line type="monotone" dataKey="rating" stroke="#AAAAAA" strokeWidth={`2px`} />
           </LineChart>

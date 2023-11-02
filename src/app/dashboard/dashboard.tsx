@@ -15,6 +15,7 @@ export default function Dashboard () {
   },[])
   return (
     <div className='w-full h-full grow md:text-center flex flex-col gap-4' >
+
       <StatBar />
       <ConfigProvider theme={theme}>
         {
