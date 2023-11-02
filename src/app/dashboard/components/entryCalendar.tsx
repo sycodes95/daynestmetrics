@@ -1,6 +1,6 @@
 'use client'
 
-import { getYMDFromDate } from '@/util/getYMDFromDate';
+import { getYMDFromDate } from '@/utils/getYMDFromDate';
 import { Calendar, CalendarProps, Badge } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { format } from 'date-fns';
@@ -29,6 +29,7 @@ import DayView, { DailyEntry } from '@/app/daily-entry/dailyEntry';
 import { getUserPG } from '@/lib/user/getUserPG';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useEffect, useState } from 'react';
+import { getRatingColor, getRatingColorBG } from '@/utils/getRatingColor';
 
 
 export default function EntryCalendar() {
@@ -47,18 +48,6 @@ export default function EntryCalendar() {
 
   const getMoodAvg = (motivated : number, productivity: number) => {
     return Number(((motivated + productivity) / 2).toFixed(1))
-  }
-
-  const getDailyAvgRating = (avg : number) => {
-    if(avg >= 0 && avg < 4){
-      return 'bg-red-400'
-    } else if (avg >= 4 && avg < 7) {
-      return 'bg-yellow-500'
-    } else if (avg >= 7 && avg < 10) {
-      return 'bg-green-400'
-    } else if (avg === 10) {
-      return 'bg-blue-400'
-    }
   }
 
   const getAllDailyEntries = async () => {
@@ -159,7 +148,7 @@ export default function EntryCalendar() {
             <Popover>
               <PopoverTrigger className='w-full h-full'>
                 <span className={`p-2 w-full h-full text-sm hover:border-2 hover:border-border rounded-lg font-bold text-white flex items-center justify-center 
-                ${getDailyAvgRating(getMoodAvg(dayEntry.mood_rating, dayEntry.productivity_rating))}
+                ${getRatingColorBG(getMoodAvg(dayEntry.mood_rating, dayEntry.productivity_rating))}
                 `}>
                   {getMoodAvg(dayEntry.mood_rating, dayEntry.productivity_rating)}
                 </span>

@@ -17,6 +17,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+import Rating from '@mui/material/Rating';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import EmojiEventsBorderIcon from '@mui/icons-material/EmojiEvents';
+
+import { styled } from '@mui/material/styles';
+
+import { DailyEntry } from "@/app/daily-entry/dailyEntry"
+import { formatDateForUser } from "@/utils/formatDateForUser"
+import { getYMDFromDate } from "@/utils/getYMDFromDate"
+import { getRatingColor, getRatingColorBG, getRatingColorText } from "@/utils/getRatingColor"
+
 export type Payment = {
   id: string
   amount: number
@@ -24,7 +37,16 @@ export type Payment = {
   email: string
 }
 
-export const columns: ColumnDef<Payment>[] = [
+const StyledRating = styled(Rating)({
+  '& .MuiRating-iconFilled': {
+    color: '#ff6d75',
+  },
+  '& .MuiRating-iconHover': {
+    color: '#ff3d47',
+  },
+});
+
+export const columns: ColumnDef<DailyEntry>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -45,71 +67,83 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "email",
+    accessorKey: "entry_date",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-  },
-  {
-    accessorKey: "amount",
-    header: () => <div className="text-left">Amount</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
+      const date = getYMDFromDate(row.getValue("entry_date"))
+      const formattedDate = formatDateForUser(date)
       
-      return <div className="text-left font-medium">{formatted}</div>
+      
+      return <div className="text-left font-medium">{formattedDate}</div>
     },
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-left">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
- 
-      return <div className="text-left font-medium">{formatted}</div>
-    },
+    accessorKey: "mood_rating",
+    header: ({ column }) => {
+      return (
+        <Button
+        className=""
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Mood Rating
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+      },
+      cell: ({ row }) => {
+        const mood: number = row.getValue("mood_rating")
+        return <StyledRating
+          className="text-black"
+          name="customized-color"
+          readOnly
+          defaultValue={mood / 2}
+          getLabelText={(value: number) => `${value} Heart${value !== 1 ? 's' : ''}`}
+          precision={0.5}
+          icon={<FavoriteIcon fontSize="inherit" />}
+          emptyIcon={<FavoriteBorderIcon fontSize="inherit" />}
+        />
+      },
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-left">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
- 
-      return <div className="text-left font-medium">{formatted}</div>
-    },
+    accessorKey: "productivity_rating",
+    header: ({ column }) => {
+      return (
+        <Button
+        className=""
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Produvtivity Rating
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+      },
+      cell: ({ row }) => {
+        const productivity: number = row.getValue("productivity_rating")
+        return <StyledRating
+          className="text-black"
+          name="customized-color"
+          readOnly
+          defaultValue={productivity / 2}
+          getLabelText={(value: number) => `${value} Heart${value !== 1 ? 's' : ''}`}
+          precision={0.5}
+          icon={<EmojiEventsIcon className="text-yellow-500" fontSize="inherit" />}
+          emptyIcon={<EmojiEventsBorderIcon fontSize="inherit" />}
+        />
+      },
   },
-  {
-    accessorKey: "amount",
-    header: () => <div className="text-left">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
- 
-      return <div className="text-left font-medium">{formatted}</div>
-    },
-  },
+  
   // ...
   {
     

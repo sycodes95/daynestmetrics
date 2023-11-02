@@ -19,6 +19,7 @@ import { getEntry } from "./services/getEntry";
 import { useRouter } from "next/navigation";
 import { LifestyleCategory, LifestyleFactor } from "@/types/lifestyleFactors";
 import { formatFactors } from "./utils/formatFactors";
+import { formatDateForUser } from "@/utils/formatDateForUser";
 
 
 type DailyEntryProps = {
@@ -91,6 +92,8 @@ export default function DailyEntry( { currentDate, getAllDailyEntriesCalendar } 
         try {
           const lsFactors = await getLifestyleFactors(user)
           if(!lsFactors) return 
+
+          //filter out un named factors
           setLifestyleFactors(lsFactors.filter(cat => cat.name))
           
         } catch (error) {
@@ -245,7 +248,7 @@ export default function DailyEntry( { currentDate, getAllDailyEntriesCalendar } 
   },[isSaved, errorSaving])
   return (
     <div className="flex flex-col gap-8 h-full grow ">
-      <span className="text-xl mt-2">{currentDate}</span>
+      <span className="text-xl mt-2">{formatDateForUser(currentDate)}</span>
 
       <div className="flex flex-col gap-4 ">
         <div className="flex justify-between text-lg">
