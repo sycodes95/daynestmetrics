@@ -16,13 +16,13 @@ export default function About(){
         <h2 className="font-bold text-sm">Add Lifestyle Factors:</h2>
         <span className="lg:w-1/2">First thing you want to do is head over to the ( Lifestyle Factors ) tab.
           This is where you should categorize and add all of the lifestyle factors, habits, routines that 
-          you would like to track.  You will be using this data in your daily entry.
+          you would like to track.  You will be using this data in your daily entries.
         </span>
 
         <h2 className="font-bold text-sm">Add A Daily Entry:</h2>
         <span className="lg:w-1/2">After each day, head over to the home page or dashboard, and click the ( + ) button 
         on the corresponding date to enter details about the day including which lifestyle factors you did 
-        or did not do.
+        or did not do. Don't worry if you missed a day, you can still add entries to any date before the current day.
         </span>
 
         <h2 className="font-bold text-sm">Check Entries:</h2>
