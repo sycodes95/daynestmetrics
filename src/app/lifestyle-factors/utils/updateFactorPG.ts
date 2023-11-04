@@ -1,11 +1,11 @@
-import { LifestyleCategory } from "../page";
+import { LifestyleCategory } from "@/types/lifestyleFactors";
 
 export const updateFactorPG = async (categoryIndex: number, nano_id: string, lifestyleFactors: LifestyleCategory[] ) => {
 
   try {
 
     const factorToPatch = lifestyleFactors[categoryIndex].factors.find(data => data.nano_id === nano_id);
-
+    console.log(factorToPatch);
     if(!factorToPatch) return false;
 
     const patchFactor = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor`, {
@@ -15,6 +15,8 @@ export const updateFactorPG = async (categoryIndex: number, nano_id: string, lif
       },
       body: JSON.stringify(factorToPatch)
     });
+
+    console.log(patchFactor);
 
     if(patchFactor.ok) {
       return true

@@ -1,8 +1,8 @@
 import { UserProfile } from "@auth0/nextjs-auth0/client";
-import { LifestyleCategory } from "../page";
 import { getUserPG } from "@/lib/user/getUserPG";
 import { nanoid } from "nanoid";
 import { addFactorToPG } from "./addFactorToPG";
+import { LifestyleCategory } from "@/types/lifestyleFactors";
 
 export const addFactorToCategory = async (categoryIndex: number, lifestyleFactors: LifestyleCategory[], user: UserProfile | undefined) => {
 
@@ -26,11 +26,13 @@ export const addFactorToCategory = async (categoryIndex: number, lifestyleFactor
       order_position: newFactors.length
     }
 
-    const addFactor = await addFactorToPG(factor)
-    if(!addFactor) return null
+    //adds factor then returns the factor with its id
+    const addAndReturnFactor = await addFactorToPG(factor)
 
-    newFactors.push(factor);
+    if(!addAndReturnFactor) return null
 
+    newFactors.push(addAndReturnFactor);
+    
     newLifestyleFactors[categoryIndex] = { 
       user_id, 
       lifestyle_category_id,
@@ -38,7 +40,7 @@ export const addFactorToCategory = async (categoryIndex: number, lifestyleFactor
       order_position: categoryIndex, 
       factors: newFactors
     };
-
+    
     return newLifestyleFactors
     
   } catch (err) {

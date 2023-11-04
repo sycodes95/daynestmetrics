@@ -58,7 +58,7 @@ const StyledRating = styled(Rating)({
   },
 });
 
-export const columns: ColumnDef<DailyEntry>[] = [
+const columns: ColumnDef<DailyEntry>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -234,8 +234,6 @@ export const columns: ColumnDef<DailyEntry>[] = [
       },
   },
   
-  //FEEL LIKE IM REPEATING MYSELF A BIT HERE, BUT ITS ONLY THREE SO ITS NOT TOO BAD :P
-  // ...
   {
     
     id: "actions",
@@ -246,7 +244,6 @@ export const columns: ColumnDef<DailyEntry>[] = [
       
       const date = getYMDFromDate(row.getValue("entry_date"))
       const user_id = row.getValue("user_id")
-
       console.log(user_id);
       return (
       <Dialog>
@@ -282,47 +279,4 @@ export const columns: ColumnDef<DailyEntry>[] = [
     },
   },
   
-  // ...
 ]
-
-// export const columns: ColumnDef<Payment>[] = [
-//   {
-//     accessorKey: "amount",
-//     header: () => <div className="text-right">Amount</div>,
-//     cell: ({ row }) => {
-//       const amount = parseFloat(row.getValue("amount"))
-//       const formatted = new Intl.NumberFormat("en-US", {
-//         style: "currency",
-//         currency: "USD",
-//       }).format(amount)
- 
-//       return <div className="text-right font-medium">{formatted}</div>
-//     },
-//   },
-//   {
-//     accessorKey: "amount",
-//     header: () => <div className="text-right">Amount</div>,
-//     cell: ({ row }) => {
-//       const amount = parseFloat(row.getValue("amount"))
-//       const formatted = new Intl.NumberFormat("en-US", {
-//         style: "currency",
-//         currency: "USD",
-//       }).format(amount)
- 
-//       return <div className="text-right font-medium">{formatted}</div>
-//     },
-//   },
-//   {
-//     accessorKey: "amount",
-//     header: () => <div className="text-right">Amount</div>,
-//     cell: ({ row }) => {
-//       const amount = parseFloat(row.getValue("amount"))
-//       const formatted = new Intl.NumberFormat("en-US", {
-//         style: "currency",
-//         currency: "USD",
-//       }).format(amount)
- 
-//       return <div className="text-right font-medium">{formatted}</div>
-//     },
-//   },
-// ]

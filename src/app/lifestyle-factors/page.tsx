@@ -133,9 +133,7 @@ export default function LifestyleFactors() {
               <div key={factor.nano_id} className="flex items-center h-fit  ">
                 <Input  className="h-10 border-none placeholder-shown:placeholder-gray-400 text-sm shadow-sm shadow-slate-300" value={factor.name} 
                 onChange={(e) => setLifestyleFactors(updateLifestyleFactors(catIndex, factor.nano_id, e.target.value, lifestyleFactors))}  
-                onBlur={()=> updateFactorPG(catIndex, factor.nano_id, lifestyleFactors).then(res => {
-                  if(res) getLSFactors()
-                })}
+                onBlur={()=> updateFactorPG(catIndex, factor.nano_id, lifestyleFactors)}
                 placeholder="test"/>
                 <Popover>
                   <PopoverTrigger>

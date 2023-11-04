@@ -1,20 +1,21 @@
-import { LifestyleFactor } from "../page"
+import { LifestyleFactor } from "@/types/lifestyleFactors"
 
 export const addFactorToPG = async (factor : LifestyleFactor) => {
 
   try {
 
-    const result = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor`, {
+    const fetchPost = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(factor)
     })
-    if(result.ok) {
-      return true
-    }
-    return false
+    
+    const postedFactor = await fetchPost.json()
+
+    return postedFactor
+    
   } catch (err) {
     
     console.error('Error adding factor to PG', err)
