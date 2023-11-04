@@ -8,7 +8,7 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { Button } from "@/components/ui/button";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { getLifestyleFactors } from "@/lib/lifestyle-factors/getLifestyleFactors";
+import { getLifestyleFactorsInCategories } from "@/lib/lifestyle-factors/getLifestyleFactorsInCategories";
 import { getUserPG } from "@/lib/user/getUserPG";
 import { Oval } from 'react-loader-spinner'
 import { putDailyEntry } from "./services/putDailyEntry";
@@ -24,7 +24,7 @@ import { formatDateForUser } from "@/utils/formatDateForUser";
 
 type DailyEntryProps = {
   currentDate: string;
-  getAllDailyEntriesCalendar: () => void;
+  getAllDailyEntriesCalendar?: () => void;
 }
 
 export type DailyEntry = {
@@ -36,7 +36,7 @@ export type DailyEntry = {
   user_id?: number | null,
 }
 // i want to break this component down more
-export default function DailyEntry( { currentDate, getAllDailyEntriesCalendar } : DailyEntryProps) {
+export default function EntryDialog( { currentDate, getAllDailyEntriesCalendar } : DailyEntryProps) {
 
   const { user, error, isLoading } = useUser();
 
@@ -90,7 +90,7 @@ export default function DailyEntry( { currentDate, getAllDailyEntriesCalendar } 
 
       const getLifestyleFactorsData = async () => {
         try {
-          const lsFactors = await getLifestyleFactors(user)
+          const lsFactors = await getLifestyleFactorsInCategories(user)
           if(!lsFactors) return 
 
           //filter out un named factors

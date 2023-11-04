@@ -90,9 +90,7 @@ export async function DELETE(req: Request){
 
   const result = await db.query(deleteText, deleteQuery)
 
-  if(result && result.rows.length > 0) return NextResponse.json(result.rows[0])
-
-  return NextResponse.json(null)
+  return NextResponse.json(result && result.rows.length > 0 ? result.rows[0] : null)
 
 };
 

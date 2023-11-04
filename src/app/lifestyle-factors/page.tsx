@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/alert"
 
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { getLifestyleFactors } from "@/lib/lifestyle-factors/getLifestyleFactors";
+import { getLifestyleFactorsInCategories } from "@/lib/lifestyle-factors/getLifestyleFactorsInCategories";
 import { updateLifestyleCategory } from "./utils/replaceLifestyleCategory";
 import { createOrUpdateCategoryPG } from "./utils/createOrUpdateCategoryPG";
 import { updateFactorPG } from "./utils/updateFactorPG";
@@ -51,7 +51,7 @@ export default function LifestyleFactors() {
 
     if(user) {
 
-      const lsFactors = await getLifestyleFactors(user)
+      const lsFactors = await getLifestyleFactorsInCategories(user)
 
       lsFactors && lsFactors.length > 0 ? setLifestyleFactors(lsFactors) : setLifestyleFactors([]) 
 

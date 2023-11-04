@@ -1,6 +1,6 @@
 import { getUserPG } from "@/lib/user/getUserPG"
 import { UserProfile } from "@auth0/nextjs-auth0/client"
-import { DailyEntry } from "../dailyEntry"
+import { DailyEntry } from "../entryDialog"
 
 
 

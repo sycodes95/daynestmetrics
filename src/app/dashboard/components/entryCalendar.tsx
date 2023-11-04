@@ -25,7 +25,7 @@ import {
 import { Button } from "@/components/ui/button"
 
 
-import DayView, { DailyEntry } from '@/app/daily-entry/dailyEntry';
+import EntryDialog, { DailyEntry } from '@/app/entryDialog/entryDialog';
 import { getUserPG } from '@/lib/user/getUserPG';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useEffect, useState } from 'react';
@@ -188,7 +188,7 @@ export default function EntryCalendar() {
           <DialogHeader>
             <DialogTitle>How was your day?</DialogTitle>
             <DialogDescription>
-              <DayView currentDate={currentDate} getAllDailyEntriesCalendar={getAllDailyEntries} />
+              <EntryDialog currentDate={currentDate} getAllDailyEntriesCalendar={getAllDailyEntries} />
             </DialogDescription>
           </DialogHeader>
         </DialogContent>

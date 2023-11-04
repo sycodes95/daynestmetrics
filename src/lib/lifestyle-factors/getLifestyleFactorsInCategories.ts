@@ -2,7 +2,7 @@ import { LifestyleCategory, LifestyleFactor } from "@/app/lifestyle-factors/page
 import { getUserPG } from "../user/getUserPG";
 import { UserProfile } from "@auth0/nextjs-auth0/client";
 
-export async function getLifestyleFactors(user : UserProfile | undefined) {
+export async function getLifestyleFactorsInCategories(user : UserProfile | undefined) {
 
   try {
     if(!user) return null

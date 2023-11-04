@@ -1,4 +1,4 @@
-import { LifestyleFactor } from '@/app/lifestyle-factors/page';
+import { LifestyleFactor } from '@/types/lifestyleFactors';
 import { NextResponse } from 'next/server';
 const db = require('../../../../db/db')
 

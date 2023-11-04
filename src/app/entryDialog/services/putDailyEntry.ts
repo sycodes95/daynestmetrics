@@ -1,4 +1,4 @@
-import { DailyEntry } from "../dailyEntry";
+import { DailyEntry } from "../entryDialog";
 
 export const putDailyEntry = async (dailyEntryData : DailyEntry) : Promise<DailyEntry | null> => {
 

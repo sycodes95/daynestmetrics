@@ -1,7 +1,7 @@
 import { getUserPG } from "@/lib/user/getUserPG"
 import { UserProfile } from "@auth0/nextjs-auth0/client"
 import { LifestyleCategory } from "../page"
-import { getLifestyleFactors } from "@/lib/lifestyle-factors/getLifestyleFactors"
+import { getLifestyleFactorsInCategories } from "@/lib/lifestyle-factors/getLifestyleFactorsInCategories"
 
 export const createOrUpdateCategoryPG = async (catIndex: number, user: UserProfile | undefined, lifestyleFactors: LifestyleCategory[]) => {
 

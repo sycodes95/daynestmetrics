@@ -16,8 +16,10 @@ import {
 
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
@@ -30,21 +32,35 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { DataTablePagination } from "./dataTablePagination"
+import { getYMDFromDate } from "@/utils/getYMDFromDate"
+import EntryDialog from "@/app/entryDialog/entryDialog"
 
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+  getEntriesData
+}: DataTableProps<TData, TValue> & {getEntriesData : ()=> void}) {
 
   const [sorting, setSorting] = useState<SortingState>([])
 
@@ -67,9 +83,72 @@ export function DataTable<TData, TValue>({
       sorting,
       columnFilters,
       rowSelection,
-    }
-  
+    },
   })
+
+  // columns.push({
+  //   id: "actions",
+  //   cell: ({ row }) => {
+  //     const entry_date = getYMDFromDate(row.getValue("entry_date"))
+  //     const user_id = row.getValue("user_id")
+      
+  //     const deleteEntry = async () => {
+  //       const fetchDelete = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/entry`, {
+  //         method: 'DELETE',
+  //         headers: {
+  //           'Content-Type': 'application/json'
+  //         },
+  //         body: JSON.stringify({
+  //           entry_date,
+  //           user_id
+  //         })
+  //       })
+
+  //       const deletedEntry = await fetchDelete.json()
+
+  //       if(deletedEntry) return getEntriesData()
+
+  //     }
+      
+
+
+  //     return (
+  //     <Dialog>
+
+  //       <DropdownMenu>
+  //         <DropdownMenuTrigger asChild>
+  //           <Button variant="ghost" className="h-8 w-8 p-0">
+  //             <span className="sr-only">Open menu</span>
+  //             <MoreHorizontal className="h-4 w-4" />
+  //           </Button>
+  //         </DropdownMenuTrigger>
+  //         <DropdownMenuContent align="end">
+  //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            
+  //           <DropdownMenuSeparator />
+  //           <DialogTrigger className="w-full">
+  //             <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
+  //           </DialogTrigger>
+  //           <DropdownMenuItem className="bg-destructive text-white cursor-pointer " onClick={()=> deleteEntry()}>
+  //             Delete
+  //           </DropdownMenuItem>
+  //         </DropdownMenuContent>
+  //       </DropdownMenu>
+
+  //       <DialogContent className='shadow-lg shadow-gray-300 h-full  w-full max-w-6xl overflow-y-scroll md:overflow-hidden'>
+  //         <DialogHeader>
+  //           <DialogTitle>How was your day?</DialogTitle>
+  //           <DialogDescription>
+  //             <EntryDialog currentDate={entry_date} />
+  //           </DialogDescription>
+  //         </DialogHeader>
+  //       </DialogContent>
+  //     </Dialog> 
+  //     )
+  //   }
+  // });
+
+
   // too much padding on the rows, p-2 much better
   return (
     <div>

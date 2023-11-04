@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import StatCard from "./statCard"
-import { DailyEntry } from "@/app/daily-entry/dailyEntry"
+import { DailyEntry } from "@/app/entryDialog/dailyEntry"
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { getUserPG } from "@/lib/user/getUserPG";
 import { Skeleton } from "@mui/material";
