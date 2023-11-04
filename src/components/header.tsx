@@ -9,8 +9,11 @@ export default function Header(){
   const pathname = usePathname()
   const pageRoutes = [
     {name: 'Entries' , route : '/entries'},
-    {name: 'Lifestyle Factors' , route : '/lifestyle-factors'}
-  ]
+    {name: 'Insights' , route : '/insights'},
+    {name: 'Lifestyle Factors' , route : '/lifestyle-factors'},
+    {name: 'About' , route : '/about'}
+
+  ];
 
   return (
     <div className="sticky top-0 z-50 h-14 w-full pl-4 pr-4 flex justify-center items-center  bg-background rounded-b-lg  text-primary border-b border-gray-300
