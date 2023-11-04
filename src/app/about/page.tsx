@@ -37,6 +37,14 @@ export default function About(){
         your lifestyle factors with mood and productivity using the data visualization tools provided.
         </span>
 
+        <h1 className="font-bold text-2xl">Why?</h1>
+        <span className="lg:w-1/2">
+          We all know everybody is different, what could be poison to one person can be nourishing for another.
+          I came up with this idea because I think there are times when we feel like some activity, habits, etc may have an impact on our lives 
+          but there either isn't much scientific research done on it already or there are conflicting research. So I guess this is my 
+          attempt to sort of become a self - scientist, there's also many things science has not caught up to yet. So why not look into your own data and get a better idea of how YOU should live your life?
+        </span>
+
       </div>
 
     </div>
