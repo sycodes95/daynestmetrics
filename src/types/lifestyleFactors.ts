@@ -1,6 +1,6 @@
 export type LifestyleCategory = { 
-  user_id? : number;
-  lifestyle_category_id? : number;
+  user_id : number;
+  lifestyle_category_id : number;
   name: string;
   order_position: number;
   factors: LifestyleFactor[];

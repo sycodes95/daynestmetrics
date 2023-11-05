@@ -8,7 +8,7 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { Button } from "@/components/ui/button";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { getLifestyleFactorsInCategories } from "@/lib/lifestyle-factors/getLifestyleFactorsInCategories";
+import { getLifestyleCategories } from "@/lib/lifestyle-factors/getLifestyleCategories";
 import { getUserPG } from "@/lib/user/getUserPG";
 import { Oval } from 'react-loader-spinner'
 import { putDailyEntry } from "./services/putDailyEntry";
@@ -90,7 +90,7 @@ export default function EntryDialog( { currentDate, getAllDailyEntriesCalendar }
 
       const getLifestyleFactorsData = async () => {
         try {
-          const lsFactors = await getLifestyleFactorsInCategories(user)
+          const lsFactors = await getLifestyleCategories(user)
           if(!lsFactors) return 
 
           //filter out un named factors

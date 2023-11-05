@@ -22,7 +22,11 @@ export const addFactorToCategory = async (
 
     const newFactors = [...newLifestyleFactors[categoryIndex].factors]
 
-    const { user_id, lifestyle_category_id, name } = newLifestyleFactors[categoryIndex]
+    const { 
+      user_id, 
+      lifestyle_category_id, 
+      name 
+    } = newLifestyleFactors[categoryIndex]
 
     const factor = { 
       user_id: pgUser.user_id, 
@@ -42,7 +46,7 @@ export const addFactorToCategory = async (
     newLifestyleFactors[categoryIndex] = { 
       user_id, 
       lifestyle_category_id,
-      name: factorInput, 
+      name, 
       order_position: categoryIndex, 
       factors: newFactors
     };

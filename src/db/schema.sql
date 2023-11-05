@@ -20,6 +20,7 @@ CREATE TABLE lifestyle_category (
   user_id INTEGER NOT NULL,
   name TEXT NOT NULL,
   order_position INTEGER NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
   FOREIGN KEY (user_id) REFERENCES app_user(user_id)
 );
 
@@ -44,7 +45,7 @@ CREATE TABLE daily_entry (
   productivity_rating INTEGER NOT NULL,
   journal TEXT DEFAULT '',
   user_id INTEGER NOT NULL,
-  entry_date DATE NOT NULL UNIQUE,
+  entry_date DATE NOT NULL,
   FOREIGN KEY (user_id) REFERENCES app_user(user_id)
 );
 

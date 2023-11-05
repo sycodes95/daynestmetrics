@@ -11,6 +11,7 @@ import {
 import { ResponsiveLine } from '@nivo/line'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Rating } from "./statBar";
+import { useEffect } from "react";
 
 type StatCardProps = {
   className?: string;
@@ -65,6 +66,9 @@ type StatCardProps = {
 // ]
 
 export default function StatCard ({className, statName, data, lineColor} : StatCardProps) {
+  useEffect(()=> {
+    console.log(data);
+  },[data])
   return (
     <Card className={`${className}  h-32 relative w-full flex border-gray-400`}>
       <CardHeader className="p-0 text-left absolute top-0 left-0 z-10 w-full">
@@ -76,6 +80,8 @@ export default function StatCard ({className, statName, data, lineColor} : StatC
         
       </CardHeader>
       <CardContent className="p-0  w-full flex justify-center">
+        {
+        data && data.length > 0 ? 
         <ResponsiveContainer className={`flex transition-all`} width="90%" height="99%">
           <LineChart className="h-32"  data={data}
             margin={{ top: 30, right: 5, left: 5, bottom: 0 }}>
@@ -83,6 +89,13 @@ export default function StatCard ({className, statName, data, lineColor} : StatC
             <Line type="monotone" dataKey="rating" stroke="#AAAAAA" strokeWidth={`2px`} />
           </LineChart>
         </ResponsiveContainer>
+        :
+        <div className="h-full w-full flex items-end justify-center">
+          <span className="">No Data</span>
+        </div>
+
+        }
+        
       </CardContent>
       
     </Card>

@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/alert"
 
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { getLifestyleFactorsInCategories } from "@/lib/lifestyle-factors/getLifestyleFactorsInCategories";
+import { getLifestyleCategories } from "@/lib/lifestyle-factors/getLifestyleCategories";
 import { updateLifestyleCategory } from "./services/replaceLifestyleCategory";
 import { createOrUpdateCategoryPG } from "./services/createOrUpdateCategoryPG";
 import { updateFactorPG } from "./services/updateFactorPG";
@@ -45,15 +45,25 @@ import { deleteFactorFromCategory } from "./services/deleteFactorFromCategory";
 import { addFactorToCategory } from "./services/addFactorToCategory";
 import PageHeading from "@/components/pageHeading";
 import { LifestyleCategory } from "@/types/lifestyleFactors";
+import { updateCategory } from "./services/updateCategory";
+import { getUserIdFromSub } from "@/lib/user/getUserIdFromSub";
 
 
 export default function LifestyleFactors() {
 
   const { user, error, isLoading } = useUser();
 
+  const [userLoaded, setUserLoaded] = useState(false)
+
   const [lifestyleCategories, setLifestyleCategories] = useState<LifestyleCategory[]>([])
 
   const [factorInput, setFactorInput] = useState('')
+
+  const [categoryInput, setCategoryInput] = useState('')
+
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const [hasLoadedCategories, setHasLoadedCategories] = useState(false);
 
   const submitFactor = async (catIndex: number) => {
 
@@ -61,6 +71,7 @@ export default function LifestyleFactors() {
 
     if(newLifestyleFactors) {
       setLifestyleCategories(newLifestyleFactors)
+      setFactorInput('')
     }
 
   }
@@ -88,21 +99,56 @@ export default function LifestyleFactors() {
 
 
   }
- 
-  useEffect(()=> {
 
-    if(user && !error && !isLoading) getLSFactors()
+  const updateCategoryName = async (lifestyle_category_id: number) => {
+
+    try {
+      if(!user) return null
+
+      const user_id = await getUserIdFromSub(user)
+
+      // set updated state 
+      setLifestyleCategories(prev => {
+
+        const newLSCategories = [...prev]
+        const categoryIndexToUpdate = newLSCategories.findIndex(category => category.lifestyle_category_id === lifestyle_category_id)
+
+        if(categoryIndexToUpdate) {
+          newLSCategories[categoryIndexToUpdate].name = categoryInput
+        }
+        return newLSCategories
+
+        
+      })
+
+      // patch update category on backend
+      const updateAndReturnCategory = await updateCategory(categoryInput, lifestyle_category_id, user_id)
+
+      if(!updateAndReturnCategory) return setErrorMessage('Error updating category name')
+
+      return setCategoryInput('')
+    } catch (error) {
+      
+    }
+  }
+  
+  useEffect(()=> {
+    if(user && !error && !isLoading) setUserLoaded(true)
   },[user, error, isLoading])
 
+  useEffect(() => {
+    userLoaded && getLsCategories()
+  },[userLoaded])
 
-  async function getLSFactors () {
+  useEffect(()=> {
+    console.log(lifestyleCategories);
+  },[lifestyleCategories])
+
+  async function getLsCategories () {
 
     if(user) {
-
-      const lsFactors = await getLifestyleFactorsInCategories(user)
-
-      lsFactors && lsFactors.length > 0 ? setLifestyleCategories(lsFactors) : setLifestyleCategories([]) 
-
+      const lsFactors = await getLifestyleCategories(user)
+      setLifestyleCategories(lsFactors)
     };
 
   };
@@ -145,26 +191,41 @@ export default function LifestyleFactors() {
           <div key={catIndex} className="rounded-lg text-black w-full h-full flex flex-col gap-2 " >
 
             <div className="flex items-center h-fit gap-2 ">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className={`w-full ${data.name ? 'text-primary' : 'text-gray-400'} flex justify-start items-center p-2 bg-white border-gray-300 h-full rounded-lg border hover:border-black`}
+                  onClick={()=> setCategoryInput(data.name)} >
+                    {data.name ? data.name: `Category ${catIndex}`}
+                  </button>
 
-              <Input className="w-full !border-b-1 border-gray-300 focus:bg-background text-md  text-gray-600 placeholder-shown:placeholder-gray-400 font-semibold caret-black" 
-              value={lifestyleCategories[catIndex].name}  
-              onChange={(e) => 
-                setLifestyleCategories(updateLifestyleCategory(catIndex, e.target.value, lifestyleCategories))
-              }
-              onBlur={()=> 
-                createOrUpdateCategoryPG(catIndex, user, lifestyleCategories).then(res => {
-                  if(res) getLSFactors()
-                }) 
-              }
-              onKeyDown={(e) => {
-                if(e.key === 'Enter') {
-                  createOrUpdateCategoryPG(catIndex, user, lifestyleCategories).then(res => {
-                    if(res) getLSFactors()
-                  }) 
-                }
-              }}
-              placeholder={`Category ${catIndex + 1}`} 
-              />
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Edit Category</DialogTitle>
+                    <DialogDescription>
+                      
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label className="text-right">
+                        Name
+                      </Label>
+                      <Input id="name" value={categoryInput} onChange={(e)=> setCategoryInput(e.target.value)} placeholder="..." className="col-span-3" />
+                    </div>
+                    
+                  </div>
+                  
+                  <DialogFooter>
+                    <DialogClose>
+                      <Button onClick={()=> updateCategoryName(data.lifestyle_category_id, data.name)}>Save category</Button>
+                    </DialogClose>
+                    
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              
               <Dialog>
                 <DialogTrigger asChild>
                   <Button className="bg-primary text-primary-foreground" >Add</Button>

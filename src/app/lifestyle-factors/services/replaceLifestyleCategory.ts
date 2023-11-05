@@ -1,4 +1,4 @@
-import { LifestyleCategory } from "../page";
+import { LifestyleCategory } from "@/types/lifestyleFactors";
 
 export const updateLifestyleCategory = (categoryIndex: number, value: string, lifestyleFactors: LifestyleCategory[]) => {
 

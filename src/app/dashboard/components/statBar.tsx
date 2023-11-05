@@ -97,6 +97,8 @@ export default function StatBar () {
     
     if(pastMonthEntries.length > 0) {
       formatEntriesForVis()
+    } else {
+      setStatsAreLoading(false)
     }
 
   },[pastMonthEntries])
