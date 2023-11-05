@@ -30,8 +30,8 @@ CREATE TABLE lifestyle_factor (
   user_id INTEGER NOT NULL,
   nano_id TEXT NOT NULL,
   name TEXT NOT NULL,
-  order_position INTEGER NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP;
+  archive BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES app_user(user_id),
   FOREIGN KEY (lifestyle_category_id) REFERENCES lifestyle_category(lifestyle_category_id)
 );
@@ -59,15 +59,3 @@ CREATE TABLE daily_entry_factor (
   PRIMARY KEY (daily_entry_id, lifestyle_factor_id)
 );
 
--- CREATE TABLE daily_entry_factor (
---   daily_entry_id INTEGER NOT NULL,
---   lifestyle_factor_id INTEGER NOT NULL,
---   did BOOLEAN NOT NULL,
---   name TEXT NOT NULL,
---   user_id INTEGER NOT NULL,
---   FOREIGN KEY (daily_entry_id) REFERENCES daily_entry(daily_entry_id) ON DELETE CASCADE,
---   FOREIGN KEY (lifestyle_factor_id) REFERENCES lifestyle_factor(lifestyle_factor_id) ON DELETE CASCADE,
---   FOREIGN KEY (name) REFERENCES lifestyle_factor(name),
---   FOREIGN KEY (user_id) REFERENCES app_user(user_id),
---   PRIMARY KEY (daily_entry_id, lifestyle_factor_id)
--- );

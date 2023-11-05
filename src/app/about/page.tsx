@@ -34,7 +34,7 @@ export default function About(){
         <h2 className="font-bold text-sm">Insights:</h2>
         <span className="lg:w-1/2">The Insights tab is where the magic happens. This is where after you've gathered a good 
         amount of daily entries you can start to see statistics and see the correlations between 
-        your lifestyle factors with mood and productivity using the data visualization tools provided.
+        your lifestyle factors with mood and productivity using the data visualization tools provided. The more entries you have the better.
         </span>
 
         <h1 className="font-bold text-2xl">Why?</h1>

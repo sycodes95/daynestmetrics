@@ -227,6 +227,7 @@ export default function Entries() {
               <PopoverContent className="text-primary flex flex-wrap gap-4 max-w-xxs w-full">
 
                 {
+                didFactors &&
                 didFactors.length > 0 ? 
                 didFactors.map((factor) => (
                   <div className="p-1 border border-black rounded-2xl" key={factor}>
@@ -254,6 +255,7 @@ export default function Entries() {
               <PopoverContent className="text-primary flex flex-wrap gap-4 max-w-xxs w-full" side="top">
 
                 {
+                didNotFactors &&
                 didNotFactors.length > 0 ? 
                 didNotFactors.map((factor) => (
                   <div className="p-1 border border-black rounded-2xl" key={factor}>

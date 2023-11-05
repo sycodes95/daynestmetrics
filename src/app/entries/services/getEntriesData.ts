@@ -15,7 +15,7 @@ export const getEntriesData = async (user: UserProfile) => {
 
     const entries = await fetchGetAllEntries.json()
 
-    if(!entries || entries.length < 1) return 
+    if(!entries || entries.length < 1) return []
 
     const fetchGetAllEntryFactors = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/all-entry-factors?user_id=${user_id}`)
 

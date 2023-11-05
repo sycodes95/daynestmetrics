@@ -4,7 +4,13 @@ import { nanoid } from "nanoid";
 import { addFactorToPG } from "./addFactorToPG";
 import { LifestyleCategory } from "@/types/lifestyleFactors";
 
-export const addFactorToCategory = async (categoryIndex: number, lifestyleFactors: LifestyleCategory[], user: UserProfile | undefined) => {
+export const addFactorToCategory = async (
+  categoryIndex: number, 
+  lifestyleFactors: LifestyleCategory[], 
+  user: UserProfile | undefined,
+  factorInput: string
+  ) => {
+  
 
   try {
     
@@ -22,8 +28,8 @@ export const addFactorToCategory = async (categoryIndex: number, lifestyleFactor
       user_id: pgUser.user_id, 
       lifestyle_category_id,
       nano_id: nanoid(), 
-      name: '', 
-      order_position: newFactors.length
+      name: factorInput, 
+      archive: false
     }
 
     //adds factor then returns the factor with its id
@@ -32,11 +38,11 @@ export const addFactorToCategory = async (categoryIndex: number, lifestyleFactor
     if(!addAndReturnFactor) return null
 
     newFactors.push(addAndReturnFactor);
-    
+
     newLifestyleFactors[categoryIndex] = { 
       user_id, 
       lifestyle_category_id,
-      name, 
+      name: factorInput, 
       order_position: categoryIndex, 
       factors: newFactors
     };
@@ -52,3 +58,4 @@ export const addFactorToCategory = async (categoryIndex: number, lifestyleFactor
   
 
 }
+

@@ -7,11 +7,11 @@ export type LifestyleCategory = {
 };
 
 export type LifestyleFactor = { 
-  user_id? : number;
-  lifestyle_factor_id?: number;
-  lifestyle_category_id? : number;
+  user_id : number;
+  archive: boolean;
+  lifestyle_factor_id: number;
+  lifestyle_category_id : number;
   nano_id: string; 
   name: string; 
-  order_position: number;
   created_at? : string;
 };

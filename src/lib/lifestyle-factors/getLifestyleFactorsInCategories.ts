@@ -1,4 +1,4 @@
-import { LifestyleCategory, LifestyleFactor } from "@/app/lifestyle-factors/page";
+import { LifestyleCategory, LifestyleFactor } from "@/types/lifestyleFactors";
 import { getUserPG } from "../user/getUserPG";
 import { UserProfile } from "@auth0/nextjs-auth0/client";
 
@@ -18,7 +18,7 @@ export async function getLifestyleFactorsInCategories(user : UserProfile | undef
     const lifestyleCategories = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/category?user_id=${pgUser.user_id}`).then(res => res.json())
   
     const lifestyleFactors = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor?user_id=${pgUser.user_id}`).then(res => res.json())
-  
+    
     lifestyleCategories.forEach((data: LifestyleCategory) => {
       defaultArray[data.order_position] = {
         user_id : data.user_id,
@@ -28,7 +28,7 @@ export async function getLifestyleFactorsInCategories(user : UserProfile | undef
         factors : [],
       }
     });
-  
+    if(!lifestyleFactors) return defaultArray
     lifestyleFactors.forEach((data: LifestyleFactor) => {
       const categoryIndex = defaultArray.findIndex(el => el.lifestyle_category_id === data.lifestyle_category_id)
       defaultArray[categoryIndex].factors.push(data)
@@ -39,7 +39,7 @@ export async function getLifestyleFactorsInCategories(user : UserProfile | undef
       })
     })
   
-  
+    console.log(defaultArray);
     return defaultArray;
     
   } catch (error) {

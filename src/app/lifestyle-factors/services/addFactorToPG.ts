@@ -1,6 +1,13 @@
-import { LifestyleFactor } from "@/types/lifestyleFactors"
 
-export const addFactorToPG = async (factor : LifestyleFactor) => {
+type CreateLifestyleFactor = {
+  user_id: number,
+  archive: boolean;
+  lifestyle_category_id: number;
+  nano_id: string; 
+  name: string; 
+}
+
+export const addFactorToPG = async (factor : CreateLifestyleFactor) => {
 
   try {
 

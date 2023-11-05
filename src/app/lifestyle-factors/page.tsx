@@ -8,12 +8,24 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button";
-
+import { Label } from "@/components/ui/label"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
 } from "@/components/ui/popover" 
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 
 import { AlertCircle } from "lucide-react"
  
@@ -25,12 +37,12 @@ import {
 
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { getLifestyleFactorsInCategories } from "@/lib/lifestyle-factors/getLifestyleFactorsInCategories";
-import { updateLifestyleCategory } from "./utils/replaceLifestyleCategory";
-import { createOrUpdateCategoryPG } from "./utils/createOrUpdateCategoryPG";
-import { updateFactorPG } from "./utils/updateFactorPG";
-import { updateLifestyleFactors } from "./utils/updateLifestyleFactors";
-import { deleteFactorFromCategory } from "./utils/deleteFactorFromCategory";
-import { addFactorToCategory } from "./utils/addFactorToCategory";
+import { updateLifestyleCategory } from "./services/replaceLifestyleCategory";
+import { createOrUpdateCategoryPG } from "./services/createOrUpdateCategoryPG";
+import { updateFactorPG } from "./services/updateFactorPG";
+import { updateLifestyleFactors } from "./services/updateLifestyleFactors";
+import { deleteFactorFromCategory } from "./services/deleteFactorFromCategory";
+import { addFactorToCategory } from "./services/addFactorToCategory";
 import PageHeading from "@/components/pageHeading";
 import { LifestyleCategory } from "@/types/lifestyleFactors";
 
@@ -39,8 +51,44 @@ export default function LifestyleFactors() {
 
   const { user, error, isLoading } = useUser();
 
-  const [lifestyleFactors, setLifestyleFactors] = useState<LifestyleCategory[]>([])
+  const [lifestyleCategories, setLifestyleCategories] = useState<LifestyleCategory[]>([])
 
+  const [factorInput, setFactorInput] = useState('')
+
+  const submitFactor = async (catIndex: number) => {
+
+    const newLifestyleFactors = await addFactorToCategory(catIndex, lifestyleCategories, user, factorInput)
+
+    if(newLifestyleFactors) {
+      setLifestyleCategories(newLifestyleFactors)
+    }
+
+  }
+
+  const archiveFactor = async (user_id: number, lifestyle_factor_id: number) => {
+
+    const request = {
+      archive: true,
+      user_id,
+      lifestyle_factor_id
+    }
+
+    const archiveFactor = await fetch (`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/archive`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(request)
+    })
+
+    if(archiveFactor) {
+      const newLifestyleFactors = [...lifestyleCategories]
+      
+    }
+
+
+  }
+ 
   useEffect(()=> {
 
     if(user && !error && !isLoading) getLSFactors()
@@ -53,7 +101,7 @@ export default function LifestyleFactors() {
 
       const lsFactors = await getLifestyleFactorsInCategories(user)
 
-      lsFactors && lsFactors.length > 0 ? setLifestyleFactors(lsFactors) : setLifestyleFactors([]) 
+      lsFactors && lsFactors.length > 0 ? setLifestyleCategories(lsFactors) : setLifestyleCategories([]) 
 
     };
 
@@ -93,66 +141,80 @@ export default function LifestyleFactors() {
         ">
 
         {
-        lifestyleFactors.map((data, catIndex) => (
+        lifestyleCategories.map((data, catIndex) => (
           <div key={catIndex} className="rounded-lg text-black w-full h-full flex flex-col gap-2 " >
 
             <div className="flex items-center h-fit gap-2 ">
 
-              <Input className="w-full !border-b-1 border-gray-300 text-md text-gray-600 placeholder-shown:placeholder-gray-400 font-semibold caret-black" 
-              value={lifestyleFactors[catIndex].name}  
+              <Input className="w-full !border-b-1 border-gray-300 focus:bg-background text-md  text-gray-600 placeholder-shown:placeholder-gray-400 font-semibold caret-black" 
+              value={lifestyleCategories[catIndex].name}  
               onChange={(e) => 
-                setLifestyleFactors(updateLifestyleCategory(catIndex, e.target.value, lifestyleFactors))
+                setLifestyleCategories(updateLifestyleCategory(catIndex, e.target.value, lifestyleCategories))
               }
               onBlur={()=> 
-                createOrUpdateCategoryPG(catIndex, user, lifestyleFactors).then(res => {
+                createOrUpdateCategoryPG(catIndex, user, lifestyleCategories).then(res => {
                   if(res) getLSFactors()
                 }) 
               }
               onKeyDown={(e) => {
                 if(e.key === 'Enter') {
-                  createOrUpdateCategoryPG(catIndex, user, lifestyleFactors).then(res => {
+                  createOrUpdateCategoryPG(catIndex, user, lifestyleCategories).then(res => {
                     if(res) getLSFactors()
                   }) 
                 }
               }}
               placeholder={`Category ${catIndex + 1}`} 
               />
-              
-              <Button className="bg-primary text-primary-foreground" onClick={()=> {
-                addFactorToCategory(catIndex, lifestyleFactors, user).then(newState => {
-                  if(newState)  setLifestyleFactors(newState)
-                })
-                
-              }} variant={'outline'}>Add</Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="bg-primary text-primary-foreground" >Add</Button>
+
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Add factor</DialogTitle>
+                    <DialogDescription>
+                      Make sure to double check spelling, you cannot edit a factor once created!
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label className="text-right">
+                        Factor
+                      </Label>
+                      <Input id="name" value={factorInput} onChange={(e)=> setFactorInput(e.target.value)} placeholder="..." className="col-span-3" />
+                    </div>
+                    
+                  </div>
+                  
+                  <DialogFooter>
+                    <DialogClose>
+                      <Button type="submit" onClick={()=> submitFactor(catIndex)}>Save factor</Button>
+                    </DialogClose>
+                    
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
             </div>
 
 
             <div className="h-full flex flex-col gap-1 ">
               {
               data.factors.map((factor) => (
-              <div key={factor.nano_id} className="flex items-center h-fit  ">
-                <Input  className="h-10 border-none placeholder-shown:placeholder-gray-400 text-sm shadow-sm shadow-slate-300" value={factor.name} 
-                onChange={(e) => setLifestyleFactors(updateLifestyleFactors(catIndex, factor.nano_id, e.target.value, lifestyleFactors))}  
-                onBlur={()=> updateFactorPG(catIndex, factor.nano_id, lifestyleFactors)}
-                placeholder="test"/>
+              <div key={factor.nano_id} className="flex items-center h-fit justify-between p-2">
+                <span  className=" border-none placeholder-shown:placeholder-gray-400 text-sm shadow-sm shadow-slate-300" 
+                >
+                  {factor.name}
+                </span>
                 <Popover>
                   <PopoverTrigger>
                     <DeleteOutlineIcon className="hover:text-red-500 transition-all" />
                   </PopoverTrigger>
                   <PopoverContent>
                     <div className="flex flex-col gap-2">
-                      <span>Are you sure you want to delete this factor?</span>
-                      <Button variant={'destructive'} onClick={()=> {
-                        deleteFactorFromCategory(
-                        user,
-                        catIndex, 
-                        factor.lifestyle_factor_id ? factor.lifestyle_factor_id : null,  
-                        factor.nano_id,
-                        lifestyleFactors
-                        ).then(res => {
-                          if(res) setLifestyleFactors(res)
-                        })
-                      } } >Delete</Button>
+                      <span>Are you sure you want to archive this factor?</span>
+                      <Button variant={'destructive'} onClick={()=> archiveFactor(factor.user_id, factor.lifestyle_factor_id)} >Archive</Button>
                     </div>
                   </PopoverContent>
                 </Popover>
