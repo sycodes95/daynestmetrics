@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from "react"
 
-import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import { Input } from "@/components/ui/input"
@@ -27,26 +26,14 @@ import {
 } from "@/components/ui/dialog"
 
 
-import { AlertCircle } from "lucide-react"
- 
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert"
-
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { getLifestyleCategories } from "@/lib/lifestyle-factors/getLifestyleCategories";
-import { updateLifestyleCategory } from "./services/replaceLifestyleCategory";
-import { createOrUpdateCategoryPG } from "./services/createOrUpdateCategoryPG";
-import { updateFactorPG } from "./services/updateFactorPG";
-import { updateLifestyleFactors } from "./services/updateLifestyleFactors";
-import { deleteFactorFromCategory } from "./services/deleteFactorFromCategory";
 import { addFactorToCategory } from "./services/addFactorToCategory";
 import PageHeading from "@/components/pageHeading";
 import { LifestyleCategory } from "@/types/lifestyleFactors";
 import { updateCategory } from "./services/updateCategory";
 import { getUserIdFromSub } from "@/lib/user/getUserIdFromSub";
+import LifestyleFactorsHeader from "./components/lifestyleFactorsHeader/lifestyleFactorsHeader";
 
 
 export default function LifestyleFactors() {
@@ -113,7 +100,7 @@ export default function LifestyleFactors() {
         const newLSCategories = [...prev]
         const categoryIndexToUpdate = newLSCategories.findIndex(category => category.lifestyle_category_id === lifestyle_category_id)
 
-        if(categoryIndexToUpdate) {
+        if(categoryIndexToUpdate > -1) {
           newLSCategories[categoryIndexToUpdate].name = categoryInput
         }
         return newLSCategories
@@ -154,143 +141,126 @@ export default function LifestyleFactors() {
   };
 
   return (
-    <>
+   
+    <div className="flex flex-col gap-8 w-full">
+      
+      <LifestyleFactorsHeader />
+      
+      <div className="w-full h-fit 
+      grid 
+      grid-cols-1 
+      sm:grid-cols-2 
+      md:grid-cols-3  
+      lg:grid-cols-4 
+      gap-x-4 gap-y-8 
+      items-center
+      justify-between
+      ">
+
       {
-      user &&
-      <div className="flex flex-col gap-8 w-full">
-        <div className="flex flex-col justify-between gap-4  items-center w-full">
-           <PageHeading
-            header="Lifestyle Factors"
-            body="Add lifestyle factors that you want to track daily."
-            >
-              <DirectionsRunIcon />
-            </PageHeading>
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Warning</AlertTitle>
-            <AlertDescription className="text-xs">
-              Deleting any lifestyle factors that are used in a daily entry will also remove it from the entry.
-            </AlertDescription>
-          </Alert>
-        </div>
-       
+      lifestyleCategories.map((data, catIndex) => (
+        <div key={catIndex} className="rounded-lg text-black w-full h-full flex flex-col gap-2 " >
 
-        <div className="w-full h-fit 
-        grid 
-        grid-cols-1 
-        sm:grid-cols-2 
-        md:grid-cols-3  
-        lg:grid-cols-4 
-        gap-x-4 gap-y-8 
-        items-center
-        justify-between
-        ">
+          <div className="flex items-center h-fit gap-2 ">
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className={`w-full ${data.name ? 'text-primary' : 'text-gray-400'} flex justify-start items-center p-2 bg-white border-gray-300 h-full rounded-lg border hover:border-black`}
+                onClick={()=> setCategoryInput(data.name)} >
+                  {data.name ? data.name: `Category ${catIndex}`}
+                </button>
 
-        {
-        lifestyleCategories.map((data, catIndex) => (
-          <div key={catIndex} className="rounded-lg text-black w-full h-full flex flex-col gap-2 " >
-
-            <div className="flex items-center h-fit gap-2 ">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className={`w-full ${data.name ? 'text-primary' : 'text-gray-400'} flex justify-start items-center p-2 bg-white border-gray-300 h-full rounded-lg border hover:border-black`}
-                  onClick={()=> setCategoryInput(data.name)} >
-                    {data.name ? data.name: `Category ${catIndex}`}
-                  </button>
-
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Edit Category</DialogTitle>
-                    <DialogDescription>
-                      
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label className="text-right">
-                        Name
-                      </Label>
-                      <Input id="name" value={categoryInput} onChange={(e)=> setCategoryInput(e.target.value)} placeholder="..." className="col-span-3" />
-                    </div>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Edit Category</DialogTitle>
+                  <DialogDescription>
                     
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-right">
+                      Name
+                    </Label>
+                    <Input id="name" value={categoryInput} onChange={(e)=> setCategoryInput(e.target.value)} placeholder="..." className="col-span-3" />
                   </div>
                   
-                  <DialogFooter>
-                    <DialogClose>
-                      <Button onClick={()=> updateCategoryName(data.lifestyle_category_id, data.name)}>Save category</Button>
-                    </DialogClose>
-                    
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-
-              
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="bg-primary text-primary-foreground" >Add</Button>
-
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Add factor</DialogTitle>
-                    <DialogDescription>
-                      Make sure to double check spelling, you cannot edit a factor once created!
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label className="text-right">
-                        Factor
-                      </Label>
-                      <Input id="name" value={factorInput} onChange={(e)=> setFactorInput(e.target.value)} placeholder="..." className="col-span-3" />
-                    </div>
-                    
-                  </div>
-                  
-                  <DialogFooter>
-                    <DialogClose>
-                      <Button type="submit" onClick={()=> submitFactor(catIndex)}>Save factor</Button>
-                    </DialogClose>
-                    
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-
-            </div>
-
-
-            <div className="h-full flex flex-col gap-1 ">
-              {
-              data.factors.map((factor) => (
-              <div key={factor.nano_id} className="flex items-center h-fit justify-between p-2">
-                <span  className=" border-none placeholder-shown:placeholder-gray-400 text-sm shadow-sm shadow-slate-300" 
-                >
-                  {factor.name}
-                </span>
-                <Popover>
-                  <PopoverTrigger>
-                    <DeleteOutlineIcon className="hover:text-red-500 transition-all" />
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <div className="flex flex-col gap-2">
-                      <span>Are you sure you want to archive this factor?</span>
-                      <Button variant={'destructive'} onClick={()=> archiveFactor(factor.user_id, factor.lifestyle_factor_id)} >Archive</Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                </div>
                 
-              </div>
-              ))
-              }
+                <DialogFooter>
+                  <DialogClose>
+                    <Button onClick={()=> updateCategoryName(data.lifestyle_category_id)}>Save category</Button>
+                  </DialogClose>
+                  
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-primary text-primary-foreground" >Add</Button>
+
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Add factor</DialogTitle>
+                  <DialogDescription>
+                    Make sure to double check spelling, you cannot edit a factor once created!
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label className="text-right">
+                      Factor
+                    </Label>
+                    <Input id="name" value={factorInput} onChange={(e)=> setFactorInput(e.target.value)} placeholder="..." className="col-span-3" />
+                  </div>
+                  
+                </div>
+                
+                <DialogFooter>
+                  <DialogClose>
+                    <Button type="submit" onClick={()=> submitFactor(catIndex)}>Save factor</Button>
+                  </DialogClose>
+                  
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+          </div>
+
+
+          <div className="h-full flex flex-col gap-1 ">
+            {
+            data.factors.map((factor) => (
+            <div key={factor.nano_id} className="flex items-center h-fit justify-between p-2">
+              <span  className=" border-none placeholder-shown:placeholder-gray-400 text-sm shadow-sm shadow-slate-300" 
+              >
+                {factor.name}
+              </span>
+              <Popover>
+                <PopoverTrigger>
+                  <DeleteOutlineIcon className="hover:text-red-500 transition-all" />
+                </PopoverTrigger>
+                <PopoverContent>
+                  <div className="flex flex-col gap-2">
+                    <span>Are you sure you want to archive this factor?</span>
+                    <Button variant={'destructive'} onClick={()=> archiveFactor(factor.user_id, factor.lifestyle_factor_id)} >Archive</Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
               
             </div>
+            ))
+            }
+            
           </div>
-        ))
-        }
         </div>
-      </div>
+      ))
       }
-    </>
+      </div>
+    </div>
+   
   )
 }
