@@ -3,6 +3,15 @@
 import { Button } from "@/components/ui/button"
 
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -11,13 +20,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/components/ui/use-toast"
 
 import { getUserIdFromSub } from "@/lib/user/getUserIdFromSub"
 import { LifestyleCategory, LifestyleFactor } from "@/types/lifestyleFactors"
 import { UserProfile } from "@auth0/nextjs-auth0/client"
 import { useEffect, useState } from "react"
+import { tr } from "date-fns/locale"
 
 type ArchivedFactors = {
   user: UserProfile | undefined;
@@ -114,10 +123,28 @@ export default function ArchivedFactors ({
   }
 
   const optimisticPermDelete = (factor: LifestyleFactor) => {
-
+    setArchivedFactors(prev => prev.filter(prevFactor => prevFactor.lifestyle_factor_id !== factor.lifestyle_factor_id))
   }
 
-  const permDelete = (factor: LifestyleFactor) => {
+  const permDelete = async (factor: LifestyleFactor) => {
+    try {
+      const { user_id, lifestyle_factor_id } = factor
+      const request = {
+        user_id,
+        lifestyle_factor_id
+      }
+      const fetchDelete = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor`, {
+        method: 'DELETE',
+        headers: { 'Content-type' : 'application/json'},
+        body: JSON.stringify(request)
+      })
+
+      if(!fetchDelete) setErrorMessage('Error deleting factor')
+
+
+    } catch (error) {
+      console.error('Error deleting factor', error)
+    }
 
   }
 
@@ -127,19 +154,25 @@ export default function ArchivedFactors ({
 
   return (
     <>
-      
 
-      <button className=" h-fit rounded-lg bg-red-500 w-28 text-white transition-all duration-300 p-2" onClick={()=> setShowArchived(prev => !prev)}>
-        {!showArchived ? 'View Archived' : 'Hide Archived'}
-      </button>
+    <Sheet>
+      <SheetTrigger className="flex justify-start">
+        <button className=" h-fit rounded-lg bg-red-500 w-28 text-white transition-all duration-300 p-2" onClick={()=> setShowArchived(prev => !prev)}>
+        View Archived
+        </button>
+      </SheetTrigger>
 
+      <SheetContent className="min-h-[33%] rounded-t-lg flex justify-center max-h-screen overflow-y-auto " side={'bottom'}>
       {
-      showArchived &&
-      <div className={`${showArchived ? 'h-full opacity-100' : 'h-0 opacity-0 pointer-events-none'} w-full flex flex-col gap-4 transition-all duration-300`} >
-        
-        <div className="">
-          <span className="text-2xl">Archived Factors</span>
-        </div>
+      <div className={` w-full flex flex-col gap-4 transition-all duration-300 h-full max-w-7xl `} >
+        <SheetHeader>
+          <SheetTitle>
+            <span className="text-2xl">Archived Factors</span>
+          </SheetTitle>
+          <SheetDescription>
+            <span>Reinstate or delete archived factors.</span>
+          </SheetDescription>
+        </SheetHeader>
 
         <div className="w-full h-full flex flex-wrap gap-4 ">
           {
@@ -156,12 +189,12 @@ export default function ArchivedFactors ({
                     Edit Archived Factor
                   </DialogTitle>
                   <div className="flex gap-4 items-center p-4">
-                    <span className="font-bold">Factor : </span>
-                    <span className="font-bold">{factor.name}</span>
+                    <span className="font-bold">Factor </span>
+                    <span className="">{factor.name}</span>
 
                   </div>
                 </DialogHeader>
-                <DialogClose className="flex justify-end items-center gap-2">
+                <DialogClose className="flex flex-col md:flex-row md:justify-end md:items-center items-end gap-2">
                   <Button className=" text-gray-400 bg-background" variant={'ghost'}>
                     Cancel
                   </Button>
@@ -177,7 +210,10 @@ export default function ArchivedFactors ({
                   }}>
                     Reinstate
                   </Button>
-                  <Button className="" variant={'destructive'}>
+                  <Button className="" variant={'destructive'} onClick={()=> {
+                    optimisticPermDelete(factor)
+                    permDelete(factor)
+                  }}>
                     Delete Permanently
                   </Button>
                   
@@ -193,6 +229,8 @@ export default function ArchivedFactors ({
         </div>
       </div>
       }
+      </SheetContent>
+    </Sheet>
     </>
 
 

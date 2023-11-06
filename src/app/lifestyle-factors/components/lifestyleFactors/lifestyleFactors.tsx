@@ -122,6 +122,7 @@ export default function LifestyleFactors () {
         gap-x-4 gap-y-8 
         items-center
         justify-between
+        border-b border-gray-300 pb-4
         ">
 
         {
@@ -170,7 +171,7 @@ export default function LifestyleFactors () {
                       archiveFactor(factor.user_id, factor.lifestyle_factor_id)
                       toast({
                         title: "Factor Archived",
-                        description: `Factor Name : "${factor.name}`,
+                        description: `Factor Name : "${factor.name}"`,
                         
                       })
                     }}

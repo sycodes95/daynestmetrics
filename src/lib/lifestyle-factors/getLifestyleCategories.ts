@@ -54,6 +54,8 @@ export async function getLifestyleCategories(user : UserProfile, archived: boole
 
       lsFactorsUnderCategory.forEach((factor) => formattedCategory.factors.push(factor))
 
+      formattedCategory.factors.sort((a, b) => new Date(a.created_at).getTime() -  new Date(b.created_at).getTime())
+
       return formattedCategory
 
     })

@@ -18,6 +18,7 @@ import { LifestyleCategory } from "@/types/lifestyleFactors";
 import { getUserIdFromSub } from "@/lib/user/getUserIdFromSub";
 import { UserProfile } from "@auth0/nextjs-auth0/client";
 import { updateCategory } from "../../services/updateCategory";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 
 type EditCategoryProps = {
@@ -79,6 +80,7 @@ export default function EditCategory({
 
         <DialogHeader>
           <DialogTitle>Edit Category</DialogTitle>
+          <DialogDescription className="text-gray-500">Change category name.</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
