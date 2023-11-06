@@ -13,5 +13,5 @@ export type LifestyleFactor = {
   lifestyle_category_id : number;
   nano_id: string; 
   name: string; 
-  created_at? : string;
+  created_at : string;
 };

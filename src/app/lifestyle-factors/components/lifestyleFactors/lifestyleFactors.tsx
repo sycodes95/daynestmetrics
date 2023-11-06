@@ -19,6 +19,7 @@ import AddCircle from "@mui/icons-material/AddCircle";
 import AddFactor from "./addFactor";
 import CategorySection from "../categorySection/categorySection";
 import { getUserIdFromSub } from "@/lib/user/getUserIdFromSub";
+import ArchivedFactors from "../archivedFactors/archivedFactors";
 
 export default function LifestyleFactors () {
 
@@ -30,27 +31,11 @@ export default function LifestyleFactors () {
 
   const [archivedFactors, setArchivedFactors] = useState<LifestyleFactor[]>([])
 
+  const [showArchived, setShowArchived] = useState(false)
+
   const [errorMessage, setErrorMessage] = useState('')
 
-  const getAllArchivedFactors = async () => {
-    try {
-
-      if(!user) return
-
-      const user_id = await getUserIdFromSub(user)
-      const fetchGet = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/all-archived-factors?user_id=${user_id}`)
-
-      const archivedFactors = await fetchGet.json()
-
-      setArchivedFactors(archivedFactors)      
-    } catch (error) {
-      console.error('Error fetching archived factors' , error)
-
-
-    }
-  }
-
-  const archiveFactorState = (
+  const optimisticArchiveFactor = (
     user_id: number, 
     lifestyle_factor_id: number, 
     lifestyle_category_id: number
@@ -117,7 +102,6 @@ export default function LifestyleFactors () {
 
     if(user) {
       const lsFactors = await getLifestyleCategories(user)
-      getAllArchivedFactors()
       setLifestyleCategories(lsFactors)
     };
 
@@ -125,6 +109,7 @@ export default function LifestyleFactors () {
 
   return (
     <>
+      
       <div className="w-full h-fit 
         grid 
         grid-cols-1 
@@ -178,7 +163,7 @@ export default function LifestyleFactors () {
                     <Button 
                     variant={'destructive'} 
                     onClick={()=> {
-                      archiveFactorState(factor.user_id, factor.lifestyle_factor_id, category.lifestyle_category_id)
+                      optimisticArchiveFactor(factor.user_id, factor.lifestyle_factor_id, category.lifestyle_category_id)
                       archiveFactor(factor.user_id, factor.lifestyle_factor_id)
                     }}
                       >Archive</Button>
@@ -195,7 +180,19 @@ export default function LifestyleFactors () {
         }
       </div>
 
-      <div className="h-full w-full flex flex-col gap-4 ">
+      <ArchivedFactors 
+      user={user} 
+      lifestyleCategories={lifestyleCategories}
+      setLifestyleCategories={setLifestyleCategories}
+      setErrorMessage={setErrorMessage}
+      />
+
+      {/* <Button className="w-fit h-fit bg-red-500 transition-all duration-300" onClick={()=> setShowArchived(prev => !prev)}>
+        {!showArchived ? 'View Archived' : 'Hide Archived'}
+      </Button>
+
+      <div className={`${showArchived ? 'h-full opacity-100' : 'h-0 opacity-0 pointer-events-none'} w-full flex flex-col gap-4 transition-all duration-300`} >
+        
         <div className="">
           <span className="text-2xl">Archived Factors</span>
         </div>
@@ -205,14 +202,13 @@ export default function LifestyleFactors () {
           archivedFactors.map((factor, index) => (
             <button className={`${factor.name ? 'text-primary' : 'text-gray-400'} p-2 border border-gray-300 h-fit rounded-lg hover:border-black transition-all`} key={factor.lifestyle_factor_id}>
               <span>{factor.name ? factor.name : 'N/A'}</span>
-
             </button>
           ))
           }
 
         </div>
 
-      </div>
+      </div> */}
     </>
   )
 }

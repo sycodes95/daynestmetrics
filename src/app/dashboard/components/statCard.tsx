@@ -70,8 +70,8 @@ export default function StatCard ({className, statName, data, lineColor} : StatC
     console.log(data);
   },[data])
   return (
-    <Card className={`${className}  h-32 relative w-full flex border-gray-400`}>
-      <CardHeader className="p-0 text-left absolute top-0 left-0 z-10 w-full">
+    <Card className={`${className}  h-32 relative w-full flex flex-col border-gray-400`}>
+      <CardHeader className="p-0 text-left z-10 w-full">
         <CardTitle className="text-sm text-primary font-semibold flex flex-col md:flex-row justify-between gap-1 bg-black bg-opacity-10 rounded-lg w-fit md:w-full backdrop-blur-sm p-2">
           <span>{statName.slice(0, 1).toUpperCase() + statName.slice(1)}</span>
           <span className="font-normal text-xs flex items-center">Past Month</span>
@@ -79,7 +79,7 @@ export default function StatCard ({className, statName, data, lineColor} : StatC
         </CardTitle>
         
       </CardHeader>
-      <CardContent className="p-0  w-full flex justify-center">
+      <CardContent className="p-0 h-full w-full flex justify-center">
         {
         data && data.length > 0 ? 
         <ResponsiveContainer className={`flex transition-all`} width="90%" height="99%">

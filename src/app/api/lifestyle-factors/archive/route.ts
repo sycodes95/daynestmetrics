@@ -10,7 +10,7 @@ export async function PATCH(req: Request){
   RETURNING*`
 
   const updateParams = [
-    true,
+    lifestyle_factor.archive,
     lifestyle_factor.user_id,
     lifestyle_factor.lifestyle_factor_id
   ];
