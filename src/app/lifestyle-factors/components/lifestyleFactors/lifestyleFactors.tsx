@@ -1,22 +1,8 @@
 'use client'
 
-import { LifestyleCategory } from "@/types/lifestyleFactors";
+import { LifestyleCategory, LifestyleFactor } from "@/types/lifestyleFactors";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { useEffect, useState } from "react";
-import { addFactorToCategory } from "../../services/addFactorToCategory";
-import { getUserIdFromSub } from "@/lib/user/getUserIdFromSub";
-import { updateCategory } from "../../services/updateCategory";
-
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 
 import {
   Popover,
@@ -26,11 +12,13 @@ import {
 
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label"
 import { getLifestyleCategories } from "@/lib/lifestyle-factors/getLifestyleCategories";
 import EditCategory from "./editCategory";
+import AddCircle from "@mui/icons-material/AddCircle";
+import AddFactor from "./addFactor";
+import CategorySection from "../categorySection/categorySection";
+import { getUserIdFromSub } from "@/lib/user/getUserIdFromSub";
 
 export default function LifestyleFactors () {
 
@@ -40,21 +28,26 @@ export default function LifestyleFactors () {
 
   const [lifestyleCategories, setLifestyleCategories] = useState<LifestyleCategory[]>([])
 
-  const [factorInput, setFactorInput] = useState('')
-
-  const [categoryInput, setCategoryInput] = useState('')
+  const [archivedFactors, setArchivedFactors] = useState<LifestyleFactor[]>([])
 
   const [errorMessage, setErrorMessage] = useState('')
 
-  const submitFactor = async (catIndex: number) => {
+  const getAllArchivedFactors = async () => {
+    try {
 
-    const newLifestyleFactors = await addFactorToCategory(catIndex, lifestyleCategories, user, factorInput)
+      if(!user) return
 
-    if(newLifestyleFactors) {
-      setLifestyleCategories(newLifestyleFactors)
-      setFactorInput('')
+      const user_id = await getUserIdFromSub(user)
+      const fetchGet = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/all-archived-factors?user_id=${user_id}`)
+
+      const archivedFactors = await fetchGet.json()
+
+      setArchivedFactors(archivedFactors)      
+    } catch (error) {
+      console.error('Error fetching archived factors' , error)
+
+
     }
-
   }
 
   const archiveFactorState = (
@@ -124,26 +117,28 @@ export default function LifestyleFactors () {
 
     if(user) {
       const lsFactors = await getLifestyleCategories(user)
+      getAllArchivedFactors()
       setLifestyleCategories(lsFactors)
     };
 
   };
 
   return (
-    <div className="w-full h-fit 
-      grid 
-      grid-cols-1 
-      sm:grid-cols-2 
-      md:grid-cols-3  
-      lg:grid-cols-4 
-      gap-x-4 gap-y-8 
-      items-center
-      justify-between
-      ">
+    <>
+      <div className="w-full h-fit 
+        grid 
+        grid-cols-1 
+        sm:grid-cols-2 
+        md:grid-cols-3  
+        lg:grid-cols-4 
+        gap-x-4 gap-y-8 
+        items-center
+        justify-between
+        ">
 
-      {
-      lifestyleCategories.map((category, catIndex) => (
-        <div key={catIndex} className="rounded-lg text-black w-full h-full flex flex-col gap-2 " >
+        {
+        lifestyleCategories.map((category, catIndex) => (
+        <CategorySection key={catIndex} className="rounded-lg text-black w-full h-full flex flex-col gap-2 " >
 
           <div className="flex items-center h-fit gap-2 ">
 
@@ -153,37 +148,14 @@ export default function LifestyleFactors () {
             setLifestyleCategories={setLifestyleCategories}
             setErrorMessage={setErrorMessage}
             />
-            
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="bg-primary text-primary-foreground" >Add</Button>
 
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Add factor</DialogTitle>
-                  <DialogDescription>
-                    Make sure to double check spelling, you cannot edit a factor once created!
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label className="text-right">
-                      Factor
-                    </Label>
-                    <Input id="name" value={factorInput} onChange={(e)=> setFactorInput(e.target.value)} placeholder="..." className="col-span-3" />
-                  </div>
-                  
-                </div>
-                
-                <DialogFooter>
-                  <DialogClose>
-                    <Button type="submit" onClick={()=> submitFactor(catIndex)}>Save factor</Button>
-                  </DialogClose>
-                  
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <AddFactor 
+            categoryIndex={catIndex}
+            user={user}
+            lifestyleCategories={lifestyleCategories}
+            setLifestyleCategories={setLifestyleCategories}
+            setErrorMessage={setErrorMessage}
+            />
 
           </div>
 
@@ -209,7 +181,7 @@ export default function LifestyleFactors () {
                       archiveFactorState(factor.user_id, factor.lifestyle_factor_id, category.lifestyle_category_id)
                       archiveFactor(factor.user_id, factor.lifestyle_factor_id)
                     }}
-                     >Archive</Button>
+                      >Archive</Button>
                   </div>
                 </PopoverContent>
               </Popover>
@@ -217,11 +189,30 @@ export default function LifestyleFactors () {
             </div>
             ))
             }
-            
           </div>
-        </div>
-      ))
-      }
+        </CategorySection>
+        ))
+        }
       </div>
+
+      <div className="h-full w-full flex flex-col gap-4 ">
+        <div className="">
+          <span className="text-2xl">Archived Factors</span>
+        </div>
+
+        <div className="w-full h-full flex flex-wrap gap-4 ">
+          {
+          archivedFactors.map((factor, index) => (
+            <button className={`${factor.name ? 'text-primary' : 'text-gray-400'} p-2 border border-gray-300 h-fit rounded-lg hover:border-black transition-all`} key={factor.lifestyle_factor_id}>
+              <span>{factor.name ? factor.name : 'N/A'}</span>
+
+            </button>
+          ))
+          }
+
+        </div>
+
+      </div>
+    </>
   )
 }
