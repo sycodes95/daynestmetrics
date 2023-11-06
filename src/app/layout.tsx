@@ -11,6 +11,7 @@ import { getUserAndSyncDB } from '@/lib/user/getUserAndSyncDB';
 import { getUser } from '@/lib/user/getUser';
 import Footer from '@/components/footer';
 import { Provider } from 'react-redux'
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -45,13 +46,16 @@ export default async function RootLayout({
             <div className=' w-full h-full max-w-7xl p-4 flex'>
               {children}
             </div>
+            <Toaster/>
           </StyledComponentsRegistry>
 
           <Footer />
+          
           </>
           :
           <LandingPage/>
           }
+          
           
         </body>
       </UserProvider>

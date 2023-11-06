@@ -11,6 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { Toaster } from "@/components/ui/toaster"
+import { useToast } from "@/components/ui/use-toast"
 
 import { getUserIdFromSub } from "@/lib/user/getUserIdFromSub"
 import { LifestyleCategory, LifestyleFactor } from "@/types/lifestyleFactors"
@@ -32,6 +34,8 @@ export default function ArchivedFactors ({
 }: ArchivedFactors
   ) {
 
+  const { toast } = useToast()
+
   const [archivedFactors, setArchivedFactors] = useState<LifestyleFactor[]>([])
   const [showArchived, setShowArchived] = useState(false)
 
@@ -51,6 +55,12 @@ export default function ArchivedFactors ({
 
 
     }
+  }
+
+  const findArchivedFactorCategoryName = (factor: LifestyleFactor) => {
+    const category = lifestyleCategories.find(cat => cat.lifestyle_category_id === factor.lifestyle_category_id)
+    if(!category || !category.name) return 'N/A'
+    return category.name
   }
   
 
@@ -117,6 +127,8 @@ export default function ArchivedFactors ({
 
   return (
     <>
+      
+
       <button className=" h-fit rounded-lg bg-red-500 w-28 text-white transition-all duration-300 p-2" onClick={()=> setShowArchived(prev => !prev)}>
         {!showArchived ? 'View Archived' : 'Hide Archived'}
       </button>
@@ -157,6 +169,10 @@ export default function ArchivedFactors ({
                     optimisticRemoveFromArchivedList(factor)
                     optimisticReinstateArchived(factor)
                     reinstateArchived(factor)
+                    toast({
+                      title: "Lifestyle Factor Reinstated",
+                      description: `Factor "${factor.name}" added under Category: "${findArchivedFactorCategoryName(factor)}"`,
+                    })
                   }}>
                     Reinstate
                   </Button>
