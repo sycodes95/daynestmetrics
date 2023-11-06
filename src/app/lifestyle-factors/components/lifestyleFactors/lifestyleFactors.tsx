@@ -20,10 +20,13 @@ import AddFactor from "./addFactor";
 import CategorySection from "../categorySection/categorySection";
 import { getUserIdFromSub } from "@/lib/user/getUserIdFromSub";
 import ArchivedFactors from "../archivedFactors/archivedFactors";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function LifestyleFactors () {
 
   const { user, error, isLoading } = useUser();
+
+  const { toast } = useToast()
 
   const [userLoaded, setUserLoaded] = useState(false)
 
@@ -165,6 +168,11 @@ export default function LifestyleFactors () {
                     onClick={()=> {
                       optimisticArchiveFactor(factor.user_id, factor.lifestyle_factor_id, category.lifestyle_category_id)
                       archiveFactor(factor.user_id, factor.lifestyle_factor_id)
+                      toast({
+                        title: "Factor Archived",
+                        description: `Factor Name : "${factor.name}`,
+                        
+                      })
                     }}
                       >Archive</Button>
                   </div>

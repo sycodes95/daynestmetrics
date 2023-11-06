@@ -172,6 +172,7 @@ export default function ArchivedFactors ({
                     toast({
                       title: "Lifestyle Factor Reinstated",
                       description: `Factor "${factor.name}" added under Category: "${findArchivedFactorCategoryName(factor)}"`,
+                      
                     })
                   }}>
                     Reinstate
