@@ -16,7 +16,6 @@ import { getEntryFactors } from "./services/getEntryFactors";
 import { deleteDailyFactors } from "./services/deleteDayFactors";
 import { postDailyFactors } from "./services/postDailyFactors";
 import { getEntry } from "./services/getEntry";
-import { useRouter } from "next/navigation";
 import { LifestyleCategory, LifestyleFactor } from "@/types/lifestyleFactors";
 import { formatFactors } from "./utils/formatFactors";
 import { formatDateForUser } from "@/utils/formatDateForUser";
@@ -94,12 +93,11 @@ export default function EntryDialog( { currentDate, getAllDailyEntriesCalendar }
           if(!lsFactors) return 
 
           //filter out un named factors
-          setLifestyleFactors(lsFactors.filter(cat => cat.name))
+          setLifestyleFactors(lsFactors.filter(cat => cat.name && cat.factors.length > 0))
           
         } catch (error) {
           console.error('Error fetching lifestylefactors', error)
         }
-
       }
 
       getLifestyleFactorsData()
@@ -204,8 +202,8 @@ export default function EntryDialog( { currentDate, getAllDailyEntriesCalendar }
       setIsSaving(false)
       
       if(!postDailyFactorsResults) return null
-
-      getAllDailyEntriesCalendar()
+      if(getAllDailyEntriesCalendar) getAllDailyEntriesCalendar()
+      
       return {
         dailyEntry,
         didFactors : {

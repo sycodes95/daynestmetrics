@@ -176,6 +176,7 @@ export default function ArchivedFactors ({
 
         <div className="w-full h-full flex flex-wrap gap-4 ">
           {
+          archivedFactors.length > 0 ?
           archivedFactors.map((factor, index) => (
             <Dialog key={factor.lifestyle_factor_id}>
 
@@ -225,6 +226,8 @@ export default function ArchivedFactors ({
               </button> */}
             </Dialog>
           ))
+          :
+          <span className="text-gray-400">No archived factors..</span>
           }
         </div>
       </div>
