@@ -214,6 +214,11 @@ export default function ArchivedFactors ({
                   <Button className="" variant={'destructive'} onClick={()=> {
                     optimisticPermDelete(factor)
                     permDelete(factor)
+                    toast({
+                      title: "Lifestyle Factor Deleted",
+                      description: `Factor "${factor.name}" deleted`,
+                      
+                    })
                   }}>
                     Delete Permanently
                   </Button>
