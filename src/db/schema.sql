@@ -34,7 +34,7 @@ CREATE TABLE lifestyle_factor (
   archive BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES app_user(user_id),
-  FOREIGN KEY (lifestyle_category_id) REFERENCES lifestyle_category(lifestyle_category_id)
+  FOREIGN KEY (lifestyle_category_id) REFERENCES lifestyle_category(lifestyle_category_id) ON DELETE CASCADE
 );
 
 

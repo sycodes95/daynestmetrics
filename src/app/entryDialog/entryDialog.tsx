@@ -107,20 +107,16 @@ export default function EntryDialog( { currentDate, getAllDailyEntriesCalendar }
   },[user, error, isLoading])
 
   useEffect(()=> {
-    if(lifestyleFactors.length > 0 && user && !error && !isLoading) {
+    if(user && !error && !isLoading) {
       const getEntryData = async () => {
         try {
           //fetchData for dailyFactorsData state.
-          const { user_id } = await getUserPG(user)
           const entry = await getEntry(user, currentDate);
           if(!entry || !entry.daily_entry_id) return 
           setDailyEntryData(entry)
           
           //fetchData for dailyEntryFactors state.
-          const dailyEntryFactors = await getEntryFactors(user_id, entry.daily_entry_id)
-          if(!dailyEntryFactors || dailyEntryFactors.length < 1) return
-          const formattedFactors = formatFactors(dailyEntryFactors, lifestyleFactors)
-          setDailyFactorsData(formattedFactors)
+          
           
         } catch (error) {
           console.error(error)
@@ -132,7 +128,37 @@ export default function EntryDialog( { currentDate, getAllDailyEntriesCalendar }
 
     }
 
-  },[lifestyleFactors, user, error, isLoading])
+  },[user, error, isLoading])
+
+  useEffect(()=> {
+    if(lifestyleFactors && lifestyleFactors.length > 0 && dailyEntryData.daily_entry_id) {
+
+      const getDailyFactorsData = async () => {
+        try {
+          const { user_id } = await getUserPG(user)
+
+          if(!dailyEntryData.daily_entry_id) return
+
+          const dailyEntryFactors = await getEntryFactors(user_id, dailyEntryData.daily_entry_id)
+          
+          if(!dailyEntryFactors || dailyEntryFactors.length < 1) return
+
+          const formattedFactors = formatFactors(dailyEntryFactors, lifestyleFactors)
+          setDailyFactorsData(formattedFactors)
+          
+        } catch (error) {
+          console.error('Error getting entry factors in entryDialog', error)
+        }
+
+        
+
+      }
+      getDailyFactorsData()
+    }
+
+    
+
+  },[lifestyleFactors, dailyEntryData])
 
   // this function below is ugly lol
   const handleDidOrNot = (factor : LifestyleFactor, didOrNot: string) => {
