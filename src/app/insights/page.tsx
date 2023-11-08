@@ -31,84 +31,74 @@ export default function Insights() {
 
   const [dailyEntryFactors, setDailyEntryFactors] = useState<DailyEntryFactor[]>([])
 
-  const [selectedLifestyleFactors, setSelectedLifestyleFactors] = useState<number[]>([])
+  const [selectedLifestyleFactorIds, setSelectedLifestyleFactorIds] = useState<number[]>([])
 
   const [didOrDidNot, setDidOrDidNot] = useState<"Did" | "Did Not">("Did")
 
   const [scatterChartData, setScatterChartData] = useState<ScatterChartData[]>([])
 
   const makeScatterData = () => {
+    // check if user wants to see did or did not factor data
+    let did = didOrDidNot === 'Did';
 
-    let did : boolean;
+    const scatterData: ScatterChartData[] = []
 
-    if(didOrDidNot === 'Did'){
-      did = true
-    } else if( didOrDidNot === 'Did Not') {
-      did = false
-    }
-    const data: ScatterChartData[] = []
-    selectedLifestyleFactors.forEach((factorId) => {
-      const id = lifestyleFactors.find(f => f.lifestyle_factor_id === factorId)
-      const entryFactors = dailyEntryFactors.filter(eFactor => eFactor.did === did && eFactor.lifestyle_factor_id === factorId)
-      const entriesWithEntryFactors = entryFactors.map(eF => {
-        const entry = dailyEntries.find(e => e.daily_entry_id === eF.daily_entry_id)
-        if(!entry) {
-          return {
-            y: null,
-            x: null
-          }
-          
+    // iterate thru selectedLifestyleFactorIds to get 
+    // 1. name of lifestyle factor for scatter data Id
+    // 2. average mood / prod for Y / X axis from all daily entries where user either did or did not do selected factor
+    
+    selectedLifestyleFactorIds.forEach((id) => {
+
+      // find lifestyle factor that matches the id
+      const lifestyleFactor = lifestyleFactors.find(f => f.lifestyle_factor_id === id)
+
+      //get all entry factors that matches selected factor id
+      const entryFactors = dailyEntryFactors.filter(eFactor => eFactor.did === did && eFactor.lifestyle_factor_id === id)
+
+      // get y and x values from all entries that has selected factor that references the entry
+      const entriesYXValues = entryFactors.map(eF => {
+        const entry = dailyEntries.find(e => e.daily_entry_id === eF.daily_entry_id);
+        return entry ? { y: entry.mood_rating, x: entry.productivity_rating } : { y: null, x: null };
+      }).filter(data => data.y !== null && data.x !== null);
+
+      // get sum of mood and productivity ratings for selected factor
+      let moodSum = 0, prodSum = 0;
+
+      // iterate thru YX values and add the sums of mood and prod
+      entriesYXValues.forEach(({y , x} ) => {
+        if(y !== null && x !== null){
+          moodSum += y;
+          prodSum += x;
         }
-        return {
-          y: entry?.mood_rating,
-          x: entry?.mood_rating
-        }
-        
-      })
+      });
 
-      let moodSum: number = 0 ;
-      let prodSum: number = 0 ;
-      entriesWithEntryFactors.forEach((rating ) => {
-        if(rating.x && rating.y) {
-           moodSum += rating.x 
-           prodSum += rating.y
-        }
-       
-      })
-
-      let moodAvg: number = Number((moodSum / entriesWithEntryFactors.length).toFixed(2))
-      let prodAvg: number = Number((prodSum / entriesWithEntryFactors.length).toFixed(2))
-
-      if(entriesWithEntryFactors.length > 0){
-        data.push({
-          id: id ? id.name : '',
-          data: [
-            {
-              y: moodAvg, 
-              x: prodAvg,
-              entries: entriesWithEntryFactors.length
-            }
-          ]
-        })
-
+      const count = entriesYXValues.length;
+      if (count > 0 && lifestyleFactor) {
+        // get average mood and productivity for selected factor
+        const moodAvg = Number((moodSum / count).toFixed(2));
+        const prodAvg = Number((prodSum / count).toFixed(2));
+        // push data into scatterData array
+        scatterData.push({
+          id: lifestyleFactor.name,
+          data: [{ y: moodAvg, x: prodAvg, entries: count }]
+        });
       }
-      
+    });
 
-      
-    })
-
-    setScatterChartData(data)
-
-
+    setScatterChartData(scatterData)
     
   }
 
-  const handleSelectFactor = (factorId: number) => {
-    if(selectedLifestyleFactors.includes(factorId)){
-      return setSelectedLifestyleFactors(prev => prev.filter(id => id !== factorId))
-    } else if (!selectedLifestyleFactors.includes(factorId)){
-      return setSelectedLifestyleFactors(prev => [...prev, factorId])
+  const handleSelectFactor = (id: number) => {
+    if(selectedLifestyleFactorIds.includes(id)){
+      return setSelectedLifestyleFactorIds(prev => prev.filter(id => id !== id))
+    } else if (!selectedLifestyleFactorIds.includes(id)){
+      return setSelectedLifestyleFactorIds(prev => [...prev, id])
     }
+  }
+
+  const populateSelectedLifestyleFactors = () => {
+    setSelectedLifestyleFactorIds(lifestyleFactors.map(factor => factor.lifestyle_factor_id))
   }
 
   useEffect(()=> {
@@ -120,8 +110,15 @@ export default function Insights() {
       getLifestyleFactors(user).then(factors => setLifestyleFactors(factors))
       getEntryFactors(user).then(entryFactors => setDailyEntryFactors(entryFactors))
       getDailyEntries(user).then(entries => setDailyEntries(entries))
+      
     }
   },[userLoaded])
+
+  useEffect(()=> {
+    if(lifestyleFactors.length > 0 && dailyEntryFactors.length > 0 && dailyEntries.length > 0) {
+      populateSelectedLifestyleFactors()
+    }
+  },[lifestyleFactors, dailyEntryFactors, dailyEntries])
 
   useEffect(()=> {
     console.log(scatterChartData);
@@ -129,7 +126,7 @@ export default function Insights() {
 
   useEffect(()=> {
     makeScatterData()
-  },[selectedLifestyleFactors, didOrDidNot])
+  },[selectedLifestyleFactorIds, didOrDidNot])
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -146,7 +143,7 @@ export default function Insights() {
 
       <ResponsiveScatterPlot
         data={scatterChartData}
-        margin={{ top: 40, right: 100, bottom: 70, left: 50 }}
+        margin={{ top: 40, right: 120, bottom: 70, left: 50 }}
         xScale={{ type: 'linear', min: 0, max: 10 }}
         xFormat=">-0.2f"
         yScale={{ type: 'linear', min: 0, max: 10 }}
@@ -154,6 +151,7 @@ export default function Insights() {
         blendMode="multiply"
         axisTop={null}
         axisRight={null}
+        colors={{scheme: 'set1'}}
         axisBottom={{
           orient: 'bottom',
           tickSize: 5,
@@ -200,7 +198,7 @@ export default function Insights() {
       />
       </div>
 
-      <div className="flex items-center gap-4 p-4">
+      <div className="flex items-center gap-2 p-4">
         <button 
         className={`${didOrDidNot === 'Did' ? 'border-black' : 'border-gray-400'} p-2  border rounded-lg w-20 h-8 flex items-center justify-center `}
         onClick={()=> setDidOrDidNot('Did')}
@@ -215,8 +213,8 @@ export default function Insights() {
       <div className="grid grid-cols-2 md:grid-cols-4 w-full h-fit p-4">
       { 
       lifestyleFactors.map((factor) => (
-        <div className="flex gap-4 items-center h-12" key={factor.lifestyle_factor_id}>
-          <Checkbox checked={selectedLifestyleFactors.includes(factor.lifestyle_factor_id)} onCheckedChange={()=> handleSelectFactor(factor.lifestyle_factor_id)} />
+        <div className="flex gap-3 items-center h-12" key={factor.lifestyle_factor_id}>
+          <Checkbox checked={selectedLifestyleFactorIds.includes(factor.lifestyle_factor_id)} onCheckedChange={()=> handleSelectFactor(factor.lifestyle_factor_id)} />
           <span>{factor.name}</span>
 
         </div>
