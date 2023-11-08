@@ -90,8 +90,9 @@ export default function Insights() {
   }
 
   const handleSelectFactor = (id: number) => {
+    console.log(id);
     if(selectedLifestyleFactorIds.includes(id)){
-      return setSelectedLifestyleFactorIds(prev => prev.filter(id => id !== id))
+      return setSelectedLifestyleFactorIds(prev => prev.filter(prevId => prevId !== id))
     } else if (!selectedLifestyleFactorIds.includes(id)){
       return setSelectedLifestyleFactorIds(prev => [...prev, id])
     }
@@ -125,6 +126,7 @@ export default function Insights() {
   },[scatterChartData])
 
   useEffect(()=> {
+    console.log(selectedLifestyleFactorIds);
     makeScatterData()
   },[selectedLifestyleFactorIds, didOrDidNot])
 
