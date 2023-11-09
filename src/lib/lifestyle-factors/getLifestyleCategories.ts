@@ -21,7 +21,6 @@ export async function getLifestyleCategories(user : UserProfile, archived: boole
         },
         body: JSON.stringify({ user_id })
       })
-      console.log(createDefaultCategories);
       lifestyleCategories = await createDefaultCategories.json()
     }
 

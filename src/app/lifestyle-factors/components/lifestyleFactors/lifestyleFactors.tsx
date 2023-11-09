@@ -101,7 +101,6 @@ export default function LifestyleFactors () {
   },[user, error, isLoading])
 
   useEffect(() => {
-    console.log('render');
     userLoaded && getLsCategories()
   },[userLoaded, getLsCategories])
 

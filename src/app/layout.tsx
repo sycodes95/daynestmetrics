@@ -1,7 +1,7 @@
 
 import { UserProvider, useUser } from '@auth0/nextjs-auth0/client';
 import '../styles/globals.css'
-import type { GetServerSidePropsContext, Metadata } from 'next'
+import type {  Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Header from '../components/header'
 import LandingPage from './landingPage/page';

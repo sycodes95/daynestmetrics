@@ -168,7 +168,6 @@ const columns: ColumnDef<DailyEntry>[] = [
     header: ({ column }) => (<div>Did Factors</div>),
       cell: ({ row }) => {
         const didFactors: string[] = row.getValue("didFactors")
-        console.log(didFactors);
         return (
           <Popover>
             <PopoverTrigger className="bg-primary text-secondary pl-2 pr-2 rounded-lg hover:bg-secondary hover:text-primary transition-colors">View</PopoverTrigger>
@@ -195,7 +194,6 @@ const columns: ColumnDef<DailyEntry>[] = [
     header: ({ column }) => (<div>Did Not Factors</div>),
       cell: ({ row }) => {
         const didNotFactors: string[] = row.getValue("didNotFactors")
-        console.log(didNotFactors);
         return (
           <Popover>
             <PopoverTrigger className="bg-primary text-secondary pl-2 pr-2 rounded-lg hover:bg-secondary hover:text-primary transition-colors">View</PopoverTrigger>
@@ -244,7 +242,6 @@ const columns: ColumnDef<DailyEntry>[] = [
       
       const date = getYMDFromDate(row.getValue("entry_date"))
       const user_id = row.getValue("user_id")
-      console.log(user_id);
       return (
       <Dialog>
 

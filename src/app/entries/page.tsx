@@ -78,7 +78,7 @@ export default function Entries() {
     getEntriesData(user).then(result => setEntriesData(result))
   },[user, error, isLoading])
 
-  const removeEntry = (daily_entry_id: number) => {
+  const removeEntry = useCallback((daily_entry_id: number) => {
     const newEntriesData = [...entriesData]
 
     const deleteIndex = newEntriesData.findIndex(data => data.daily_entry_id === daily_entry_id)
@@ -86,7 +86,7 @@ export default function Entries() {
     newEntriesData.splice(deleteIndex, 1)
 
     setEntriesData(newEntriesData)
-  }
+  },[entriesData])
 
   useEffect(() => {
     getEntries()
@@ -220,7 +220,6 @@ export default function Entries() {
       header: ({ column }) => (<div>Did Factors</div>),
         cell: ({ row }) => {
           const didFactors: string[] = row.getValue("didFactors")
-          console.log(didFactors);
           return (
             <Popover>
               <PopoverTrigger className="bg-primary text-secondary pl-2 pr-2 rounded-lg hover:bg-secondary hover:text-primary transition-colors">View</PopoverTrigger>
@@ -248,7 +247,6 @@ export default function Entries() {
       header: ({ column }) => (<div>Did Not Factors</div>),
         cell: ({ row }) => {
           const didNotFactors: string[] = row.getValue("didNotFactors")
-          console.log(didNotFactors);
           return (
             <Popover>
               <PopoverTrigger className="bg-primary text-secondary pl-2 pr-2 rounded-lg hover:bg-secondary hover:text-primary transition-colors">View</PopoverTrigger>
@@ -343,7 +341,9 @@ export default function Entries() {
       <PageHeading header='Entries' body='View all daily entries.'>
           <EditNoteIcon />
       </PageHeading>
-      <DataTable columns={columns} data={entriesData} getEntriesData={getEntries} />
+      <DataTable columns={columns} data={entriesData} getEntriesData={getEntries} removeEntry={removeEntry} />
     </div>
   )
 }
+
+// so i delete selected then right after a random row gets selected automatically... weird bug

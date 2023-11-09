@@ -13,7 +13,6 @@ export async function GET(req: Request){
   WHERE daily_entry_id = $1 AND user_id = $2`
   , queryParams);
 
-  console.log(result);
   return NextResponse.json(result.rows)
 };
 

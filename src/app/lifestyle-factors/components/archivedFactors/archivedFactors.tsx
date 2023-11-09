@@ -78,7 +78,6 @@ export default function ArchivedFactors ({
   }
 
   const optimisticReinstateArchived = (factor: LifestyleFactor) => {
-    console.log('TWICE');
     setLifestyleCategories(prev => 
       prev.map((category) => {
 

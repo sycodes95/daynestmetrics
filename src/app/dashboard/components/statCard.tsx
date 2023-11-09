@@ -67,7 +67,6 @@ type StatCardProps = {
 
 export default function StatCard ({className, statName, data, lineColor} : StatCardProps) {
   useEffect(()=> {
-    console.log(data);
   },[data])
   return (
     <Card className={`${className}  h-32 relative w-full flex flex-col border-gray-400`}>

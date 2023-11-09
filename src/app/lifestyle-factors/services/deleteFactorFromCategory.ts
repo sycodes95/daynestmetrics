@@ -37,8 +37,8 @@
 // }
 
 import { UserProfile } from "@auth0/nextjs-auth0/client";
-import { LifestyleCategory } from "../page";
 import { getUserPG } from "@/lib/user/getUserPG";
+import { LifestyleCategory } from "@/types/lifestyleFactors";
 
 export const deleteFactorFromCategory = async (
   user: UserProfile,
@@ -52,7 +52,6 @@ export const deleteFactorFromCategory = async (
 
     const {user_id} = await getUserPG(user)
 
-    console.log(user_id, nano_id);
 
     const fetchDelete = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/lifestyle-factors/factor`, {
       method: 'DELETE',
@@ -66,14 +65,10 @@ export const deleteFactorFromCategory = async (
     });
     const deletedFactor = await fetchDelete.json()
 
-    console.log(deletedFactor);
-
-
     if(!deletedFactor) return null
 
     const prevLifestyleFactors = [...lifestyleFactors]
     prevLifestyleFactors[categoryIndex].factors = prevLifestyleFactors[categoryIndex].factors.filter(factor => factor.nano_id !== nano_id)
-    console.log(prevLifestyleFactors);
     
     return prevLifestyleFactors
 

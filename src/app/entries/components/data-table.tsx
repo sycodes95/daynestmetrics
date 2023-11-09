@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import {
   ColumnDef,
@@ -25,6 +25,8 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { DataTablePagination } from "./dataTablePagination"
+import { useToast } from "@/components/ui/use-toast"
+
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -35,8 +37,12 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  getEntriesData
-}: DataTableProps<TData, TValue> & {getEntriesData : ()=> void}) {
+  getEntriesData,
+  removeEntry
+}: DataTableProps<TData, TValue> 
+& {getEntriesData : ()=> void, removeEntry : (daily_entry_id: number)=> void}) {
+
+  const { toast } = useToast()
 
   const [sorting, setSorting] = useState<SortingState>([])
 
@@ -61,7 +67,58 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   })
+  const optimisticHandleDeleteSelected = () => {
+    const idsToDelete: number[] = table.getFilteredSelectedRowModel().rows.map((row) => {
+      return row.getValue("daily_entry_id")
+    });
 
+    // removes deleted entries from parent component state
+    idsToDelete.forEach((id) => {
+      removeEntry(id)
+    })
+
+    //resets table row selection due to weird bug of auto selecting a new row after deletion
+    table.resetRowSelection();
+
+  }
+  const handleDeleteSelected = async () => {
+    try {
+      
+      const idsToDelete: number[] = table.getFilteredSelectedRowModel().rows.map((row) => {
+        return row.getValue("daily_entry_id")
+      });
+
+      const fetchDelete = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/delete-selected`, {
+        method: 'DELETE',
+        headers: {
+          'Content-type': 'json/application'
+        },
+        body: JSON.stringify(idsToDelete)
+      })
+
+      const deletedEntries = await fetchDelete.json()
+
+      if(deletedEntries.length < 1) {
+        return toast({
+          variant: 'destructive',
+          title: "Error",
+          description: "Whoops, there was an error deleting entries. Please refresh and try again, if that doesn\'t work contact support",
+        })
+      } 
+      return toast({
+        title: "Success!",
+        description: `${deletedEntries.length} Entries successfully deleted`,
+      })
+
+    } catch (error) {
+      console.error('Error deleting entries selected from entries table', error)
+      toast({
+        variant: 'destructive',
+        title: "Error",
+        description: "Whoops, there was an error deleting entries. Please refresh and try again, if that doesn\'t work contact support",
+      })
+    }
+  }
   
   return (
     <div>
@@ -75,7 +132,13 @@ export function DataTable<TData, TValue>({
         
         {
         table.getFilteredSelectedRowModel().rows.length > 0 &&
-        <Button className="h-6" variant={'destructive'}>Delete Selected</Button>
+        <Button className="h-6" 
+        variant={'destructive'} 
+        onClick={()=> {
+          optimisticHandleDeleteSelected()
+          handleDeleteSelected()
+        }}
+        >Delete Selected</Button>
         }
       </div>
 

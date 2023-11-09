@@ -12,6 +12,5 @@ export async function GET(req: Request){
   WHERE user_id = $1`
   , queryParams);
 
-  console.log(result);
   return NextResponse.json(result.rows)
 };

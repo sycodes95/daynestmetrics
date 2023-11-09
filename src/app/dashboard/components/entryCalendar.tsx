@@ -60,7 +60,6 @@ export default function EntryCalendar() {
   },[user, error, isLoading, getAllDailyEntries])
 
   useEffect(()=> {
-    console.log(dailyEntries);
   },[dailyEntries])
 
   
@@ -94,7 +93,6 @@ export default function EntryCalendar() {
           })
         })
 
-        console.log(fetchDelete);
 
         const deletedEntry = await fetchDelete.json()
 
@@ -107,17 +105,12 @@ export default function EntryCalendar() {
           const newEntries = [...prev]
           const entryToDelete = newEntries.findIndex(en => {
 
-            console.log(format(new Date(en.entry_date), 'yyyy-MM-dd'), currentDate);
             return format(new Date(en.entry_date), 'yyyy-MM-dd') === currentDate
           })
-
-          console.log(newEntries[entryToDelete]);
 
           // const entryToDelete = newEntries.findIndex(en => en.entry_date === dayEntry?.entry_date)
 
           if(entryToDelete > -1) newEntries.splice(entryToDelete, 1)
-
-          console.log(newEntries);
 
           return newEntries
 

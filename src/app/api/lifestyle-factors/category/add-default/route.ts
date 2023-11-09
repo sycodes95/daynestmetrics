@@ -3,7 +3,6 @@ const db = require('../../../../../db/db')
 
 export async function POST(req: Request){
   const { user_id } = await req.json()
-  console.log(user_id);
   const defaultCategories = Array.from({ length: 12 }, (_, index) => ({
     user_id,
     order_position: index + 1,
@@ -22,7 +21,6 @@ export async function POST(req: Request){
 
   const insertResults = await Promise.all(insertDefaultCategories)
   const insertedCategories = insertResults.map(result => result.rows[0]);
-  console.log(insertedCategories)
 
   return NextResponse.json(insertedCategories)
 
