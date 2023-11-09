@@ -22,7 +22,7 @@ export default function About(){
         <h2 className="font-bold text-sm">Add A Daily Entry:</h2>
         <span className="lg:w-1/2">After each day, head over to the home page or dashboard, and click the ( + ) button 
         on the corresponding date to enter details about the day including which lifestyle factors you did 
-        or did not do. Don't worry if you missed a day, you can still add entries to any date before the current day.
+        or did not do. Don&apos;t worry if you missed a day, you can still add entries to any date before the current day.
         </span>
 
         <h2 className="font-bold text-sm">Check Entries:</h2>
@@ -32,7 +32,7 @@ export default function About(){
         </span>
 
         <h2 className="font-bold text-sm">Insights:</h2>
-        <span className="lg:w-1/2">The Insights tab is where the magic happens. This is where after you've gathered a good 
+        <span className="lg:w-1/2">The Insights tab is where the magic happens. This is where after you&apos;ve gathered a good 
         amount of daily entries you can start to see statistics and see the correlations between 
         your lifestyle factors with mood and productivity using the data visualization tools provided. The more entries you have the better.
         </span>
@@ -41,8 +41,8 @@ export default function About(){
         <span className="lg:w-1/2">
           We all know everybody is different, what could be poison to one person can be nourishing for another.
           I came up with this idea because I think there are times when we feel like some activity, habits, etc may have an impact on our lives 
-          but there either isn't much scientific research done on it already or there are conflicting research. So I guess this is my 
-          attempt to sort of become a self - scientist, there's also many things science has not caught up to yet. So why not look into your own data and get a better idea of how YOU should live your life?
+          but there either isn&apos;t much scientific research done on it already or there are conflicting research. So I guess this is my 
+          attempt to sort of become a self - scientist, there&apos;s also many things science has not caught up to yet. So why not look into your own data and get a better idea of how YOU should live your life?
         </span>
 
       </div>

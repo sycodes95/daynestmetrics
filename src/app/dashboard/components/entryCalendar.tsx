@@ -1,10 +1,8 @@
 'use client'
 
-import { getYMDFromDate } from '@/utils/getYMDFromDate';
 import { Calendar, CalendarProps, Badge } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { format } from 'date-fns';
-import Link from 'next/link';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import {
@@ -28,8 +26,8 @@ import { Button } from "@/components/ui/button"
 import EntryDialog, { DailyEntry } from '@/app/entryDialog/entryDialog';
 import { getUserPG } from '@/lib/user/getUserPG';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { useEffect, useState } from 'react';
-import { getRatingColor, getRatingColorBG } from '@/utils/getRatingColor';
+import { useCallback, useEffect, useState } from 'react';
+import { getRatingColorBG } from '@/utils/getRatingColor';
 
 
 export default function EntryCalendar() {
@@ -38,19 +36,7 @@ export default function EntryCalendar() {
 
   const [dailyEntries, setDailyEntries] = useState<DailyEntry[]>([])
 
-  useEffect(() => { 
-    if(user && !error && !isLoading) getAllDailyEntries()
-  },[user, error, isLoading])
-
-  useEffect(()=> {
-    console.log(dailyEntries);
-  },[dailyEntries])
-
-  const getMoodAvg = (motivated : number, productivity: number) => {
-    return Number(((motivated + productivity) / 2).toFixed(1))
-  }
-
-  const getAllDailyEntries = async () => {
+  const getAllDailyEntries = useCallback(async () => {
 
     const { user_id } = await getUserPG(user)
 
@@ -63,7 +49,23 @@ export default function EntryCalendar() {
       setDailyEntries(allDailyEntries)
     }
 
+  },[user])
+
+  const getMoodAvg = (motivated : number, productivity: number) => {
+    return Number(((motivated + productivity) / 2).toFixed(1))
   }
+
+  useEffect(() => { 
+    if(user && !error && !isLoading) getAllDailyEntries()
+  },[user, error, isLoading, getAllDailyEntries])
+
+  useEffect(()=> {
+    console.log(dailyEntries);
+  },[dailyEntries])
+
+  
+
+  
 
   const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
 
