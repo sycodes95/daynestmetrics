@@ -51,6 +51,7 @@ CREATE TABLE daily_entry (
 
 CREATE TABLE daily_entry_factor (
   daily_entry_id INTEGER NOT NULL,
+  
   lifestyle_factor_id INTEGER NOT NULL,
   did BOOLEAN NOT NULL,
   user_id INTEGER NOT NULL,

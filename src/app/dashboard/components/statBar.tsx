@@ -1,12 +1,15 @@
 'use client'
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import StatCard from "./statCard"
-import { DailyEntry } from "@/app/entryDialog/dailyEntry"
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { getUserPG } from "@/lib/user/getUserPG";
 import { Skeleton } from "@mui/material";
 import StatBarSkeleton from "./statCardSkeleton";
+
+import { CircularProgressbar } from 'react-circular-progressbar';
+import { DailyEntry } from "@/app/entryDialog/entryDialog";
+
 type BasicStats = {
   overall: { rating : number }[] | [],
   mood:{ rating : number }[] | [],
@@ -19,9 +22,11 @@ export default function StatBar () {
 
   const { user, error, isLoading } = useUser();
 
+  const [allEntries, setAllEntries] = useState<DailyEntry[] | []>([])
+
   const [pastMonthEntries, setPastMonthEntries] = useState<DailyEntry[] | []>([])
 
-  const [overallAvg, setOverallAvg] = useState<number | null>(null)
+  const [overallAvg, setOverallAvg] = useState<number | string>('No Data')
 
   const [basicStats , setBasicStats] = useState<BasicStats>({
     overall: [],
@@ -42,7 +47,7 @@ export default function StatBar () {
     return '#619DC4'
   }
 
-  async function fetchPastMonthEntries () {
+  const getPastMonthEntries = useCallback(async () => {
 
     try {
       
@@ -53,15 +58,33 @@ export default function StatBar () {
       const entries = await fetchGet.json()
 
       setPastMonthEntries(entries)
-      console.log(entries);
 
     } catch (error) {
       setStatsAreLoading(false)
-      console.error(error)
     }
-  }
+  },[user])
 
-  const formatEntriesForVis = () => {
+  const getAllEntries = useCallback(async () => {
+
+    try {
+      
+      const {user_id} = await getUserPG(user)
+
+      const fetchGet = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/daily-entry/all-entries?user_id=${user_id}`)
+
+      const entries = await fetchGet.json()
+
+      setAllEntries(entries)
+
+    } catch (error) {
+      setStatsAreLoading(false)
+    }
+  },[user])
+
+
+  
+
+  const formatEntriesForVis = useCallback(() => {
     const overallData: { rating : number}[] = []
     const moodData: { rating : number}[] = []
     const productivityData: { rating : number}[] = []
@@ -90,7 +113,20 @@ export default function StatBar () {
 
     setStatsAreLoading(false)
 
-  }
+  },[pastMonthEntries]);
+  useEffect(()=> {
+    if(allEntries.length > 0){
+      const avg = allEntries.reduce((acc, cur, index) => {
+        let curAvg = (cur.mood_rating + cur.productivity_rating) / 2;
+
+        if(index === 0) return curAvg
+        
+        return ((acc * index) + curAvg) / (index + 1)
+      },0)
+
+      setOverallAvg(Number(avg.toFixed(1)))
+    }
+  },[allEntries])
 
   useEffect(()=> {
 
@@ -101,19 +137,49 @@ export default function StatBar () {
       setStatsAreLoading(false)
     }
 
-  },[pastMonthEntries])
+  },[pastMonthEntries, formatEntriesForVis])
 
   useEffect(()=> {
     if(user && !error && !isLoading) {
-      fetchPastMonthEntries()
+      getPastMonthEntries()
+      getAllEntries()
     }
-  },[user, error, isLoading])
+  },[user, error, isLoading, getPastMonthEntries, getAllEntries])
  
   return (
     <div className="flex flex-col md:flex-row items-center gap-2  w-full">
-      <div className="w-full rounded-lg bg-black text-white h-full md:mr-2 border-black border-2 p-2 flex flex-col items-center md:w-64">
-        <span className=" w-full text-left text-sm font-bold">Overall</span>
-        <span className=" w-full flex items-center justify-center  h-full font-bold text-2xl">7 / 10</span>
+      <div className="w-full rounded-lg bg-black bg-opacity-90 text-white h-full md:mr-2 border-black border-2 p-2 flex flex-col items-center gap-2 md:w-64">
+        <div className="w-full flex justify-start font-semibold text-xs">Overall Avg</div>
+        {
+        typeof overallAvg === 'number' ?
+        <div className="flex p-2 items-center justify-center">
+          <CircularProgressbar className="h-20 w-20"  
+          maxValue={10} 
+          value={overallAvg} 
+          text={`${overallAvg} / 10`} 
+          styles={{
+            path: {
+              stroke:'#FFFFFF'
+            },
+            trail: {
+              stroke: '#242424',
+              strokeLinecap: 'butt',
+              transform: 'rotate(0.25turn)',
+              transformOrigin: 'center center',
+            },
+            text: {
+              fill: '#FFFFFF',
+              fontSize: '16px',
+            },
+            
+          }}
+          />
+        </div>
+        :
+        <div className="text-secondary h-full flex items-center">
+          No Data...
+        </div>
+        }
 
       </div>
 

@@ -7,6 +7,7 @@ export async function GET(req: Request){
   const queryParams = [user_id]
 
   const result = await db.query('SELECT * FROM daily_entry WHERE user_id = $1', queryParams);
-  return NextResponse.json(result.rows.length > 0 ? result.rows : null)
+  
+  return NextResponse.json(result.rows)
 };
 

@@ -10,6 +10,8 @@ import StyledComponentsRegistry from '../lib/AntdRegistry';
 import { getUserAndSyncDB } from '@/lib/user/getUserAndSyncDB';
 import { getUser } from '@/lib/user/getUser';
 import Footer from '@/components/footer';
+import 'react-circular-progressbar/dist/styles.css';
+
 import { Provider } from 'react-redux'
 import { Toaster } from "@/components/ui/toaster"
 import { redirect } from 'next/navigation';

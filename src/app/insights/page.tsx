@@ -14,6 +14,130 @@ import { getEntryFactors } from "./services/getEntryFactors";
 import { getDailyEntries } from "./services/getDailyEntries";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ResponsiveScatterPlot } from '@nivo/scatterplot'
+import { ResponsiveRadar } from '@nivo/radar'
+
+// const demoData = [
+//   {
+//     "taste": "fruity",
+//     "chardonay": 111,
+//     "carmenere": 51,
+//     "syrah": 30
+//   },
+//   {
+//     "taste": "bitter",
+//     "chardonay": 75,
+//     "carmenere": 43,
+//     "syrah": 104
+//   },
+//   {
+//     "taste": "heavy",
+//     "chardonay": 22,
+//     "carmenere": 32,
+//     "syrah": 108
+//   },
+//   {
+//     "taste": "strong",
+//     "chardonay": 41,
+//     "carmenere": 113,
+//     "syrah": 36
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   },
+//   {
+//     "taste": "sunny",
+//     "chardonay": 24,
+//     "carmenere": 53,
+//     "syrah": 81
+//   }
+// ]
 
 type ScatterChartData = {
   id: string;
@@ -139,9 +263,6 @@ export default function Insights() {
       </PageHeading>
 
       <div className="h-96 w-full grow">
-
-      
-
       <ResponsiveScatterPlot
         data={scatterChartData}
         margin={{ top: 40, right: 120, bottom: 70, left: 50 }}
@@ -241,6 +362,48 @@ export default function Insights() {
       :
       <div className="text-gray-500">No Lifestyle Factors...</div>
       }
+      </div>
+
+
+      <div className="h-96 grow w-full">
+        {/* <ResponsiveRadar
+          data={demoData}
+          keys={[ 'chardonay', 'carmenere', 'syrah' ]}
+          indexBy="taste"
+          valueFormat=">-.2f"
+          margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
+          borderColor={{ from: 'color' }}
+          gridLabelOffset={36}
+          dotSize={10}
+          dotColor={{ theme: 'background' }}
+          dotBorderWidth={2}
+          colors={{ scheme: 'nivo' }}
+          blendMode="multiply"
+          motionConfig="wobbly"
+          legends={[
+            {
+              anchor: 'top-left',
+              direction: 'column',
+              translateX: -50,
+              translateY: -40,
+              itemWidth: 80,
+              itemHeight: 20,
+              itemTextColor: '#999',
+              symbolSize: 12,
+              symbolShape: 'circle',
+              effects: [
+                {
+                  on: 'hover',
+                  style: {
+                    itemTextColor: '#000'
+                  }
+                }
+              ]
+            }
+          ]}
+        /> */}
+
+
       </div>
     </div>
   )
