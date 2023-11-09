@@ -154,16 +154,20 @@ export default function Insights() {
         axisRight={null}
         colors={{scheme: 'set1'}}
         tooltip={({node }) => (
-          <div className="flex items-center gap-2 p-2 bg-black bg-opacity-80 rounded-lg">
-            <div className="h-4 w-4 rounded-lg" style={{'background' : node.color}}></div>
+          <div className="flex flex-col items-center gap-2 p-2 bg-black bg-opacity-80 rounded-lg">
+            <div className="flex items-center justify-start gap-2">
+              <div className="h-4 w-4 rounded-lg" style={{'background' : node.color}}></div>
+              <span className="text-secondary">{node.serieId}</span>
+
+            </div>
             <div className="h-4 flex items-center text-sm gap-4 text-white">
-              <span className="">{node.serieId}</span>
-              <span className="font-semibold">Y: {node.data.y}</span>
               <span className="font-semibold">X: {node.data.x}</span>
-              <span className="font-semibold">Entries: {node.data.entries}</span>
+              <span className="font-semibold">Y: {node.data.y}</span>
 
 
             </div>
+              <span className="font-semibold text-secondary">Entries: {node.data.entries}</span>
+
           </div>
         )}
         axisBottom={{
