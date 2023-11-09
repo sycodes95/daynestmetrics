@@ -2,7 +2,7 @@
 
 import { LifestyleCategory, LifestyleFactor } from "@/types/lifestyleFactors";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   Popover,
@@ -32,11 +32,16 @@ export default function LifestyleFactors () {
 
   const [lifestyleCategories, setLifestyleCategories] = useState<LifestyleCategory[]>([])
 
-  const [archivedFactors, setArchivedFactors] = useState<LifestyleFactor[]>([])
-
-  const [showArchived, setShowArchived] = useState(false)
-
   const [errorMessage, setErrorMessage] = useState('')
+  
+  const getLsCategories = useCallback(async function() {
+
+    if(user) {
+      const lsFactors = await getLifestyleCategories(user)
+      setLifestyleCategories(lsFactors)
+    };
+
+  },[user]);
 
   const optimisticArchiveFactor = (
     user_id: number, 
@@ -67,9 +72,7 @@ export default function LifestyleFactors () {
     user_id: number, 
     lifestyle_factor_id: number, 
     ) => {
-
     try {
-
       const request = {
         archive: true,
         user_id,
@@ -98,17 +101,11 @@ export default function LifestyleFactors () {
   },[user, error, isLoading])
 
   useEffect(() => {
+    console.log('render');
     userLoaded && getLsCategories()
-  },[userLoaded])
+  },[userLoaded, getLsCategories])
 
-  async function getLsCategories () {
-
-    if(user) {
-      const lsFactors = await getLifestyleCategories(user)
-      setLifestyleCategories(lsFactors)
-    };
-
-  };
+  
 
   return (
     <>
@@ -195,29 +192,7 @@ export default function LifestyleFactors () {
       setLifestyleCategories={setLifestyleCategories}
       setErrorMessage={setErrorMessage}
       />
-
-      {/* <Button className="w-fit h-fit bg-red-500 transition-all duration-300" onClick={()=> setShowArchived(prev => !prev)}>
-        {!showArchived ? 'View Archived' : 'Hide Archived'}
-      </Button>
-
-      <div className={`${showArchived ? 'h-full opacity-100' : 'h-0 opacity-0 pointer-events-none'} w-full flex flex-col gap-4 transition-all duration-300`} >
-        
-        <div className="">
-          <span className="text-2xl">Archived Factors</span>
-        </div>
-
-        <div className="w-full h-full flex flex-wrap gap-4 ">
-          {
-          archivedFactors.map((factor, index) => (
-            <button className={`${factor.name ? 'text-primary' : 'text-gray-400'} p-2 border border-gray-300 h-fit rounded-lg hover:border-black transition-all`} key={factor.lifestyle_factor_id}>
-              <span>{factor.name ? factor.name : 'N/A'}</span>
-            </button>
-          ))
-          }
-
-        </div>
-
-      </div> */}
+     
     </>
   )
 }

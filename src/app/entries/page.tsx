@@ -3,7 +3,7 @@
 import PageHeading from '@/components/pageHeading';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { DataTable } from './components/data-table';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { getUserPG } from '@/lib/user/getUserPG';
 import { LifestyleFactor } from '@/types/lifestyleFactors';
@@ -73,10 +73,10 @@ export default function Entries() {
   
   const [entriesData, setEntriesData] = useState<DailyEntryData[]>([])
 
-  const getEntries = () => {
+  const getEntries = useCallback(() => {
     if(!user || error || isLoading) return
     getEntriesData(user).then(result => setEntriesData(result))
-  }
+  },[user, error, isLoading])
 
   const removeEntry = (daily_entry_id: number) => {
     const newEntriesData = [...entriesData]
@@ -90,7 +90,7 @@ export default function Entries() {
 
   useEffect(() => {
     getEntries()
-  },[ user, error, isLoading])
+  },[ user, error, isLoading, getEntries])
 
   const StyledRating = styled(Rating)({
     '& .MuiRating-iconFilled': {

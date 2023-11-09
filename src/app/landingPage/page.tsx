@@ -16,7 +16,7 @@ export default function LandingPage() {
   console.log(conquerMountain);
   return(
     <div className="flex flex-col gap-4 w-full h-full items-center ">
-      <Image className='absolute top-0 left-0 h-full w-full object-cover -z-10 grayscale opacity-40 max-h-screen rounded-xl' src={landingPageBackground} alt="" />
+      <Image className='absolute top-0 left-0 h-full w-full object-cover -z-10 grayscale opacity-40 max-h-screen rounded-xl  saturate-200' src={landingPageBackground} alt="" />
 
       <LandingPageHeader />
       

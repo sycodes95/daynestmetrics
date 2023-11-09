@@ -7,7 +7,7 @@ import { DailyEntryFactor } from "@/types/dailyEntryFactor";
 import { LifestyleFactor } from "@/types/lifestyleFactors";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import StackedBarChartIcon from '@mui/icons-material/StackedBarChart';
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DailyEntry } from "../entryDialog/entryDialog";
 import { getLifestyleFactors } from "./services/getLifestyleFactors";
 import { getEntryFactors } from "./services/getEntryFactors";
@@ -37,7 +37,7 @@ export default function Insights() {
 
   const [scatterChartData, setScatterChartData] = useState<ScatterChartData[]>([])
 
-  const makeScatterData = () => {
+  const makeScatterData = useCallback(() => {
     // check if user wants to see did or did not factor data
     let did = didOrDidNot === 'Did';
 
@@ -87,7 +87,7 @@ export default function Insights() {
 
     setScatterChartData(scatterData)
     
-  }
+  },[dailyEntries, lifestyleFactors, dailyEntryFactors, selectedLifestyleFactorIds, didOrDidNot])
 
   const handleSelectFactor = (id: number) => {
     console.log(id);
@@ -98,9 +98,9 @@ export default function Insights() {
     }
   }
 
-  const populateSelectedLifestyleFactors = () => {
+  const populateSelectedLifestyleFactors = useCallback(() => {
     setSelectedLifestyleFactorIds(lifestyleFactors.map(factor => factor.lifestyle_factor_id))
-  }
+  },[lifestyleFactors])
 
   useEffect(()=> {
     if(user && !error && !isLoading) setUserLoaded(true)
@@ -113,22 +113,21 @@ export default function Insights() {
       getDailyEntries(user).then(entries => setDailyEntries(entries))
       
     }
-  },[userLoaded])
+  },[userLoaded, user])
 
   useEffect(()=> {
     if(lifestyleFactors.length > 0 && dailyEntryFactors.length > 0 && dailyEntries.length > 0) {
       populateSelectedLifestyleFactors()
     }
-  },[lifestyleFactors, dailyEntryFactors, dailyEntries])
+  },[lifestyleFactors, dailyEntryFactors, dailyEntries, populateSelectedLifestyleFactors])
 
   useEffect(()=> {
     console.log(scatterChartData);
   },[scatterChartData])
 
   useEffect(()=> {
-    console.log(selectedLifestyleFactorIds);
     makeScatterData()
-  },[selectedLifestyleFactorIds, didOrDidNot])
+  },[selectedLifestyleFactorIds, didOrDidNot, makeScatterData])
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -154,6 +153,19 @@ export default function Insights() {
         axisTop={null}
         axisRight={null}
         colors={{scheme: 'set1'}}
+        tooltip={({node }) => (
+          <div className="flex items-center gap-2 p-2 bg-black bg-opacity-80 rounded-lg">
+            <div className="h-4 w-4 rounded-lg" style={{'background' : node.color}}></div>
+            <div className="h-4 flex items-center text-sm gap-4 text-white">
+              <span className="">{node.serieId}</span>
+              <span className="font-semibold">Y: {node.data.y}</span>
+              <span className="font-semibold">X: {node.data.x}</span>
+              <span className="font-semibold">Entries: {node.data.entries}</span>
+
+
+            </div>
+          </div>
+        )}
         axisBottom={{
           orient: 'bottom',
           tickSize: 5,

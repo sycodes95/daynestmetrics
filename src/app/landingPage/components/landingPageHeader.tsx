@@ -126,7 +126,7 @@ ListItem.displayName = "ListItem"
 
 export default function LandingPageHeader() {
   return (
-    <div className="w-full max-w-7xl flex items-center justify-between p-4 bg-black  bg-opacity-90 rounded-b-lg    h-14  shadow-lg shadow-gray-400">
+    <div className="w-full max-w-7xl flex items-center justify-between p-4 bg-black  bg-opacity-90 rounded-b-lg    h-14 shadow-md shadow-gray-300">
 
       <div className='flex gap-1 md:gap-2 items-center'>
         <div className='p-2 rounded-lg'>
