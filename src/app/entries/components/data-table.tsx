@@ -153,9 +153,17 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       
-      <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
+      <div className="flex-1 flex items-center gap-4 text-sm text-muted-foreground">
+        <div>
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+
+        </div>
+        
+        {
+        table.getFilteredSelectedRowModel().rows.length > 0 &&
+        <Button className="h-6 " variant={'destructive'}>Delete Selected</Button>
+        }
       </div>
 
       {/* <div className="flex items-center py-4">

@@ -214,6 +214,7 @@ export default function Insights() {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 w-full h-fit p-4">
       { 
+      lifestyleFactors.length > 0 ?
       lifestyleFactors.map((factor) => (
         <div className="flex gap-3 items-center h-12" key={factor.lifestyle_factor_id}>
           <Checkbox checked={selectedLifestyleFactorIds.includes(factor.lifestyle_factor_id)} onCheckedChange={()=> handleSelectFactor(factor.lifestyle_factor_id)} />
@@ -221,6 +222,8 @@ export default function Insights() {
 
         </div>
       ))
+      :
+      <div className="text-gray-500">No Lifestyle Factors...</div>
       }
       </div>
     </div>
