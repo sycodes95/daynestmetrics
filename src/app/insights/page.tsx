@@ -33,6 +33,15 @@ type ScatterChartData = {
   data: { y:number,  x:number, entries:number}[]
 }
 
+type FeaturedStatistics = {
+  topOverall: { factorName : string, avgRating: number }[];
+  topMood: { factorName : string, avgRating: number }[];
+  topProductivity: { factorName : string, avgRating: number }[];
+  bottomOverall: { factorName : string, avgRating: number }[];
+  bottomMood: { factorName : string, avgRating: number }[];
+  bottomProductivity: { factorName : string, avgRating: number }[];
+}
+
 export default function Insights() {
 
   const { user, error, isLoading } = useUser()
@@ -50,6 +59,71 @@ export default function Insights() {
   const [didOrDidNot, setDidOrDidNot] = useState<"Did" | "Did Not">("Did")
 
   const [scatterChartData, setScatterChartData] = useState<ScatterChartData[]>([])
+
+  const [featuredStatistics, setFeaturedStatistics] = useState<FeaturedStatistics>({
+    topOverall: [],
+    topMood: [],
+    topProductivity: [],
+    bottomOverall: [],
+    bottomMood: [],
+    bottomProductivity: [],
+
+  })
+
+  const makeFeaturedStatisticsData = () => {
+
+    const didFactors = dailyEntryFactors.filter(factor => factor.did)
+    const didNotFactors = dailyEntryFactors.filter(factor => !factor.did)
+
+    const factorSumsData: { factor: string, overall: number, mood: number, productivity: number, entries: number}[] = []
+
+    dailyEntries.forEach((entry) => {
+
+      const entryId = entry.daily_entry_id
+      const mood = entry.mood_rating
+      const productivity = entry.productivity_rating
+      const overall = Number(((mood + productivity) / 2).toFixed(2))
+
+      didFactors
+      .filter(didFactor => {
+        const didFactorEntryId = didFactor.daily_entry_id
+        if(entryId === didFactorEntryId){
+          return true
+        }
+      })
+      .forEach(didFactor => {
+        const didFactorName = lifestyleFactors.find(factor => factor.lifestyle_factor_id === didFactor.lifestyle_factor_id)?.name
+        if(didFactorName) {
+
+          //get index of didFactor by name from factorSumsData
+          const factorSumsIndex = factorSumsData.findIndex(data => data.factor === didFactorName)
+
+          //if exists, sum all mood, productivity, and overall from this entry's data
+          //if not exist push the factor name and this entry's data
+          factorSumsIndex > -1 
+          ? factorSumsData[factorSumsIndex] = {
+            ...factorSumsData[factorSumsIndex],
+            mood: (factorSumsData[factorSumsIndex].mood + mood) / (factorSumsData[factorSumsIndex].entries + 1),
+            productivity: (factorSumsData[factorSumsIndex].productivity + productivity) / (factorSumsData[factorSumsIndex].entries + 1),
+            overall: (factorSumsData[factorSumsIndex].overall + overall) / (factorSumsData[factorSumsIndex].entries + 1) ,
+            entries: factorSumsData[factorSumsIndex].entries += 1
+          }
+          : factorSumsData.push({
+            factor: didFactorName,
+            overall,
+            mood,
+            productivity,
+            entries: 1
+          })
+
+        }
+        
+      })
+    })
+
+    console.log(factorSumsData);
+
+  }
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: undefined,
@@ -157,7 +231,9 @@ export default function Insights() {
   },[userLoaded, user])
 
   useEffect(()=> {
+    console.log(dailyEntryFactors);
     if(lifestyleFactors.length > 0 && dailyEntryFactors.length > 0 && dailyEntries.length > 0) {
+      makeFeaturedStatisticsData()
       populateSelectedLifestyleFactors()
     }
   },[lifestyleFactors, dailyEntryFactors, dailyEntries, populateSelectedLifestyleFactors])
@@ -167,6 +243,7 @@ export default function Insights() {
 
   useEffect(()=> {
     makeScatterData()
+    
   },[selectedLifestyleFactorIds, didOrDidNot, makeScatterData, dateRange])
 
   return (
