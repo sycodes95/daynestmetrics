@@ -15,134 +15,24 @@ import { getDailyEntries } from "./services/getDailyEntries";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ResponsiveScatterPlot } from '@nivo/scatterplot'
 import { ResponsiveRadar } from '@nivo/radar'
+import { CalendarIcon } from "@radix-ui/react-icons"
 
-// const demoData = [
-//   {
-//     "taste": "fruity",
-//     "chardonay": 111,
-//     "carmenere": 51,
-//     "syrah": 30
-//   },
-//   {
-//     "taste": "bitter",
-//     "chardonay": 75,
-//     "carmenere": 43,
-//     "syrah": 104
-//   },
-//   {
-//     "taste": "heavy",
-//     "chardonay": 22,
-//     "carmenere": 32,
-//     "syrah": 108
-//   },
-//   {
-//     "taste": "strong",
-//     "chardonay": 41,
-//     "carmenere": 113,
-//     "syrah": 36
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   },
-//   {
-//     "taste": "sunny",
-//     "chardonay": 24,
-//     "carmenere": 53,
-//     "syrah": 81
-//   }
-// ]
+import { format } from "date-fns"
+ import { DateRange } from "react-day-picker"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 type ScatterChartData = {
   id: string;
   data: { y:number,  x:number, entries:number}[]
 }
+
 export default function Insights() {
 
   const { user, error, isLoading } = useUser()
@@ -160,6 +50,15 @@ export default function Insights() {
   const [didOrDidNot, setDidOrDidNot] = useState<"Did" | "Did Not">("Did")
 
   const [scatterChartData, setScatterChartData] = useState<ScatterChartData[]>([])
+
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: undefined,
+    to: undefined
+  })
+
+  useEffect(()=> {
+    console.log(dateRange);
+  },[dateRange])
 
   const makeScatterData = useCallback(() => {
     // check if user wants to see did or did not factor data
@@ -179,9 +78,21 @@ export default function Insights() {
       //get all entry factors that matches selected factor id
       const entryFactors = dailyEntryFactors.filter(eFactor => eFactor.did === did && eFactor.lifestyle_factor_id === id)
 
+      const dailyEntriesWithinDateRange = dailyEntries.filter(entry => {
+        const entryDate = new Date(entry.entry_date)
+
+        if(dateRange && dateRange.from && dateRange.to && entryDate <= dateRange.to && entryDate >= dateRange.from) {
+          //if date range has a date for both from and to add entry to filtered array
+          return true
+        } else if(!dateRange || (!dateRange.from && !dateRange.to)){
+          //if there is no date range or any corresponding properties add entry to array
+          return true
+        }
+      } )
+
       // get y and x values from all entries that has selected factor that references the entry
       const entriesYXValues = entryFactors.map(eF => {
-        const entry = dailyEntries.find(e => e.daily_entry_id === eF.daily_entry_id);
+        const entry = dailyEntriesWithinDateRange.find(e => e.daily_entry_id === eF.daily_entry_id);
         return entry ? { y: entry.mood_rating, x: entry.productivity_rating } : { y: null, x: null };
       }).filter(data => data.y !== null && data.x !== null);
 
@@ -211,7 +122,14 @@ export default function Insights() {
 
     setScatterChartData(scatterData)
     
-  },[dailyEntries, lifestyleFactors, dailyEntryFactors, selectedLifestyleFactorIds, didOrDidNot])
+  },[dailyEntries, lifestyleFactors, dailyEntryFactors, selectedLifestyleFactorIds, didOrDidNot, dateRange])
+
+  const resetDateRange = () => {
+    setDateRange({
+      from: undefined,
+      to: undefined
+    })
+  }
 
   const handleSelectFactor = (id: number) => {
     if(selectedLifestyleFactorIds.includes(id)){
@@ -249,10 +167,10 @@ export default function Insights() {
 
   useEffect(()=> {
     makeScatterData()
-  },[selectedLifestyleFactorIds, didOrDidNot, makeScatterData])
+  },[selectedLifestyleFactorIds, didOrDidNot, makeScatterData, dateRange])
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col gap-2">
       <PageHeading
       header="Insights" 
       body="Get insights into how your lifestyle factors correlates to mood and productivity"
@@ -260,6 +178,53 @@ export default function Insights() {
         <StackedBarChartIcon/>
       </PageHeading>
 
+      <div className="flex items-center gap-2">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              id="dateRange"
+              variant={'ghost'}
+              className={cn(
+                "w-fit justify-start text-left font-normal h-8 hover:bg-none ",
+                !dateRange && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {dateRange?.from ? (
+                dateRange.to ? (
+                  <>
+                    {format(dateRange.from, "LLL dd, y")} -{" "}
+                    {format(dateRange.to, "LLL dd, y")}
+                  </>
+                ) : (
+                  format(dateRange.from, "LLL dd, y")
+                )
+              ) : (
+                <span>Pick a date range</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0 bg-background bg-opacity-40" align="start">
+            <Calendar
+              className="bg-opacity-20"
+              initialFocus
+              mode="range"
+              defaultMonth={dateRange?.from}
+              selected={dateRange}
+              onSelect={(dateRange) => {
+                setDateRange(dateRange)
+              }}
+              numberOfMonths={2}
+            />
+          </PopoverContent>
+        </Popover>
+
+        <Button className="p-2 h-6 w-16" onClick={()=> resetDateRange()}>
+          Reset
+        </Button>
+
+      </div>
+      
       <div className="h-96 w-full grow">
       <ResponsiveScatterPlot
         data={scatterChartData}
@@ -361,48 +326,7 @@ export default function Insights() {
       <div className="text-gray-500">No Lifestyle Factors...</div>
       }
       </div>
-
-
-      <div className="h-96 grow w-full">
-        {/* <ResponsiveRadar
-          data={demoData}
-          keys={[ 'chardonay', 'carmenere', 'syrah' ]}
-          indexBy="taste"
-          valueFormat=">-.2f"
-          margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
-          borderColor={{ from: 'color' }}
-          gridLabelOffset={36}
-          dotSize={10}
-          dotColor={{ theme: 'background' }}
-          dotBorderWidth={2}
-          colors={{ scheme: 'nivo' }}
-          blendMode="multiply"
-          motionConfig="wobbly"
-          legends={[
-            {
-              anchor: 'top-left',
-              direction: 'column',
-              translateX: -50,
-              translateY: -40,
-              itemWidth: 80,
-              itemHeight: 20,
-              itemTextColor: '#999',
-              symbolSize: 12,
-              symbolShape: 'circle',
-              effects: [
-                {
-                  on: 'hover',
-                  style: {
-                    itemTextColor: '#000'
-                  }
-                }
-              ]
-            }
-          ]}
-        /> */}
-
-
-      </div>
+      
     </div>
   )
 }
