@@ -27,20 +27,30 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import FeaturedStatistics from "./components/featuredStatistics/featuredStatistics";
 
 type ScatterChartData = {
   id: string;
   data: { y:number,  x:number, entries:number}[]
 }
 
-type FeaturedStatistics = {
-  topOverall: { factorName : string, avgRating: number }[];
-  topMood: { factorName : string, avgRating: number }[];
-  topProductivity: { factorName : string, avgRating: number }[];
-  bottomOverall: { factorName : string, avgRating: number }[];
-  bottomMood: { factorName : string, avgRating: number }[];
-  bottomProductivity: { factorName : string, avgRating: number }[];
-}
+// type FeaturedStatistics = {
+//   "Top Overall Factors": { factorName : string, avgRating: number }[];
+//   "Top Mood Factors": { factorName : string, avgRating: number }[];
+//   "Top Productivity Factors": { factorName : string, avgRating: number }[];
+//   "Bottom Overall Factors": { factorName : string, avgRating: number }[];
+//   "Bottom Mood Factors": { factorName : string, avgRating: number }[];
+//   "Bottom Productivity Factors": { factorName : string, avgRating: number }[];
+// }
+
+// type FactorSumData = {
+//   factor: string;
+//   overall: number;
+//   mood: number;
+//   productivity: number;
+//   entries: number;
+//   did: boolean;
+// }
 
 export default function Insights() {
 
@@ -60,79 +70,80 @@ export default function Insights() {
 
   const [scatterChartData, setScatterChartData] = useState<ScatterChartData[]>([])
 
-  const [featuredStatistics, setFeaturedStatistics] = useState<FeaturedStatistics>({
-    topOverall: [],
-    topMood: [],
-    topProductivity: [],
-    bottomOverall: [],
-    bottomMood: [],
-    bottomProductivity: [],
+  // const [featuredStatistics, setFeaturedStatistics] = useState<FeaturedStatistics>({
+  //   "Top Overall Factors": [],
+  //   "Top Mood Factors": [],
+  //   "Top Productivity Factors": [],
+  //   "Bottom Overall Factors": [],
+  //   "Bottom Mood Factors": [],
+  //   "Bottom Productivity Factors": [],
 
-  })
+  // })
 
-  const makeFeaturedStatisticsData = () => {
+  // const makeFeaturedStatisticsData = () => {
+  //   const factorSumData: Map<string, FactorSumData> = new Map<string, FactorSumData>();
 
-    const didFactors = dailyEntryFactors.filter(factor => factor.did)
-    const didNotFactors = dailyEntryFactors.filter(factor => !factor.did)
+  //   dailyEntries.forEach((entry) => {
 
-    const factorSumsData: { factor: string, overall: number, mood: number, productivity: number, entries: number}[] = []
+  //     const { daily_entry_id, mood_rating, productivity_rating } = entry;
 
-    dailyEntries.forEach((entry) => {
+  //     const overall = ((mood_rating + productivity_rating) / 2);
 
-      const entryId = entry.daily_entry_id
-      const mood = entry.mood_rating
-      const productivity = entry.productivity_rating
-      const overall = Number(((mood + productivity) / 2).toFixed(2))
+  //     dailyEntryFactors.forEach((factor) => {
+  //       if (factor.daily_entry_id !== daily_entry_id) {
+  //         return;
+  //       }
 
-      didFactors
-      .filter(didFactor => {
-        const didFactorEntryId = didFactor.daily_entry_id
-        if(entryId === didFactorEntryId){
-          return true
-        }
-      })
-      .forEach(didFactor => {
-        const didFactorName = lifestyleFactors.find(factor => factor.lifestyle_factor_id === didFactor.lifestyle_factor_id)?.name
-        if(didFactorName) {
+  //       // determine if the factor is "did" or "didNot"
+  //       const status = factor.did ? 'Did' : 'DidNot';
+  //       const factorName = lifestyleFactors.find(lf => lf.lifestyle_factor_id === factor.lifestyle_factor_id)?.name;
 
-          //get index of didFactor by name from factorSumsData
-          const factorSumsIndex = factorSumsData.findIndex(data => data.factor === didFactorName)
+  //       if (factorName) {
+  //         const key = `${factorName}-${status}`;
+  //         const data = factorSumData.get(key) 
+  //         || { factor: factorName, overall: 0, mood: 0, productivity: 0, entries: 0, did: status === 'Did' ? true : false};
 
-          //if exists, sum all mood, productivity, and overall from this entry's data
-          //if not exist push the factor name and this entry's data
-          factorSumsIndex > -1 
-          ? factorSumsData[factorSumsIndex] = {
-            ...factorSumsData[factorSumsIndex],
-            mood: (factorSumsData[factorSumsIndex].mood + mood) / (factorSumsData[factorSumsIndex].entries + 1),
-            productivity: (factorSumsData[factorSumsIndex].productivity + productivity) / (factorSumsData[factorSumsIndex].entries + 1),
-            overall: (factorSumsData[factorSumsIndex].overall + overall) / (factorSumsData[factorSumsIndex].entries + 1) ,
-            entries: factorSumsData[factorSumsIndex].entries += 1
-          }
-          : factorSumsData.push({
-            factor: didFactorName,
-            overall,
-            mood,
-            productivity,
-            entries: 1
-          })
+  //         data.mood = (data.mood * data.entries + mood_rating) / (data.entries + 1);
+  //         data.productivity = (data.productivity * data.entries + productivity_rating) / (data.entries + 1);
+  //         data.overall = (data.overall * data.entries + overall) / (data.entries + 1);
+  //         data.entries += 1;
+  //         data.did = status === 'Did' ? true : false
 
-        }
-        
-      })
-    })
+  //         factorSumData.set(key, data);
+  //       }
+  //     });
+  //   });
+  //   // Convert the Map to an array of data objects.
+  //   const factorSumsData = Array.from(factorSumData.values());
 
-    console.log(factorSumsData);
+  //   const sortedByOverall = factorSumsData.sort((a, b) => b.overall - a.overall)
+  //   const sortedByMood = factorSumsData.sort((a, b) => b.mood - a.mood)
+  //   const sortedByProductivity = factorSumsData.sort((a, b) => b.productivity - a.productivity)
 
+  //   setFeaturedStatistics({
+  //     "Top Overall Factors": getTopAndBottomThreeElements(sortedByOverall).top,
+  //     "Top Mood Factors": getTopAndBottomThreeElements(sortedByMood).top,
+  //     "Top Productivity Factors": getTopAndBottomThreeElements(sortedByProductivity).top,
+  //     "Bottom Overall Factors": getTopAndBottomThreeElements(sortedByOverall).bottom,
+  //     "Bottom Mood Factors": getTopAndBottomThreeElements(sortedByMood).bottom,
+  //     "Bottom Productivity Factors": getTopAndBottomThreeElements(sortedByProductivity).bottom
+      
+  //   })
+    
+  // }
+
+  const getTopAndBottomThreeElements = (arr: any[]) => {
+    return {
+      top: arr.splice(0, 3),
+      bottom: arr.splice(arr.length - 3, arr.length - 1)
+    }
   }
+
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: undefined,
     to: undefined
   })
-
-  useEffect(()=> {
-    console.log(dateRange);
-  },[dateRange])
 
   const makeScatterData = useCallback(() => {
     // check if user wants to see did or did not factor data
@@ -231,9 +242,8 @@ export default function Insights() {
   },[userLoaded, user])
 
   useEffect(()=> {
-    console.log(dailyEntryFactors);
     if(lifestyleFactors.length > 0 && dailyEntryFactors.length > 0 && dailyEntries.length > 0) {
-      makeFeaturedStatisticsData()
+      // makeFeaturedStatisticsData()
       populateSelectedLifestyleFactors()
     }
   },[lifestyleFactors, dailyEntryFactors, dailyEntries, populateSelectedLifestyleFactors])
@@ -255,6 +265,12 @@ export default function Insights() {
         <StackedBarChartIcon/>
       </PageHeading>
 
+
+      <FeaturedStatistics 
+      dailyEntries={dailyEntries} 
+      dailyEntryFactors={dailyEntryFactors} 
+      lifestyleFactors={lifestyleFactors}
+      />
       <div className="flex items-center gap-2">
         <Popover>
           <PopoverTrigger asChild>
@@ -393,7 +409,7 @@ export default function Insights() {
       { 
       lifestyleFactors.length > 0 ?
       lifestyleFactors.map((factor) => (
-        <div className="flex gap-3 items-center h-12" key={factor.lifestyle_factor_id}>
+        <div className="flex gap-3 items-center h-8" key={factor.lifestyle_factor_id}>
           <Checkbox checked={selectedLifestyleFactorIds.includes(factor.lifestyle_factor_id)} onCheckedChange={()=> handleSelectFactor(factor.lifestyle_factor_id)} />
           <span>{factor.name}</span>
 
