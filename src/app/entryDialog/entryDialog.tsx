@@ -271,8 +271,9 @@ export default function EntryDialog( { currentDate, getAllDailyEntriesCalendar }
 
   },[isSaved, errorSaving])
   return (
-    <div className="flex flex-col gap-8 h-full grow ">
-      <span className="text-xl mt-2">{formatDateForUser(currentDate)}</span>
+    <div className="flex flex-col gap-8 h-full pt-4 pb-4 text-black">
+      <span className=" text-xl font-semibold">How was your day?</span>
+      <span className="text-xl rounded-lg text-black w-fit">{formatDateForUser(currentDate)}</span>
 
       <div className="flex flex-col gap-4 ">
         <div className="flex justify-between text-lg">
@@ -314,39 +315,39 @@ export default function EntryDialog( { currentDate, getAllDailyEntriesCalendar }
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full grow">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full ">
       
-        <div className="relative flex flex-col flex-1  gap-2">
+        <div className="relative flex flex-col h-full  gap-2">
           <span className="text-lg text-left">Lifestyle Factors</span>
-          <div className="w-full md:max-h-96 flex flex-col flex-1 gap-2 md:overflow-y-auto pr-2">
+          <div className="w-full md:max-h-96 h-full flex flex-col flex-1 gap-2 md:overflow-y-auto pr-2">
             {
             lifestyleFactors.map((category, index) => (
-              <div key={index} className="w-full flex flex-col gap-2 rounded-lg ">
-                <span className="whitespace-nowrap overflow-hidden text-left text-ellipsis font-semibold text-black border border-b-gray-300 pt-2 pb-2">
+              <div key={index} className="w-full flex flex-col rounded-lg ">
+                <span className="whitespace-nowrap overflow-hidden text-left text-ellipsis font-semibold text-black border-b-4 border-black p-2 w-fit">
                   {category.name}
                 </span>
                 {
                 category.factors.map((factor, index) => (
-                  <div className="flex items-center justify-between gap-2 w-full" key={factor.nano_id}>
+                  <div className="flex items-center justify-between gap-2 w-full h-12 p-2 " key={factor.nano_id}>
                     <span className="">{factor.name}</span>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 h-full items-center">
                       <button className={`
-                      ${dailyFactorsData.did.some(f => f.lifestyle_factor_id === factor.lifestyle_factor_id) ? 'text-emerald-400' : 'text-gray-400'}
-                       cursor-pointer hover:text-emerald-400 transition-all
+                      ${dailyFactorsData.did.some(f => f.lifestyle_factor_id === factor.lifestyle_factor_id) ? 'bg-teal' : 'bg-gray-400'}
+                       cursor-pointer hover:bg-teal transition-all rounded-lg text-white w-24 h-full
                       `}
                       onClick={()=> {
                         handleDidOrNot(factor, 'did')
                       }}>
-                        <TaskAltIcon className=""  />
+                        <span className="p-2 ">Did</span>
                       </button>
                       <button className={`
-                      ${dailyFactorsData.didNot.some(f => f.lifestyle_factor_id === factor.lifestyle_factor_id) ? 'text-red-400' : 'text-gray-400'}
-                       cursor-pointer hover:text-red-400 transition-all
+                      ${dailyFactorsData.didNot.some(f => f.lifestyle_factor_id === factor.lifestyle_factor_id) ? 'bg-red-500' : 'bg-gray-400'}
+                       cursor-pointer hover:bg-red-500 transition-all rounded-lg text-white w-24 h-full
                       `}
                       onClick={()=> {
                         handleDidOrNot(factor, 'did not')
                       }}>
-                        <HighlightOffIcon className="" />
+                        <span className="p-2 ">Did Not</span>
                       </button>
                     </div>
                   </div>
@@ -359,10 +360,10 @@ export default function EntryDialog( { currentDate, getAllDailyEntriesCalendar }
           </div>
         </div>
 
-        <div className="flex flex-col flex-1 gap-2  ">
+        <div className="flex flex-col gap-2 h-full ">
           <span className="text-lg text-left">Journal</span>
           <textarea 
-          className="md:h-full h-80 rounded-lg border border-gray-300 p-4 outline-none resize-none" 
+          className="h-96 rounded-lg  p-4 outline-none resize-none" 
           placeholder="..." 
           name="journal" 
           value={dailyEntryData.journal}
@@ -377,7 +378,7 @@ export default function EntryDialog( { currentDate, getAllDailyEntriesCalendar }
 
       </div>
 
-      <div className="flex gap-4 justify-end items-center">
+      <div className="flex justify-end items-center">
         {
         isSaved &&
         <span className="text-green-500"> Saved Successfully! </span>

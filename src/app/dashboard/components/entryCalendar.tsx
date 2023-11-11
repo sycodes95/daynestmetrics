@@ -180,13 +180,10 @@ export default function EntryCalendar() {
           
         </div>
 
-        <DialogContent className='shadow-lg shadow-gray-300 h-full  w-full max-w-6xl overflow-y-scroll md:overflow-hidden'>
-          <DialogHeader>
-            <DialogTitle>How was your day?</DialogTitle>
-            <DialogDescription>
-              <EntryDialog currentDate={currentDate} getAllDailyEntriesCalendar={getAllDailyEntries} />
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className='shadow-lg shadow-gray-300 p-2 md:p-8 w-full max-w-6xl overflow-y-scroll md:overflow-hidden min-h-screen h-full'>
+          <DialogDescription className=' grow h-full'>
+            <EntryDialog currentDate={currentDate} getAllDailyEntriesCalendar={getAllDailyEntries} />
+          </DialogDescription>
         </DialogContent>
       </Dialog>
       }

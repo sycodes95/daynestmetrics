@@ -38,7 +38,7 @@ import EmojiEventsBorderIcon from '@mui/icons-material/EmojiEvents';
 
 import { formatDateForUser } from "@/utils/formatDateForUser"
 import { getYMDFromDate } from "@/utils/getYMDFromDate"
-import { getRatingColor, getRatingColorBG, getRatingColorText } from "@/utils/getRatingColor"
+
 
 import {
   Popover,
@@ -331,13 +331,10 @@ export default function Entries() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <DialogContent className='shadow-lg shadow-gray-300 h-full  w-full max-w-6xl overflow-y-scroll md:overflow-hidden'>
-            <DialogHeader>
-              <DialogTitle>How was your day?</DialogTitle>
-              <DialogDescription>
+          <DialogContent className='shadow-lg p-2 md:p-8 shadow-gray-300 w-full max-w-6xl overflow-y-scroll md:overflow-hidden min-h-screen h-full'>
+            <DialogDescription className='grow h-full'>
                 <EntryDialog currentDate={date} />
               </DialogDescription>
-            </DialogHeader>
           </DialogContent>
         </Dialog> 
         )
