@@ -156,7 +156,7 @@ export default function ArchivedFactors ({
 
     <Sheet>
       <SheetTrigger className="flex justify-start">
-        <button className=" h-fit rounded-lg bg-red-500 w-28 text-white transition-all duration-300 p-2" onClick={()=> setShowArchived(prev => !prev)}>
+        <button className=" h-fit rounded-lg bg-accent w-28 text-white transition-all duration-300 p-2" onClick={()=> setShowArchived(prev => !prev)}>
         View Archived
         </button>
       </SheetTrigger>
