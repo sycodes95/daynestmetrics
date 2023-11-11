@@ -148,12 +148,13 @@ export default function EntryCalendar() {
                   {getMoodAvg(dayEntry.mood_rating, dayEntry.productivity_rating)}
                 </span>
               </PopoverTrigger>
-              <PopoverContent className='h-fit  w-fit flex flex-col'>
-                <DialogTrigger className=''>
-                  <Button className='text-xs' variant={'outline'}>Edit</Button>
+              <PopoverContent className='h-fit  w-32 flex flex-col p-1 shadow-md shadow-gray-300'>
+                <span className='p-2 font-semibold border-b border-gray-300'>Actions</span>
+                <DialogTrigger className='w-full text-left p-2'>
+                  Edit
                 </DialogTrigger>
 
-                <Button className='text-xs' variant={'destructive'} onClick={()=> handleDailyEntryDelete()} >Delete</Button>
+                <Button className='text-xs text-left flex justify-start p-2' variant={'destructive'} onClick={()=> handleDailyEntryDelete()} >Delete</Button>
                 {/* <button className='text-xs bg-black text-white'  >test</button> */}
 
                 

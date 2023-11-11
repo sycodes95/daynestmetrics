@@ -34,24 +34,6 @@ type ScatterChartData = {
   data: { y:number,  x:number, entries:number}[]
 }
 
-// type FeaturedStatistics = {
-//   "Top Overall Factors": { factorName : string, avgRating: number }[];
-//   "Top Mood Factors": { factorName : string, avgRating: number }[];
-//   "Top Productivity Factors": { factorName : string, avgRating: number }[];
-//   "Bottom Overall Factors": { factorName : string, avgRating: number }[];
-//   "Bottom Mood Factors": { factorName : string, avgRating: number }[];
-//   "Bottom Productivity Factors": { factorName : string, avgRating: number }[];
-// }
-
-// type FactorSumData = {
-//   factor: string;
-//   overall: number;
-//   mood: number;
-//   productivity: number;
-//   entries: number;
-//   did: boolean;
-// }
-
 export default function Insights() {
 
   const { user, error, isLoading } = useUser()
@@ -69,76 +51,6 @@ export default function Insights() {
   const [didOrDidNot, setDidOrDidNot] = useState<"Did" | "Did Not">("Did")
 
   const [scatterChartData, setScatterChartData] = useState<ScatterChartData[]>([])
-
-  // const [featuredStatistics, setFeaturedStatistics] = useState<FeaturedStatistics>({
-  //   "Top Overall Factors": [],
-  //   "Top Mood Factors": [],
-  //   "Top Productivity Factors": [],
-  //   "Bottom Overall Factors": [],
-  //   "Bottom Mood Factors": [],
-  //   "Bottom Productivity Factors": [],
-
-  // })
-
-  // const makeFeaturedStatisticsData = () => {
-  //   const factorSumData: Map<string, FactorSumData> = new Map<string, FactorSumData>();
-
-  //   dailyEntries.forEach((entry) => {
-
-  //     const { daily_entry_id, mood_rating, productivity_rating } = entry;
-
-  //     const overall = ((mood_rating + productivity_rating) / 2);
-
-  //     dailyEntryFactors.forEach((factor) => {
-  //       if (factor.daily_entry_id !== daily_entry_id) {
-  //         return;
-  //       }
-
-  //       // determine if the factor is "did" or "didNot"
-  //       const status = factor.did ? 'Did' : 'DidNot';
-  //       const factorName = lifestyleFactors.find(lf => lf.lifestyle_factor_id === factor.lifestyle_factor_id)?.name;
-
-  //       if (factorName) {
-  //         const key = `${factorName}-${status}`;
-  //         const data = factorSumData.get(key) 
-  //         || { factor: factorName, overall: 0, mood: 0, productivity: 0, entries: 0, did: status === 'Did' ? true : false};
-
-  //         data.mood = (data.mood * data.entries + mood_rating) / (data.entries + 1);
-  //         data.productivity = (data.productivity * data.entries + productivity_rating) / (data.entries + 1);
-  //         data.overall = (data.overall * data.entries + overall) / (data.entries + 1);
-  //         data.entries += 1;
-  //         data.did = status === 'Did' ? true : false
-
-  //         factorSumData.set(key, data);
-  //       }
-  //     });
-  //   });
-  //   // Convert the Map to an array of data objects.
-  //   const factorSumsData = Array.from(factorSumData.values());
-
-  //   const sortedByOverall = factorSumsData.sort((a, b) => b.overall - a.overall)
-  //   const sortedByMood = factorSumsData.sort((a, b) => b.mood - a.mood)
-  //   const sortedByProductivity = factorSumsData.sort((a, b) => b.productivity - a.productivity)
-
-  //   setFeaturedStatistics({
-  //     "Top Overall Factors": getTopAndBottomThreeElements(sortedByOverall).top,
-  //     "Top Mood Factors": getTopAndBottomThreeElements(sortedByMood).top,
-  //     "Top Productivity Factors": getTopAndBottomThreeElements(sortedByProductivity).top,
-  //     "Bottom Overall Factors": getTopAndBottomThreeElements(sortedByOverall).bottom,
-  //     "Bottom Mood Factors": getTopAndBottomThreeElements(sortedByMood).bottom,
-  //     "Bottom Productivity Factors": getTopAndBottomThreeElements(sortedByProductivity).bottom
-      
-  //   })
-    
-  // }
-
-  const getTopAndBottomThreeElements = (arr: any[]) => {
-    return {
-      top: arr.splice(0, 3),
-      bottom: arr.splice(arr.length - 3, arr.length - 1)
-    }
-  }
-
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: undefined,
@@ -257,7 +169,7 @@ export default function Insights() {
   },[selectedLifestyleFactorIds, didOrDidNot, makeScatterData, dateRange])
 
   return (
-    <div className="w-full h-full flex flex-col gap-2">
+    <div className="w-full h-full flex flex-col gap-4">
       <PageHeading
       header="Insights" 
       body="Get insights into how your lifestyle factors correlates to mood and productivity"
@@ -271,6 +183,11 @@ export default function Insights() {
       dailyEntryFactors={dailyEntryFactors} 
       lifestyleFactors={lifestyleFactors}
       />
+
+      <div>
+        <span className="text-xl text-gray-500">Scatter Plot</span>
+
+      </div>
       <div className="flex items-center gap-2">
         <Popover>
           <PopoverTrigger asChild>
@@ -318,10 +235,10 @@ export default function Insights() {
 
       </div>
       
-      <div className="h-96 w-full grow">
+      <div className="h-96 w-full ">
       <ResponsiveScatterPlot
         data={scatterChartData}
-        margin={{ top: 40, right: 120, bottom: 70, left: 50 }}
+        margin={{ top: 40, right: 120, bottom: 60, left: 50 }}
         xScale={{ type: 'linear', min: 0, max: 10 }}
         xFormat=">-0.2f"
         yScale={{ type: 'linear', min: 0, max: 10 }}
@@ -393,13 +310,13 @@ export default function Insights() {
       />
       </div>
 
-      <div className="flex items-center gap-2 p-4">
+      <div className="flex items-center p-4">
         <button 
-        className={`${didOrDidNot === 'Did' ? 'border-black' : 'border-gray-400'} p-2  border rounded-lg w-20 h-8 flex items-center justify-center `}
+        className={`${didOrDidNot === 'Did' ? 'border-black' : 'border-gray-400'} p-2  border rounded-l-lg w-20 h-8 flex items-center justify-center `}
         onClick={()=> setDidOrDidNot('Did')}
         >Did</button>
         <button 
-        className={`${didOrDidNot === 'Did Not' ? 'border-black' : 'border-gray-400'} p-2  border rounded-lg w-20 h-8 flex items-center justify-center `}
+        className={`${didOrDidNot === 'Did Not' ? 'border-black' : 'border-gray-400'} p-2  border rounded-r-lg w-20 h-8 flex items-center justify-center `}
         onClick={()=> setDidOrDidNot('Did Not')}
         >Did Not</button>
 

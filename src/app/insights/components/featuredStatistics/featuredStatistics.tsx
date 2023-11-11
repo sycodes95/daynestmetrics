@@ -45,6 +45,8 @@ export default function FeaturedStatistics( {dailyEntries, lifestyleFactors, dai
 
   })
 
+  const [featuredStatisticsIsLoading, setFeaturedStatisticsIsLoading] = useState(true)
+
   const makeFeaturedStatisticsData = useCallback(() => {
     const factorSumData: Map<string, FactorSumData> = new Map<string, FactorSumData>();
 
@@ -151,7 +153,7 @@ export default function FeaturedStatistics( {dailyEntries, lifestyleFactors, dai
                 </div> */}
                 <div className="flex w-full flex-col overflow-hidden p-2">
                   <div className="flex flex-col gap-2 justify-between w-full overflow-hidden text-ellipsis">
-                    <span className={`${data.did ? 'text-teal ' : ' text-red-500'} font-semibold border whitespace-nowrap text-xs  border-b-0 rounded-t-lg`}>{data.did ? 'Did' : 'Did Not'}</span>
+                    <span className={`${data.did ? 'text-teal ' : ' text-stone-500'} font-semibold border whitespace-nowrap text-xs  border-b-0 rounded-t-lg`}>{data.did ? 'Did' : 'Did Not'}</span>
                     <span className="whitespace-nowrap text-ellipsis overflow-hidden w-full font-semibold">{data.factor}</span>
                     <div className="flex justify-between rounded-b-lg rounded-lg">
                       <span>Average</span>
@@ -168,7 +170,7 @@ export default function FeaturedStatistics( {dailyEntries, lifestyleFactors, dai
               </div>
             ))
             :
-            <div className="">Not Enough Data Yet</div>
+            <div className="p-2">Not Enough Data.</div>
             }
           </div>
           

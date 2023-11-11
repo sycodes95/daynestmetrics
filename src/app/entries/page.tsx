@@ -223,20 +223,25 @@ export default function Entries() {
           return (
             <Popover>
               <PopoverTrigger className="bg-primary text-secondary pl-2 pr-2 rounded-lg hover:bg-secondary hover:text-primary transition-colors">View</PopoverTrigger>
-              <PopoverContent className="text-primary flex flex-wrap gap-4 max-w-xxs w-full">
+              <PopoverContent className="text-primary flex flex-col gap-4 max-w-xxs w-full shadow-md shadow-gray-300">
+                <span className='font-semibold'>Did Factors</span>
 
-                {
-                didFactors &&
-                didFactors.length > 0 ? 
-                didFactors.map((factor) => (
-                  <div className="p-1 border border-black rounded-2xl" key={factor}>
-                    {factor}
-                  </div>
-                  
-                ))
-                :
-                <span className="text-gray-500">None</span>
-                }
+                <div className='flex flex-wrap gap-2 '>
+                  {
+                  didFactors &&
+                  didFactors.length > 0 ? 
+                  didFactors.map((factor) => (
+                    <div className="p-2 border-black border text-primary rounded-lg" key={factor}>
+                      {factor}
+                    </div>
+                    
+                  ))
+                  :
+                  <span className="text-gray-500">N/A</span>
+                  }
+
+                </div>
+                
               </PopoverContent>
             </Popover>
           )
@@ -250,20 +255,25 @@ export default function Entries() {
           return (
             <Popover>
               <PopoverTrigger className="bg-primary text-secondary pl-2 pr-2 rounded-lg hover:bg-secondary hover:text-primary transition-colors">View</PopoverTrigger>
-              <PopoverContent className="text-primary flex flex-wrap gap-4 max-w-xxs w-full" side="top">
+              <PopoverContent className="text-primary flex flex-col gap-4 max-w-xxs w-full shadow-md shadow-gray-300">
+                <span className='font-semibold'>Did Not Factors</span>
 
-                {
-                didNotFactors &&
-                didNotFactors.length > 0 ? 
-                didNotFactors.map((factor) => (
-                  <div className="p-1 border border-black rounded-2xl" key={factor}>
-                    {factor}
-                  </div>
-                  
-                ))
-                :
-                <span className="text-gray-500">None</span>
-                }
+                <div className='flex flex-wrap gap-2 '>
+                  {
+                  didNotFactors &&
+                  didNotFactors.length > 0 ? 
+                  didNotFactors.map((factor) => (
+                    <div className="p-2 border-black border text-primary rounded-lg" key={factor}>
+                      {factor}
+                    </div>
+                    
+                  ))
+                  :
+                  <span className="text-gray-500">N/A</span>
+                  }
+
+                </div>
+                
               </PopoverContent>
             </Popover>
           )
@@ -277,8 +287,8 @@ export default function Entries() {
           return (
             <Popover>
               <PopoverTrigger className="bg-primary text-secondary pl-2 pr-2 rounded-lg hover:bg-secondary hover:text-primary transition-colors">View</PopoverTrigger>
-              <PopoverContent className="text-primary flex flex-wrap gap-4 max-w-xxs w-full  " side="top">
-
+              <PopoverContent className="text-primary flex flex-wrap gap-4 max-w-xxs w-full shadow-md shadow-gray-300 " side="bottom">
+                <span className='font-semibold '>Journal</span>
                 <span className="text-gray-500 whitespace-pre-wrap word-wrap break-words w-full">{journal ? journal : 'N/A'}</span>
               </PopoverContent>
             </Popover>
@@ -304,8 +314,8 @@ export default function Entries() {
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuContent className='shadow-md shadow-gray-300' align="end">
+              <DropdownMenuLabel className='border-b border-gray-300'>Actions</DropdownMenuLabel>
               
               <DropdownMenuSeparator />
               <DialogTrigger className="w-full">

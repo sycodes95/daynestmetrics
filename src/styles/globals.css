@@ -54,6 +54,10 @@
   }
 }
 
+.h-500px{
+  height: 500px;
+}
+
 .bg-psych{
   background-image: url('../assets/images/purple-psychedelic-background.webp');
   background-repeat: repeat;
