@@ -3,27 +3,94 @@ import Link from "next/link";
 import UserMenu from "./userMenu";
 import { usePathname, useRouter } from "next/navigation";
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import { Divide as Hamburger } from 'hamburger-react'
+import { useState } from "react";
 
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import StackedBarChartIcon from '@mui/icons-material/StackedBarChart';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import InfoIcon from '@mui/icons-material/Info';
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import GitHubIcon from '@mui/icons-material/GitHub';
+
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose
+} from "@/components/ui/sheet"
 
 export default function Header(){
   const pathname = usePathname()
   const pageRoutes = [
-    {name: 'Entries' , route : '/entries'},
-    {name: 'Insights' , route : '/insights'},
-    {name: 'Lifestyle Factors' , route : '/lifestyle-factors'},
-    {name: 'About' , route : '/about'}
+    {name: 'Entries' , route : '/entries', icon: <EditNoteIcon/>},
+    {name: 'Insights' , route : '/insights', icon: <StackedBarChartIcon/>},
+    {name: 'Lifestyle Factors' , route : '/lifestyle-factors', icon: <DirectionsRunIcon/>},
+    {name: 'About' , route : '/about', icon: <InfoIcon/>}
 
   ];
 
-  return (
-    <div className="sticky top-0 z-50 h-14 w-full pl-4 pr-4 flex justify-center items-center  bg-background rounded-b-lg  text-primary border-b border-gray-300
-    ">
-      <div className="w-full max-w-7xl flex items-center min-w-max">
+  const youtubeLink = process.env.NEXT_MY_YOUTUBE_URL
+  const githubLink = process.env.NEXT_MY_GITHUB_URL
 
-      
-        <Link className=" font-display text-xl mt-1 flex gap-2 items-center" href={'/'}>
+
+  return (
+    <div className="sticky top-0 z-50 h-16 w-full flex justify-center items-center  bg-background rounded-b-lg  text-primary border-b border-gray-300
+    ">
+      <div className="w-full max-w-7xl flex items-center justify-between md:justify-start min-w-max">
+        <div className="w-full md:hidden h-fit flex justify-start p-2 rounded-lg">
+          <Sheet>
+            <SheetTrigger>
+              <Hamburger toggled={false} />
+            </SheetTrigger>
+            <SheetContent className="max-h-screen h-full flex flex-col" side={'left'}>
+              <SheetHeader className="flex flex-col gap-2">
+                <SheetTitle className="flex justify-start">
+                  <QueryStatsIcon />
+                </SheetTitle>
+                <SheetDescription>
+                  <div className="flex flex-col gap-2 h-full">
+                    {
+                    pageRoutes.map((data, index) => (
+                      <SheetClose asChild={true} key={data.name}>
+                        <Link className={`flex gap-2 w-fit justify-center items-center  text-2xl text-primary border-b-2 h-12 transition-all duration-300 whitespace-nowrap`} 
+                        key={index} 
+                        href={`${data.route}`}>
+                          {data.icon}
+                          <span>{data.name}</span>
+                          
+                        </Link>
+
+                      </SheetClose>
+                      
+                    ))
+                    } 
+                    
+                  </div>
+                  
+                  
+                </SheetDescription>
+              </SheetHeader>
+              <div className="max-w-7xl w-full h-full flex justify-start items-end gap-4">
+                <span className="text-primary">© 2023 Daynestmetrics</span>
+                {
+                youtubeLink && githubLink &&
+                <>
+                <a href={process.env.NEXT_MY_GITHUB_URL} target='_blank'><GitHubIcon/></a>
+                <a href={process.env.NEXT_MY_YOUTUBE_URL} target='_blank'><YouTubeIcon/></a>
+                </>
+                }
+                
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+        <Link className=" font-display text-xl pl-2 mt-1 flex gap-2 items-center" href={'/'}>
           <QueryStatsIcon />
-          <span>Daynestmetrics</span>
+          <span className="hidden md:contents">Daynestmetrics</span>
           
         </Link>
         
@@ -39,7 +106,7 @@ export default function Header(){
           ))
           }
         </div>
-        <div className="w-full flex justify-end">
+        <div className="w-full flex justify-end p-2 pr-4">
           <UserMenu />
         </div>
       </div>

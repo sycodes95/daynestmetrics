@@ -9,7 +9,6 @@ export default function Footer() {
         <a href={process.env.NEXT_MY_GITHUB_URL} target='_blank'><GitHubIcon/></a>
         <a href={process.env.NEXT_MY_YOUTUBE_URL} target='_blank'><YouTubeIcon/></a>
 
-
       </div>
     </div>
   )
