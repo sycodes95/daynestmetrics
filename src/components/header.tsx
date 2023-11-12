@@ -12,6 +12,7 @@ import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import InfoIcon from '@mui/icons-material/Info';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import HomeIcon from '@mui/icons-material/Home';
 
 import {
   Sheet,
@@ -38,7 +39,7 @@ export default function Header(){
 
 
   return (
-    <div className="sticky top-0 z-50 h-16 w-full flex justify-center items-center  bg-background rounded-b-lg  text-primary border-b border-gray-300
+    <div className="sticky top-0 z-50 h-14 w-full flex justify-center items-center  bg-background rounded-b-lg  text-primary border-b border-gray-300
     ">
       <div className="w-full max-w-7xl flex items-center justify-between md:justify-start min-w-max">
         <div className="w-full md:hidden h-fit flex justify-start p-2 rounded-lg">
@@ -53,6 +54,15 @@ export default function Header(){
                 </SheetTitle>
                 <SheetDescription>
                   <div className="flex flex-col gap-2 h-full">
+                    <SheetClose asChild={true}>
+                      <Link className={`flex gap-2 w-fit justify-center items-center  text-2xl text-primary border-b-2 h-12 transition-all duration-300 whitespace-nowrap`} 
+                      href={`/`}>
+                        <HomeIcon/>
+                        <span>Home</span>
+                        
+                      </Link>
+
+                    </SheetClose>
                     {
                     pageRoutes.map((data, index) => (
                       <SheetClose asChild={true} key={data.name}>
@@ -88,7 +98,7 @@ export default function Header(){
             </SheetContent>
           </Sheet>
         </div>
-        <Link className=" font-display text-xl pl-2 mt-1 flex gap-2 items-center" href={'/'}>
+        <Link className=" font-display text-xl md:pl-2 md:mt-1 flex gap-2 items-center" href={'/'}>
           <QueryStatsIcon />
           <span className="hidden md:contents">Daynestmetrics</span>
           
