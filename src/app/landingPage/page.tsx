@@ -10,17 +10,22 @@ import insightsDemo from '../../assets/images/features/insights.png'
 import Image from 'next/image';
 import LandingPageHeader from './components/landingPageHeader';
 import LandingPageHeadline from './components/landingPageHeadline';
+import Footer from '@/components/footer';
+import LandingPageFooter from './components/landingPageFooter';
 
 
 export default function LandingPage() {
   return(
-    <div className="flex flex-col gap-4 w-full h-full items-center ">
+    <div className="relative flex flex-col gap-4 w-full h-full items-center ">
       <Image className='absolute top-0 left-0 h-full w-full object-cover -z-10 grayscale opacity-40 max-h-screen rounded-xl  saturate-200' src={landingPageBackground} alt="" />
 
       <LandingPageHeader />
       
       <LandingPageHeadline />
 
+      <div className='absolute bottom-0'>
+        <LandingPageFooter/>
+      </div>
       
     </div>
   )

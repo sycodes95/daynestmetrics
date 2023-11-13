@@ -81,7 +81,6 @@ export default function Header(){
                     
                   </div>
                   
-                  
                 </SheetDescription>
               </SheetHeader>
               <div className="max-w-7xl w-full h-full flex justify-start items-end gap-4">
