@@ -36,7 +36,7 @@ export async function PATCH(req: Request, res: Response){
 export async function POST(req: Request){
   
   const user = await req.json()
-
+  console.log(user);
   let queryParams: any = []
 
   let insertFields = ``
