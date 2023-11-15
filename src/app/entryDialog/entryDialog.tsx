@@ -377,7 +377,7 @@ export default function EntryDialog( { currentDate, getAllDailyEntriesCalendar }
 
       </div>
 
-      <div className="flex justify-end items-center">
+      <div className="flex gap-2 justify-end items-center">
         {
         isSaved &&
         <span className="text-green-500"> Saved Successfully! </span>
