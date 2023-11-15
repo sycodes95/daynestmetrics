@@ -103,8 +103,8 @@ export default function EntryCalendar() {
           // update state 
           const newEntries = [...prev]
           const entryToDelete = newEntries.findIndex(en => {
-
-            return format(new Date(en.entry_date), 'yyyy-MM-dd') === currentDate
+            const [entryDate, _] = en.entry_date.split('T')
+            return entryDate === currentDate
           })
 
           // const entryToDelete = newEntries.findIndex(en => en.entry_date === dayEntry?.entry_date)

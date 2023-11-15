@@ -33,7 +33,7 @@ export default async function RootLayout({
   
   const user = await getUser()
   getUserAndSyncDB(user)
-  console.log(user);
+  
   return (
     <>
 
