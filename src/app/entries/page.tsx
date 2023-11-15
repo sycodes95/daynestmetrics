@@ -154,6 +154,7 @@ export default function Entries() {
         )
       },
       cell: ({ row }) => {
+
         const date:string = row.getValue("entry_date")
         const [formattedDate, _] = date.split('T') 
         return <div className="text-left font-medium">{formattedDate}</div>
@@ -300,7 +301,8 @@ export default function Entries() {
       id: "actions",
       cell: ({ row }) => {
         
-        const date = getYMDFromDate(row.getValue("entry_date"))
+        const date:string = row.getValue("entry_date")
+        const [formattedDate, _] = date.split('T') 
         const user_id : number = row.getValue("user_id")
         const daily_entry_id : number = row.getValue("daily_entry_id")
 
@@ -321,7 +323,7 @@ export default function Entries() {
               <DialogTrigger className="w-full">
                 <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
               </DialogTrigger>
-              <DropdownMenuItem className="bg-destructive text-white cursor-pointer" onClick={()=> deleteEntry(user_id, date).then(
+              <DropdownMenuItem className="bg-destructive text-white cursor-pointer" onClick={()=> deleteEntry(user_id, formattedDate).then(
                 deleted => {
                   if(deleted) removeEntry(daily_entry_id)
                 }
