@@ -36,7 +36,6 @@ export type DailyEntry = {
 }
 // i want to break this component down more
 export default function EntryDialog( { currentDate, getAllDailyEntriesCalendar } : DailyEntryProps) {
-
   const { user, error, isLoading } = useUser();
 
   const [lifestyleFactors, setLifestyleFactors] = useState<LifestyleCategory[]>([])

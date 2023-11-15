@@ -62,17 +62,16 @@ export default function EntryCalendar() {
   useEffect(()=> {
   },[dailyEntries])
 
-  
-
-  
-
   const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
 
+    const currentDate = format(new Date(current.toDate()), 'yyyy-MM-dd')
 
-    const currentDate = format(current.toDate(), 'yyyy-MM-dd')
-
-    const dayEntry = dailyEntries.find(entry => format(new Date(entry.entry_date), 'yyyy-MM-dd') === currentDate);
-
+    // const dayEntry = dailyEntries.find(entry => format(new Date(entry.entry_date), 'yyyy-MM-dd') === currentDate);
+    const dayEntry = dailyEntries.find(entry => {
+      const [entryDate, _] = entry.entry_date.split('T')
+      return entryDate === currentDate
+    })
+    
     const handleDailyEntryDelete = async () => {
 
       try {

@@ -41,7 +41,9 @@ CREATE TABLE daily_entry (
   productivity_rating INTEGER NOT NULL,
   journal TEXT DEFAULT '',
   user_id INTEGER NOT NULL,
-  entry_date DATE NOT NULL,
+  -- entry_date DATE NOT NULL,
+  entry_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+
   FOREIGN KEY (user_id) REFERENCES app_user(user_id)
 );
 
