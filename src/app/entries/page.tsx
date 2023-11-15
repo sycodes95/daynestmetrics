@@ -154,8 +154,8 @@ export default function Entries() {
         )
       },
       cell: ({ row }) => {
-        const date = getYMDFromDate(row.getValue("entry_date"))
-        const formattedDate = formatDateForUser(date)
+        const date:string = row.getValue("entry_date")
+        const [formattedDate, _] = date.split('T') 
         return <div className="text-left font-medium">{formattedDate}</div>
       },
     },
