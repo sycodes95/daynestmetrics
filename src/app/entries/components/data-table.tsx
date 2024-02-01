@@ -26,17 +26,19 @@ import {
 import { Button } from "@/components/ui/button"
 import { DataTablePagination } from "./dataTablePagination"
 import { useToast } from "@/components/ui/use-toast"
+import { DailyEntryData } from "../page"
 
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  
+  setEntriesData: React.Dispatch<React.SetStateAction<DailyEntryData[]>>
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  setEntriesData,
   getEntriesData,
   removeEntry
 }: DataTableProps<TData, TValue> 
@@ -68,13 +70,14 @@ export function DataTable<TData, TValue>({
     },
   })
   const optimisticHandleDeleteSelected = () => {
-    const idsToDelete: number[] = table.getFilteredSelectedRowModel().rows.map((row) => {
+    const idsToDelete: number[] = table.getSelectedRowModel().rows.map((row) => {
       return row.getValue("daily_entry_id")
     });
 
     // removes deleted entries from parent component state
-    idsToDelete.forEach((id) => {
-      removeEntry(id)
+    setEntriesData(prev => {
+      const newEntries = [...prev].filter(entry => !idsToDelete.includes(entry.daily_entry_id ?? -1));
+      return newEntries
     })
 
     //resets table row selection due to weird bug of auto selecting a new row after deletion

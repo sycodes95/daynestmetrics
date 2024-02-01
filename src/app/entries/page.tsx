@@ -57,7 +57,7 @@ import {
 import { styled } from '@mui/material';
 import { deleteEntry } from './services/deleteEntry';
 
-type DailyEntryData = {
+export type DailyEntryData = {
   daily_entry_id?: number | null,
   entry_date: string,
   journal: string,
@@ -78,7 +78,7 @@ export default function Entries() {
     getEntriesData(user).then(result => setEntriesData(result))
   },[user, error, isLoading])
 
-  const removeEntry = useCallback((daily_entry_id: number) => {
+  const removeEntry = (daily_entry_id: number) => {
     const newEntriesData = [...entriesData]
 
     const deleteIndex = newEntriesData.findIndex(data => data.daily_entry_id === daily_entry_id)
@@ -86,7 +86,7 @@ export default function Entries() {
     newEntriesData.splice(deleteIndex, 1)
 
     setEntriesData(newEntriesData)
-  },[entriesData])
+  }
 
   useEffect(() => {
     getEntries()
@@ -323,11 +323,13 @@ export default function Entries() {
               <DialogTrigger className="w-full">
                 <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
               </DialogTrigger>
-              <DropdownMenuItem className="bg-destructive text-white cursor-pointer" onClick={()=> deleteEntry(user_id, formattedDate).then(
+              <DropdownMenuItem className="bg-destructive text-white cursor-pointer" onClick={async ()=> {
+                await deleteEntry(user_id, formattedDate).then(
                 deleted => {
                   if(deleted) removeEntry(daily_entry_id)
                 }
-              )}>
+              )
+              }}>
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -350,7 +352,7 @@ export default function Entries() {
       <PageHeading header='Entries' body='View all daily entries.'>
           <EditNoteIcon />
       </PageHeading>
-      <DataTable columns={columns} data={entriesData} getEntriesData={getEntries} removeEntry={removeEntry} />
+      <DataTable columns={columns} data={entriesData} setEntriesData={setEntriesData} getEntriesData={getEntries} removeEntry={removeEntry} />
     </div>
   )
 }
