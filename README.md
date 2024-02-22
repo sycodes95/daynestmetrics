@@ -42,7 +42,7 @@ I've often dreamed of a tool that could monitor both my emotional state and prod
 
 This is the landing page for my web application.
 
-![Landing Page](./src/assets/readme/landingPage.png.png "Landing Page")
+![Landing Page](./src/assets/readme/landingPage.png "Landing Page")
 
 **Dashboard**
 
